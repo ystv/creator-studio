@@ -3,6 +3,9 @@ import Uppy from "@uppy/core";
 import Tus from "@uppy/tus";
 import { Dashboard } from "@uppy/react";
 import GoogleDrive from "@uppy/google-drive";
+import Dropbox from "@uppy/dropbox";
+import OneDrive from "@uppy/onedrive";
+import Url from "@uppy/url";
 import "@uppy/core/dist/style.css";
 import "@uppy/dashboard/dist/style.css";
 import "../styles/uploader.css";
@@ -11,27 +14,17 @@ const uppy = Uppy({
   restrictions: { maxNumberOfFiles: 1, allowedFileTypes: ["video/*"] },
   autoProceed: true,
 })
-  .use(Dashboard, {
-    trigger: ".UppyModalOpenerBtn",
-    inline: true,
-    target: ".DashboardContainer",
-    replaceTargetContent: true,
-    showProgressDetails: true,
-    note: "Please double check that you have exported correctly.",
-    height: 470,
-    metaFields: [
-      { id: "name", name: "Name", placeholder: "Production name" },
-      {
-        id: "description",
-        name: "Description",
-        placeholder: "Brief description",
-      },
-    ],
-    browserBackButtonClose: true,
-  })
   .use(GoogleDrive, {
-    target: Dashboard,
-    companionUrl: "https://companion.ystv.co.uk",
+    companionUrl: "https://upload.ystv.co.uk/companion",
+  })
+  .use(Dropbox, {
+    companionUrl: "https://upload.ystv.co.uk/companion",
+  })
+  .use(OneDrive, {
+    companionUrl: "https://upload.ystv.co.uk/companion",
+  })
+  .use(Url, {
+    companionUrl: "https://upload.ystv.co.uk/companion",
   })
   .use(Tus, {
     endpoint: "https://upload.ystv.co.uk/files/",
@@ -45,7 +38,25 @@ uppy.on("complete", (result) => {
   console.log("failed files:", result.failed);
 });
 
-const Uploader = () => <Dashboard uppy={uppy} />;
+const Uploader = () => (
+  <Dashboard
+    uppy={uppy}
+    plugins={["GoogleDrive", "Dropbox", "OneDrive", "Url"]}
+    showProgressDetails={true}
+    theme="auto"
+    height="30rem"
+    width="30rem"
+    metaFields={[
+      { id: "title", name: "Title", placeholder: "Video title" },
+      {
+        id: "description",
+        name: "Description",
+        placeholder: "Video description",
+      },
+    ]}
+    note="lol"
+  />
+);
 
 Uploader.displayName = "UppyPageComponent";
 export default Uploader;
