@@ -1,18 +1,30 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "tabler-react/dist/Tabler.css";
 const { Card, Table, Button, Tag } = require("tabler-react");
 
 const Videos = () => {
+  const [creations, setCreations] = useState();
+  const [isLoading, setIsLoading] = useState(true);
+  useEffect(async () => {
+    const res = await fetch("http://localhost:8081/v1/internal/creator");
+    const data = await res.json();
+    const [item] = data.results;
+    setCreations(item);
+  }, [isLoading]);
+
   return (
     <Card>
+      <h1>Test</h1>
+      {creations && <div>creations.Name</div>}
       <Card.Header>
         <Card.Title>Uploaded Videos</Card.Title>
         <Card.Options>
-          <Button color="secondary" size="sm">
+          <Button onClick={setCreations} color="secondary" size="sm">
             Refresh
           </Button>
         </Card.Options>
       </Card.Header>
+      {isLoading && <p>Fetching the latest videos!</p>}
       <Table
         bodyItems={[
           {
