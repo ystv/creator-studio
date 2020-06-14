@@ -1,30 +1,36 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import "tabler-react/dist/Tabler.css";
+import useCreationsService from "../services/useCreationsService";
 const { Card, Table, Button, Tag } = require("tabler-react");
 
-const Videos = () => {
-  const [creations, setCreations] = useState();
-  const [isLoading, setIsLoading] = useState(true);
-  useEffect(async () => {
-    const res = await fetch("http://localhost:8081/v1/internal/creator");
-    const data = await res.json();
-    const [item] = data.results;
-    setCreations(item);
-  }, [isLoading]);
+const Creations: React.FC<{}> = () => {
+  const service = useCreationsService();
+  return (
+    <div>
+      {service.status === "loading" && <div>Loading...</div>}
+      {service.status === "loaded" &&
+        console.log(typeof service.payload.results) &&
+        service.payload.results.map((creation) => (
+          <div key={creation.ID}>{creation.Name}</div>
+        ))}
+      {service.status === "error" && <div>Error, the backend is not ideal</div>}
+    </div>
+  );
+};
 
+const Videos = () => {
   return (
     <Card>
       <h1>Test</h1>
-      {creations && <div>creations.Name</div>}
+      <Creations />
       <Card.Header>
         <Card.Title>Uploaded Videos</Card.Title>
         <Card.Options>
-          <Button onClick={setCreations} color="secondary" size="sm">
+          <Button color="secondary" size="sm">
             Refresh
           </Button>
         </Card.Options>
       </Card.Header>
-      {isLoading && <p>Fetching the latest videos!</p>}
       <Table
         bodyItems={[
           {
