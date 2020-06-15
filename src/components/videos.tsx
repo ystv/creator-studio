@@ -1,21 +1,17 @@
-import React from "react";
+import React, { Suspense } from "react";
 import "tabler-react/dist/Tabler.css";
-import useCreationsService from "../services/useCreationsService";
+import useSWR from "swr";
 const { Card, Table, Button, Tag } = require("tabler-react");
 
 const Creations: React.FC<{}> = () => {
-  const service = useCreationsService();
-  return (
-    <div>
-      {service.status === "loading" && <div>Loading...</div>}
-      {service.status === "loaded" &&
-        console.log(typeof service.payload.results) &&
-        service.payload.results.map((creation) => (
-          <div key={creation.ID}>{creation.Name}</div>
-        ))}
-      {service.status === "error" && <div>Error, the backend is not ideal</div>}
-    </div>
+  const fetcher = (url: string) => fetch(url).then((r) => r.json());
+  const { data, error } = useSWR(
+    "http://localhost:8081/v1/internal/creator",
+    fetcher
   );
+  if (error) return <div>Failed to load</div>;
+  if (!data) return <div>Loading</div>;
+  return <div>My stuff {JSON.stringify(data)}</div>;
 };
 
 const Videos = () => {
