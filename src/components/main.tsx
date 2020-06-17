@@ -1,9 +1,8 @@
 import React from "react";
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
-import Uploader from "./upload";
 import Home from "./home";
-import Meta from "./metadata";
 import Videos from "./videos";
+import UploadForm from "./uploadForm";
 import { Layout, Menu, Typography } from "antd";
 import {
   UserOutlined,
@@ -13,21 +12,30 @@ import {
 } from "@ant-design/icons";
 import "antd/dist/antd.css";
 import "../styles/main.css";
+import logo from "../ystv.png";
 
 const { Header, Content, Sider } = Layout;
 const { SubMenu } = Menu;
-const { Title } = Typography;
+
+const username = "Rhys ";
 
 const Main = () => {
   return (
     <Router>
       <Layout>
         <Header className="header">
-          <div className="logo" />
+          <img src={logo} className="logo" />
           <Menu theme="dark" mode="horizontal" defaultSelectedKeys={["1"]}>
             <Menu.Item key="1">Creator Studio</Menu.Item>
             <Menu.Item key="2">Goliath</Menu.Item>
             <Menu.Item key="3">YSTV Classic</Menu.Item>
+            <Menu.Item
+              key="4"
+              icon={<UserOutlined />}
+              style={{ float: "right" }}
+            >
+              {username}
+            </Menu.Item>
           </Menu>
         </Header>
         <Layout>
@@ -46,10 +54,10 @@ const Main = () => {
               </Menu.Item>
               <SubMenu key="sub1" icon={<UserOutlined />} title="My Creations">
                 <Menu.Item key="3">
-                  <Link to="/my/all">All Creations</Link>
+                  <Link to="/creations/user">All Creations</Link>
                 </Menu.Item>
                 <Menu.Item key="4">
-                  <Link to="/my/pending">Pending Creations</Link>
+                  <Link to="/creations/user/pending">Pending Creations</Link>
                 </Menu.Item>
               </SubMenu>
               <SubMenu
@@ -57,7 +65,9 @@ const Main = () => {
                 icon={<TeamOutlined />}
                 title="YSTV Creations"
               >
-                <Menu.Item key="5">All Creations</Menu.Item>
+                <Menu.Item key="5">
+                  <Link to="/creations">All Creations</Link>
+                </Menu.Item>
                 <Menu.Item key="6">Scheduled Creations</Menu.Item>
               </SubMenu>
             </Menu>
@@ -67,12 +77,11 @@ const Main = () => {
             style={{ padding: 24, margin: 0, minHeight: 280 }}
           >
             <Switch>
-              <Route path="/upload">
-                <Title>Video Details</Title>
-                <Meta />
-              </Route>
-              <Route path="/my">
+              <Route path="/creations">
                 <Videos />
+              </Route>
+              <Route path="/upload">
+                <UploadForm />
               </Route>
               <Route path="/">
                 <Home />

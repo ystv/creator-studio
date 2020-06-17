@@ -8,7 +8,7 @@ import OneDrive from "@uppy/onedrive";
 import Url from "@uppy/url";
 import "@uppy/core/dist/style.css";
 import "@uppy/dashboard/dist/style.css";
-import "../styles/uploader.css";
+import "../../styles/uploader.css";
 
 const uppy = Uppy({
   restrictions: { maxNumberOfFiles: 1, allowedFileTypes: ["video/*"] },

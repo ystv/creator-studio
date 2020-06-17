@@ -1,8 +1,7 @@
 .logo {
-  width: 120px;
-  height: 31px;
-  background: rgba(255, 255, 255, 0.2);
-  margin: 16px 28px 16px 0;
+  width: 95px;
+  background-image: url(../ystv.png);
+  margin: 0px 55px 0 0;
   float: left;
 }
 
