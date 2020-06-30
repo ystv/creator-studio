@@ -1,8 +1,15 @@
 import React, { useState, useEffect } from "react";
 import Axios from "axios";
 import { Table, Tag, Typography, Button } from "antd";
-import { Link, useRouteMatch, Switch, Route } from "react-router-dom";
+import {
+  Link,
+  useRouteMatch,
+  Switch,
+  Route,
+  useParams,
+} from "react-router-dom";
 import Meta from "./forms/metadata";
+import Creation from "./video";
 const { Title } = Typography;
 
 const tagColours = (tag: string) => {
@@ -12,7 +19,7 @@ const tagColours = (tag: string) => {
     case "Available":
       return "green";
     case "Pending":
-      return "yellow";
+      return "orange";
     default:
       return "volcano";
   }
@@ -79,17 +86,18 @@ const Videos = () => {
   useEffect(() => {
     getData();
   }, [loading]);
-  let match = useRouteMatch();
+  let { path, url } = useRouteMatch();
 
   const getData = async () => {
     await Axios.get("http://localhost:8081/v1/internal/creator").then((res) => {
-      let processedData = res.data.map((row: any) => ({
-        id: row.ID,
-        name: row.Name,
-        status: row.Status,
-        uploadedBy: row.Owner,
-      }));
-      setData(processedData);
+      setData(
+        res.data.map((row: any) => ({
+          id: row.ID,
+          name: row.Name,
+          status: row.Status,
+          uploadedBy: row.Owner,
+        }))
+      );
       setLoading(false);
     });
     setData(data);
@@ -102,27 +110,18 @@ const Videos = () => {
 
   return (
     <Switch>
-      <Route path={`${match.path}/user`}>
-        <Title style={{ float: "left" }}>My Creations</Title>
-        <Table
-          rowSelection={rowSelection}
-          dataSource={dataSource}
-          columns={columns(match.url)}
-        />
-      </Route>
-      <Route path={`${match.path}/:creationId`}>
-        <Title>Video Details</Title>
-        <Meta />
-      </Route>
-      <Route path="/">
-        <Title style={{ float: "left" }}>Uploaded Creations</Title>
+      <Route exact path={path}>
+        <Title>Uploaded Creations</Title>
         <Button onClick={refresh}>Refresh</Button>
         <Table
           rowSelection={rowSelection}
           dataSource={data}
-          columns={columns(match.url)}
+          columns={columns(url)}
           loading={loading}
         />
+      </Route>
+      <Route path={`${path}/:CreationId`}>
+        <Creation />
       </Route>
     </Switch>
   );

@@ -46,27 +46,27 @@ const { Step } = Steps;
 //     )
 // }
 
-const steps = [
-  {
-    title: "Upload Video",
-    content: <Upload />,
-  },
-  {
-    title: "Video details",
-    content: <Meta />,
-  },
-  {
-    title: "Publish",
-    content: <Publish />,
-  },
-];
-
 const UploadForm = () => {
   const [currentStep, setCurrentStep] = useState(0);
 
   const next = () => {
     setCurrentStep(currentStep + 1);
   };
+
+  const steps = [
+    {
+      title: "Upload Video",
+      content: <Upload nextStep={next} />,
+    },
+    {
+      title: "Video details",
+      content: <Meta />,
+    },
+    {
+      title: "Publish",
+      content: <Publish />,
+    },
+  ];
 
   return (
     <React.Fragment>
