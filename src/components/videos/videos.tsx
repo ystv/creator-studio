@@ -8,7 +8,7 @@ import {
   Route,
   useParams,
 } from "react-router-dom";
-import Meta from "./forms/metadata";
+import Meta from "../forms/metadata";
 import Creation from "./video";
 const { Title } = Typography;
 
@@ -111,7 +111,9 @@ const Videos = () => {
   return (
     <Switch>
       <Route exact path={path}>
-        <Title>Uploaded Creations</Title>
+        <Title>YSTV Videos</Title>
+        <Button disabled>Move to</Button>
+        <Button disabled>Disable</Button>
         <Button onClick={refresh}>Refresh</Button>
         <Table
           rowSelection={rowSelection}

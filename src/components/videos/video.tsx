@@ -21,12 +21,20 @@ const Creation = () => {
   }, [loading]);
 
   interface VideoData {
-    ID: string;
-    Name: string;
-    Status: string;
-    Owner: string;
-    CreatedDate: Date;
-    Description: string;
+    id: number;
+    name: string;
+    status: string;
+    owner: number;
+    createdDate: Date;
+    description: string;
+    files: videoFiles[];
+  }
+
+  interface videoFiles {
+    id: number;
+    uri: string;
+    preset: number;
+    status: string;
   }
 
   const getData = async () => {
@@ -43,27 +51,58 @@ const Creation = () => {
     setLoading(true);
   };
 
-  const columns = () => {
-    return [
+  const videoInfo = () => {
+    const tabList = [
       {
-        title: "Preset",
-        dataIndex: "name",
-        key: "name",
+        key: "Analytics",
+        tab: "Analytics",
       },
       {
-        title: "Type",
-        dataIndex: "name",
-        key: "name",
-      },
-      {
-        title: "Status",
-        dataIndex: "status",
-        key: "status",
+        key: "Files",
+        tab: "Files",
       },
     ];
-  };
 
-  const videoInfo = () => {
+    const contentList = (option: string) => {
+      const columns = () => {
+        return [
+          {
+            title: "Preset",
+            dataIndex: "preset",
+            key: "preset",
+          },
+          {
+            title: "Location",
+            dataIndex: "uri",
+            key: "location",
+          },
+          {
+            title: "Status",
+            dataIndex: "status",
+            key: "status",
+          },
+          {
+            title: "Actions",
+            dataIndex: "actions",
+            key: "actions",
+          },
+        ];
+      };
+
+      switch (option) {
+        case "Details":
+          return <h1>Test</h1>;
+        case "Files":
+          return (
+            <Table
+              columns={columns()}
+              dataSource={videoData?.files}
+              loading={loading}
+            />
+          );
+      }
+    };
+
     const tagColours = (tag: string) => {
       switch (tag) {
         case "Processing":
@@ -77,46 +116,27 @@ const Creation = () => {
       }
     };
 
-    const tabList = [
-      {
-        key: "Details",
-        tab: "Details",
-      },
-      {
-        key: "Files",
-        tab: "Files",
-      },
-    ];
-
-    const contentList = {
-      Details: <h1>Test</h1>,
-      Files: <h2>Fily</h2>,
-    };
-
     if (videoData) {
       return (
         <div>
-          <Title>{videoData.Name}</Title>
-          <Paragraph>{videoData.Description}</Paragraph>
+          <Title>{videoData.name}</Title>
+          <Paragraph>{videoData.description}</Paragraph>
           <Descriptions>
             <Descriptions.Item label="Broadcast Date">
-              {videoData.CreatedDate}
+              {videoData.createdDate}
             </Descriptions.Item>
             <Descriptions.Item label="Status">
-              <Tag color={tagColours(videoData.Status)} key={videoData.Status}>
-                {videoData.Status}
+              <Tag color={tagColours(videoData.status)} key={videoData.status}>
+                {videoData.status}
               </Tag>
             </Descriptions.Item>
             <Descriptions.Item label="Creator">
-              {videoData.Owner}
+              {videoData.owner}
             </Descriptions.Item>
           </Descriptions>
-
-          <Card title={videoData.Name} tabList={tabList}>
-            {contentList["Details"]}
+          <Card tabList={tabList} activeTabKey={"Files"}>
+            {contentList("Files")}
           </Card>
-
-          <Table columns={columns()} loading={loading} />
         </div>
       );
     } else {

@@ -1,25 +1,27 @@
 import React from "react";
-import { Typography, Card, Row, Col } from "antd";
+import { Typography, Card, Row, Col, Calendar, Layout } from "antd";
 const { Title, Paragraph } = Typography;
-
+const { Content, Sider } = Layout;
 const Home = () => {
   return (
     <React.Fragment>
-      <Title>Welcome to the YSTV Creator Studio!</Title>
-      <Paragraph>
-        From this web app you will be able to manage all aspects of an exported
-        video. Select one of the menu's to begin!
-      </Paragraph>
-      <Row gutter={8}>
-        <Col span={8}>
+      <Card title="Welcome to YSTV Creator Studio!">
+        <Paragraph>
+          From this web app you will be able to manage all aspects of an
+          exported video. Select one of the menu's to begin!
+        </Paragraph>
+      </Card>
+      <Layout>
+        <Content>
+          <Calendar />
+        </Content>
+        <Sider style={{ marginLeft: 10 }} className="site-layout-background">
           <Card title="How-to's">
             <Paragraph>
               First time using Creator Studio? Watch our intro video or have a
               look at our documentation!
             </Paragraph>
           </Card>
-        </Col>
-        <Col span={8}>
           <Card title="Statistics">
             <p>
               Total videos: <b>100</b>
@@ -34,8 +36,8 @@ const Home = () => {
               Encoding videos: <b>4</b>
             </p>
           </Card>
-        </Col>
-      </Row>
+        </Sider>
+      </Layout>
     </React.Fragment>
   );
 };

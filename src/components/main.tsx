@@ -1,9 +1,9 @@
 import React, { useContext } from "react";
 import Home from "./home";
-import Videos from "./videos";
+import Videos from "./videos/videos";
 import UploadForm from "./uploadForm";
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
-import { Layout, Menu, Typography } from "antd";
+import { Layout, Menu, Breadcrumb } from "antd";
 import {
   UserOutlined,
   TeamOutlined,
@@ -11,13 +11,16 @@ import {
   UploadOutlined,
   CloudServerOutlined,
   SettingOutlined,
+  CalendarOutlined,
 } from "@ant-design/icons";
 import "antd/dist/antd.css";
 import "../styles/main.css";
 import logo from "../ystv.png";
 import UserContext from "./userContext";
-import Creation from "./video";
+import Creation from "./videos/video";
 import Settings from "./settings";
+import Series from "./series/series";
+import Playlists from "./playlists/playlists";
 
 const { Header, Content, Sider } = Layout;
 const { SubMenu } = Menu;
@@ -59,12 +62,19 @@ const Main = () => {
               <Menu.Item key="2" icon={<UploadOutlined />}>
                 <Link to="/upload">Upload</Link>
               </Menu.Item>
+              <Menu.Divider />
               <SubMenu key="sub1" icon={<UserOutlined />} title="My Creations">
                 <Menu.Item key="3">
-                  <Link to="/creations/user">All Creations</Link>
+                  <Link to="/my/videos/pending">Pending Videos</Link>
                 </Menu.Item>
                 <Menu.Item key="4">
-                  <Link to="/creations/user/pending">Pending Creations</Link>
+                  <Link to="/my/videos">Videos</Link>
+                </Menu.Item>
+                <Menu.Item key="5">
+                  <Link to="/my/series">Series</Link>
+                </Menu.Item>
+                <Menu.Item key="6">
+                  <Link to="/my/playlists">Playlists</Link>
                 </Menu.Item>
               </SubMenu>
               <SubMenu
@@ -72,21 +82,30 @@ const Main = () => {
                 icon={<TeamOutlined />}
                 title="YSTV Creations"
               >
-                <Menu.Item key="5">
-                  <Link to="/creations">All Creations</Link>
+                <Menu.Item key="7">
+                  <Link to="/videos/scheduled">Scheduled Videos</Link>
                 </Menu.Item>
-                <Menu.Item key="6">Scheduled Creations</Menu.Item>
+                <Menu.Item key="8">
+                  <Link to="/videos">Videos</Link>
+                </Menu.Item>
+                <Menu.Item key="9">
+                  <Link to="/series">Series</Link>
+                </Menu.Item>
+                <Menu.Item key="10">
+                  <Link to="/playlists">Playlists</Link>
+                </Menu.Item>
               </SubMenu>
               <SubMenu
                 key="sub3"
                 icon={<CloudServerOutlined />}
                 title="Encode Farm"
               >
-                <Menu.Item key="7">Current Jobs</Menu.Item>
-                <Menu.Item key="8">Encode Profiles</Menu.Item>
+                <Menu.Item key="11">Current Jobs</Menu.Item>
+                <Menu.Item key="12">Encode Profiles</Menu.Item>
               </SubMenu>
+              <Menu.Divider />
               <Menu.Item
-                key="9"
+                key="13"
                 style={{ marginTop: "auto" }}
                 icon={<SettingOutlined />}
               >
@@ -94,28 +113,36 @@ const Main = () => {
               </Menu.Item>
             </Menu>
           </Sider>
-          <Content
-            className="site-layout-background"
-            style={{ padding: 24, margin: 0, minHeight: 280 }}
-          >
-            <Switch>
-              <Route path="/creations/user">
-                <MyCreation />
-              </Route>
-              <Route path="/creations">
-                <Videos />
-              </Route>
-              <Route path="/upload">
-                <UploadForm />
-              </Route>
-              <Route path="/settings">
-                <Settings />
-              </Route>
-              <Route path="/">
-                <Home />
-              </Route>
-            </Switch>
-          </Content>
+          <Layout style={{ padding: "24px 24px 24px" }}>
+            <Content
+              className="site-layout-background"
+              style={{ padding: 24, margin: 0, minHeight: 280 }}
+            >
+              <Switch>
+                <Route path="/upload">
+                  <UploadForm />
+                </Route>
+                <Route path="/my/videos">
+                  <MyCreation />
+                </Route>
+                <Route path="/videos">
+                  <Videos />
+                </Route>
+                <Route path="/series">
+                  <Series />
+                </Route>
+                <Route path="/playlists">
+                  <Playlists />
+                </Route>
+                <Route path="/settings">
+                  <Settings />
+                </Route>
+                <Route path="/">
+                  <Home />
+                </Route>
+              </Switch>
+            </Content>
+          </Layout>
         </Layout>
       </Layout>
     </Router>
