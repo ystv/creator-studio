@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Axios from "axios";
-import { Table, Tag, Typography, Button } from "antd";
+import { Table, Tag, Typography, Button, Space } from "antd";
 import {
   Link,
   useRouteMatch,
@@ -112,9 +112,11 @@ const Videos = () => {
     <Switch>
       <Route exact path={path}>
         <Title>YSTV Videos</Title>
-        <Button disabled>Move to</Button>
-        <Button disabled>Disable</Button>
-        <Button onClick={refresh}>Refresh</Button>
+        <Space style={{ marginBottom: 16 }}>
+          <Button disabled>Move to</Button>
+          <Button disabled>Disable</Button>
+          <Button onClick={refresh}>Refresh</Button>
+        </Space>
         <Table
           rowSelection={rowSelection}
           dataSource={data}

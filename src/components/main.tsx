@@ -29,7 +29,7 @@ const Main = () => {
   const user = useContext(UserContext);
   return (
     <Router>
-      <Layout>
+      <Layout style={{ height: "100vh" }}>
         <Header className="header">
           <img src={logo} className="logo" />
           <Menu theme="dark" mode="horizontal" defaultSelectedKeys={["1"]}>
