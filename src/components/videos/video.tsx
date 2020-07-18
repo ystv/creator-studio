@@ -17,6 +17,7 @@ import {
   Cascader,
 } from "antd";
 import { useParams } from "react-router-dom";
+import { string } from "yup";
 const { Title, Paragraph } = Typography;
 const { Content, Sider } = Layout;
 
@@ -24,28 +25,36 @@ const Creation = () => {
   let { CreationId } = useParams();
   const [videoData, setVideoData] = useState<VideoData | undefined>(undefined);
   const [loading, setLoading] = useState(true);
-  const [cardView, setCardView] = useState("Analytics");
+  const [cardView, setCardView] = useState("Files");
   useEffect(() => {
     getData();
   }, [loading]);
 
   interface VideoData {
-    id: number;
+    videoID: number;
+    seriesID: number;
     name: string;
-    status: string;
-    owner: number;
-    createdDate: Date;
+    url: string;
     description: string;
+    thumbnail: string;
     duration: number;
     views: number;
+    tags: string[];
+    seriesPosition: number;
+    status: string;
+    preset: string;
+    broadcastDate: Date;
+    createdAt: Date;
+    owner: string;
     files: videoFiles[];
   }
 
   interface videoFiles {
     id: number;
     uri: string;
-    preset: number;
+    encodeFormat: string;
     status: string;
+    size: number;
   }
 
   const getData = async () => {
@@ -53,6 +62,7 @@ const Creation = () => {
       url: `http://localhost:8081/v1/internal/creator/${CreationId}`,
     }).then((response) => {
       const { data } = response;
+      data.status = capitalise(data.status);
       setVideoData(data);
     });
     setLoading(false);
@@ -60,6 +70,10 @@ const Creation = () => {
 
   const refresh = () => {
     setLoading(true);
+  };
+
+  const capitalise = (s: string) => {
+    return s.charAt(0).toUpperCase() + s.slice(1);
   };
 
   const videoInfo = () => {
@@ -86,17 +100,23 @@ const Creation = () => {
       const columns = () => {
         return [
           {
-            title: "File",
-            dataIndex: "preset",
-            key: "preset",
+            title: "Encode",
+            dataIndex: "encodeFormat",
+            key: "EncodeFormat",
           },
           {
             title: "Location",
             dataIndex: "uri",
             key: "location",
             render: (text: any, record: any) => (
-              <a href={`https://${text}`}>{text}</a>
+              <a href={`https://cdn.ystv.co.uk/${text}`}>{text}</a>
             ),
+          },
+          {
+            title: "size",
+            dataIndex: "size",
+            key: "size",
+            render: (size: number) => <p>{formatBytes(size)}</p>,
           },
           {
             title: "Status",
@@ -104,7 +124,7 @@ const Creation = () => {
             key: "status",
             render: (tag: string) => (
               <Tag color={tagColours(tag)} key={tag}>
-                {tag}
+                {capitalise(tag)}
               </Tag>
             ),
           },
@@ -161,9 +181,12 @@ const Creation = () => {
           );
       }
     };
+    const capitalise = (s: string) => {
+      return s.charAt(0).toUpperCase() + s.slice(1);
+    };
 
     const tagColours = (tag: string) => {
-      switch (tag) {
+      switch (capitalise(tag)) {
         case "Processing":
           return "geekblue";
         case "Available":
@@ -175,6 +198,19 @@ const Creation = () => {
         default:
           return "volcano";
       }
+    };
+
+    const formatBytes = (bytes: number, decimals = 2) => {
+      if (bytes === 0) return "0 Bytes";
+
+      const k = 1024;
+      const dm = decimals < 0 ? 0 : decimals;
+      const sizes = ["Bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
+      // Got to have YB just incase
+
+      const i = Math.floor(Math.log(bytes) / Math.log(k));
+
+      return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + " " + sizes[i];
     };
 
     if (videoData) {
@@ -193,7 +229,7 @@ const Creation = () => {
                   </Tag>
                 </Space>
               </Title>
-              <Paragraph>Broadcast date: {videoData.createdDate}</Paragraph>
+              <Paragraph>Broadcast date: {videoData.broadcastDate}</Paragraph>
               <Paragraph>{videoData.description}</Paragraph>
               <Row gutter={16}>
                 <Col span={12}>

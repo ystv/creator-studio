@@ -8,7 +8,6 @@ import {
 } from "react-router-dom";
 import { Typography, Button, Table, Space, Tag } from "antd";
 import Axios from "axios";
-import Playlist from "./playlist";
 const { Title } = Typography;
 
 const Playlists = () => {
@@ -94,7 +93,7 @@ const Playlists = () => {
         <Table columns={columns(url)} loading={loading} />
       </Route>
       <Route path={`${path}/:CreationId`}>
-        <Playlist />
+        <h1>Playlist</h1>
       </Route>
     </Switch>
   );
