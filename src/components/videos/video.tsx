@@ -137,8 +137,10 @@ const Creation = () => {
                 <Button>Edit info</Button>
                 <Button>Delete video</Button>
                 <Button>Change video source</Button>
+                <Cascader />
+                <br />
+                <Button>YouTube</Button>
               </Space>
-              <Cascader />
             </React.Fragment>
           );
         case "History":
@@ -181,13 +183,15 @@ const Creation = () => {
           <Layout>
             <Content className="site-layout-background">
               <Title>
-                {videoData.name}
-                <Tag
-                  color={tagColours(videoData.status)}
-                  key={videoData.status}
-                >
-                  {videoData.status}
-                </Tag>
+                <Space>
+                  {videoData.name}
+                  <Tag
+                    color={tagColours(videoData.status)}
+                    key={videoData.status}
+                  >
+                    {videoData.status}
+                  </Tag>
+                </Space>
               </Title>
               <Paragraph>Broadcast date: {videoData.createdDate}</Paragraph>
               <Paragraph>{videoData.description}</Paragraph>

@@ -25,15 +25,6 @@ const tagColours = (tag: string) => {
   }
 };
 
-const dataSource = [
-  {
-    id: "1",
-    name: "ERN 2020",
-    status: "Processing",
-    uploadedBy: "Rhys Milling",
-  },
-];
-
 const columns = (url: string) => {
   return [
     {
