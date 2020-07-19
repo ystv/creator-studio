@@ -14,10 +14,10 @@ const { Title } = Typography;
 
 const tagColours = (tag: string) => {
   switch (tag) {
-    case "Processing":
-      return "geekblue";
-    case "Available":
+    case "Public":
       return "green";
+    case "Scheduled":
+      return "geekblue";
     case "Pending":
       return "orange";
     default:
@@ -26,6 +26,7 @@ const tagColours = (tag: string) => {
 };
 
 const columns = (url: string) => {
+  // TODO Do keys properly
   return [
     {
       title: "Name",
@@ -43,15 +44,31 @@ const columns = (url: string) => {
       ),
     },
     {
-      title: "Uploaded by",
-      dataIndex: "uploadedBy",
-      key: "uploadedBy",
+      title: "Duration",
+      dataIndex: "duration",
+      key: "duration",
+      render: (duration: number) => (
+        <p>{new Date(duration * 1000).toISOString().substr(11, 8)}</p>
+      ),
+    },
+    {
+      title: "Broadcast Date",
+      dataIndex: "broadcastDate",
+      key: "broadcastDate",
+      render: (date: string) => (
+        <p>{new Date(date).toLocaleDateString("en-uk")}</p>
+      ),
+    },
+    {
+      title: "Views",
+      dataIndex: "views",
+      key: "views",
     },
     {
       title: "Actions",
       key: "action",
       render: (text: any, record: any) => (
-        <Link to={`${url}/${record.id}`}>View</Link>
+        <Link to={`${url}/${record.videoID}`}>View</Link>
       ),
     },
   ];
@@ -81,18 +98,29 @@ const Videos = () => {
 
   const getData = async () => {
     await Axios.get("http://localhost:8081/v1/internal/creator").then((res) => {
+      // TODO Want to get types in here
       setData(
         res.data.map((row: any) => ({
-          id: row.ID,
-          name: row.Name,
-          status: row.Status,
-          uploadedBy: row.Owner,
+          videoID: row.videoID,
+          seriesID: row.seriesID,
+          name: row.name,
+          url: row.url,
+          duration: row.duration,
+          views: row.views,
+          tags: row.tags,
+          seriesPosition: row.seriesPosition,
+          status: capitalise(row.status),
+          broadcastDate: row.broadcastDate,
+          createdAt: row.createdAt,
         }))
       );
       setLoading(false);
     });
     setData(data);
     setLoading(false);
+  };
+  const capitalise = (s: string) => {
+    return s.charAt(0).toUpperCase() + s.slice(1);
   };
 
   const refresh = () => {

@@ -16,7 +16,7 @@ import {
   Timeline,
   Cascader,
 } from "antd";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import { string } from "yup";
 const { Title, Paragraph } = Typography;
 const { Content, Sider } = Layout;
@@ -105,6 +105,16 @@ const Creation = () => {
             key: "EncodeFormat",
           },
           {
+            title: "Status",
+            dataIndex: "status",
+            key: "status",
+            render: (tag: string) => (
+              <Tag color={tagColours(tag)} key={tag}>
+                {capitalise(tag)}
+              </Tag>
+            ),
+          },
+          {
             title: "Location",
             dataIndex: "uri",
             key: "location",
@@ -117,16 +127,6 @@ const Creation = () => {
             dataIndex: "size",
             key: "size",
             render: (size: number) => <p>{formatBytes(size)}</p>,
-          },
-          {
-            title: "Status",
-            dataIndex: "status",
-            key: "status",
-            render: (tag: string) => (
-              <Tag color={tagColours(tag)} key={tag}>
-                {capitalise(tag)}
-              </Tag>
-            ),
           },
         ];
       };
@@ -229,7 +229,9 @@ const Creation = () => {
                   </Tag>
                 </Space>
               </Title>
-              <Paragraph>Broadcast date: {videoData.broadcastDate}</Paragraph>
+              <Paragraph>
+                Broadcast date: {new Date(videoData.broadcastDate).toString()}
+              </Paragraph>
               <Paragraph>{videoData.description}</Paragraph>
               <Row gutter={16}>
                 <Col span={12}>
@@ -253,7 +255,12 @@ const Creation = () => {
             </Content>
             <Sider className="site-layout-background">
               <img src="https://via.placeholder.com/350x200" width={200} />
-              <Button>Edit video</Button>
+              <Space>
+                <Button>Edit video</Button>
+                <Button href={"https://ystv.co.uk/watch/" + videoData.videoID}>
+                  Watch video
+                </Button>
+              </Space>
             </Sider>
           </Layout>
           <Card
@@ -273,7 +280,9 @@ const Creation = () => {
   return (
     <React.Fragment>
       <Breadcrumb>
-        <Breadcrumb.Item>Videos</Breadcrumb.Item>
+        <Breadcrumb.Item>
+          <Link to="/videos">Videos</Link>
+        </Breadcrumb.Item>
         <Breadcrumb.Item>{CreationId}</Breadcrumb.Item>
       </Breadcrumb>
       {videoInfo()}
