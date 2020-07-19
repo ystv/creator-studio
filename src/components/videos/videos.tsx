@@ -10,6 +10,7 @@ import {
 } from "react-router-dom";
 import Creation from "./video";
 import TagColours from "../../utils/tagColours";
+import Capitalise from "../../utils/capitalise";
 const { Title } = Typography;
 
 const columns = (url: string) => {
@@ -99,7 +100,7 @@ const Videos = () => {
           views: row.views,
           tags: row.tags,
           seriesPosition: row.seriesPosition,
-          status: capitalise(row.status),
+          status: Capitalise(row.status),
           broadcastDate: row.broadcastDate,
           createdAt: row.createdAt,
         }))
@@ -108,9 +109,6 @@ const Videos = () => {
     });
     setData(data);
     setLoading(false);
-  };
-  const capitalise = (s: string) => {
-    return s.charAt(0).toUpperCase() + s.slice(1);
   };
 
   const refresh = () => {
