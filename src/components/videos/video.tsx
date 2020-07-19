@@ -18,6 +18,9 @@ import {
 } from "antd";
 import { useParams, Link } from "react-router-dom";
 import { string } from "yup";
+import FormatBytes from "../../utils/formatBytes";
+import Capitalise from "../../utils/capitalise";
+import TagColours from "../../utils/tagColours";
 const { Title, Paragraph } = Typography;
 const { Content, Sider } = Layout;
 
@@ -55,6 +58,7 @@ const Creation = () => {
     encodeFormat: string;
     status: string;
     size: number;
+    mimeType: string;
   }
 
   const getData = async () => {
@@ -62,7 +66,7 @@ const Creation = () => {
       url: `http://localhost:8081/v1/internal/creator/${CreationId}`,
     }).then((response) => {
       const { data } = response;
-      data.status = capitalise(data.status);
+      data.status = Capitalise(data.status);
       setVideoData(data);
     });
     setLoading(false);
@@ -70,10 +74,6 @@ const Creation = () => {
 
   const refresh = () => {
     setLoading(true);
-  };
-
-  const capitalise = (s: string) => {
-    return s.charAt(0).toUpperCase() + s.slice(1);
   };
 
   const videoInfo = () => {
@@ -98,6 +98,7 @@ const Creation = () => {
 
     const contentList = (option: string) => {
       const columns = () => {
+        // TODO sort out keys
         return [
           {
             title: "Encode",
@@ -105,14 +106,9 @@ const Creation = () => {
             key: "EncodeFormat",
           },
           {
-            title: "Status",
-            dataIndex: "status",
-            key: "status",
-            render: (tag: string) => (
-              <Tag color={tagColours(tag)} key={tag}>
-                {capitalise(tag)}
-              </Tag>
-            ),
+            title: "Type",
+            dataIndex: "mimeType",
+            key: "mimeType",
           },
           {
             title: "Location",
@@ -123,10 +119,20 @@ const Creation = () => {
             ),
           },
           {
+            title: "Status",
+            dataIndex: "status",
+            key: "status",
+            render: (tag: string) => (
+              <Tag color={TagColours(tag)} key={tag}>
+                {Capitalise(tag)}
+              </Tag>
+            ),
+          },
+          {
             title: "size",
             dataIndex: "size",
             key: "size",
-            render: (size: number) => <p>{formatBytes(size)}</p>,
+            render: (size: number) => <p>{FormatBytes(size)}</p>,
           },
         ];
       };
@@ -181,37 +187,6 @@ const Creation = () => {
           );
       }
     };
-    const capitalise = (s: string) => {
-      return s.charAt(0).toUpperCase() + s.slice(1);
-    };
-
-    const tagColours = (tag: string) => {
-      switch (capitalise(tag)) {
-        case "Processing":
-          return "geekblue";
-        case "Available":
-          return "green";
-        case "Public":
-          return "green";
-        case "Internal":
-          return "cyan";
-        default:
-          return "volcano";
-      }
-    };
-
-    const formatBytes = (bytes: number, decimals = 2) => {
-      if (bytes === 0) return "0 Bytes";
-
-      const k = 1024;
-      const dm = decimals < 0 ? 0 : decimals;
-      const sizes = ["Bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
-      // Got to have YB just incase
-
-      const i = Math.floor(Math.log(bytes) / Math.log(k));
-
-      return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + " " + sizes[i];
-    };
 
     if (videoData) {
       return (
@@ -222,7 +197,7 @@ const Creation = () => {
                 <Space>
                   {videoData.name}
                   <Tag
-                    color={tagColours(videoData.status)}
+                    color={TagColours(videoData.status)}
                     key={videoData.status}
                   >
                     {videoData.status}
@@ -230,7 +205,8 @@ const Creation = () => {
                 </Space>
               </Title>
               <Paragraph>
-                Broadcast date: {new Date(videoData.broadcastDate).toString()}
+                Broadcast date:{" "}
+                {new Date(videoData.broadcastDate).toLocaleString()}
               </Paragraph>
               <Paragraph>{videoData.description}</Paragraph>
               <Row gutter={16}>
@@ -254,8 +230,8 @@ const Creation = () => {
               </Descriptions>
             </Content>
             <Sider className="site-layout-background">
-              <img src="https://via.placeholder.com/350x200" width={200} />
-              <Space>
+              <img src="https://via.placeholder.com/384x216" width={216} />
+              <Space style={{ marginTop: 5 }}>
                 <Button>Edit video</Button>
                 <Button href={"https://ystv.co.uk/watch/" + videoData.videoID}>
                   Watch video

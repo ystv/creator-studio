@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Axios from "axios";
-import { Table, Tag, Typography, Button, Space } from "antd";
+import { Table, Tag, Typography, Button, Space, Input } from "antd";
 import {
   Link,
   useRouteMatch,
@@ -8,22 +8,9 @@ import {
   Route,
   useParams,
 } from "react-router-dom";
-import Meta from "../forms/metadata";
 import Creation from "./video";
+import TagColours from "../../utils/tagColours";
 const { Title } = Typography;
-
-const tagColours = (tag: string) => {
-  switch (tag) {
-    case "Public":
-      return "green";
-    case "Scheduled":
-      return "geekblue";
-    case "Pending":
-      return "orange";
-    default:
-      return "volcano";
-  }
-};
 
 const columns = (url: string) => {
   // TODO Do keys properly
@@ -38,7 +25,7 @@ const columns = (url: string) => {
       dataIndex: "status",
       key: "status",
       render: (tag: string) => (
-        <Tag color={tagColours(tag)} key={tag}>
+        <Tag color={TagColours(tag)} key={tag}>
           {tag}
         </Tag>
       ),
@@ -68,7 +55,10 @@ const columns = (url: string) => {
       title: "Actions",
       key: "action",
       render: (text: any, record: any) => (
-        <Link to={`${url}/${record.videoID}`}>View</Link>
+        <Space>
+          <Link to={`${url}/${record.videoID}`}>Details</Link>
+          <a href={`https://ystv.co.uk/watch/${record.videoID}`}>Watch</a>
+        </Space>
       ),
     },
   ];
@@ -134,8 +124,11 @@ const Videos = () => {
         <Space style={{ marginBottom: 16 }}>
           <Button disabled>Move to</Button>
           <Button disabled>Disable</Button>
-          <Button onClick={refresh}>Refresh</Button>
+          <Input placeholder="Search" />
         </Space>
+        <Button onClick={refresh} style={{ float: "right" }}>
+          Refresh
+        </Button>
         <Table
           rowSelection={rowSelection}
           dataSource={data}
