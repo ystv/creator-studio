@@ -100,9 +100,10 @@ const VideoCalendar = () => {
     getData();
   }, [loading]);
   interface IVideoCalendar {
-    broadcastDate: Date;
-    name: string;
     videoID: number;
+    name: string;
+    status: string;
+    broadcastDate: Date;
   }
   const getData = async () => {
     await Axios.request<IVideoCalendar[]>({
@@ -128,7 +129,11 @@ const VideoCalendar = () => {
               <li key={item.videoID}>
                 <Badge
                   status="success"
-                  text={<Link to={`/videos/${item.videoID}`}>{item.name}</Link>}
+                  text={
+                    <span title={item.name}>
+                      <Link to={`/videos/${item.videoID}`}>{item.name}</Link>
+                    </span>
+                  }
                 />
               </li>
             ))}

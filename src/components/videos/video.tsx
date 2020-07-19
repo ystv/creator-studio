@@ -15,6 +15,7 @@ import {
   Layout,
   Timeline,
   Cascader,
+  Spin,
 } from "antd";
 import { useParams, Link } from "react-router-dom";
 import { string } from "yup";
@@ -249,7 +250,11 @@ const Creation = () => {
         </div>
       );
     } else {
-      return <h1>Loading</h1>;
+      return (
+        <div className="loading">
+          <Spin size="large" />
+        </div>
+      );
     }
   };
 
