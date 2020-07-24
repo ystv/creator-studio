@@ -64,7 +64,8 @@ const Creation = () => {
 
   const getData = async () => {
     await Axios.request<VideoData>({
-      url: `http://localhost:8081/v1/internal/creator/${CreationId}`,
+      url: `https://api.ystv.co.uk/v1/internal/creator/${CreationId}`,
+      withCredentials: true,
     }).then((response) => {
       const { data } = response;
       data.status = Capitalise(data.status);

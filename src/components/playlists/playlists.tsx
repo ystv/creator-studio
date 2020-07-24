@@ -29,7 +29,7 @@ const Playlists = () => {
 
   const getData = async () => {
     await Axios.request<playlistMeta[]>({
-      url: `http://localhost:8081/v1/internal/creator/playlists`,
+      url: `https://api.ystv.co.uk/v1/internal/creator/playlists`,
     }).then((response) => {
       const { data } = response;
       setPlaylistMeta(data);

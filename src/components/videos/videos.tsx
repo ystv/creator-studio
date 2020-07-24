@@ -88,7 +88,9 @@ const Videos = () => {
   let { path, url } = useRouteMatch();
 
   const getData = async () => {
-    await Axios.get("http://localhost:8081/v1/internal/creator").then((res) => {
+    await Axios.get("https://api.ystv.co.uk/v1/internal/creator", {
+      withCredentials: true,
+    }).then((res) => {
       // TODO Want to get types in here
       setData(
         res.data.map((row: any) => ({

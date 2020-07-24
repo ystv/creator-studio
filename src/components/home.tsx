@@ -16,6 +16,7 @@ import NumberWithCommas from "../utils/numberWithCommas";
 import Moment from "moment";
 import "../styles/calendar.css";
 import { Link } from "react-router-dom";
+
 const { Title, Paragraph } = Typography;
 const { Content, Sider } = Layout;
 const Home = () => {
@@ -34,6 +35,7 @@ const Home = () => {
             <Button type="primary">Get Started</Button>
           </Card>
           <StatCard />
+          <UserCard />
         </Sider>
       </Layout>
     </React.Fragment>
@@ -54,7 +56,8 @@ const StatCard = () => {
   }
   const getData = async () => {
     await Axios.request<ICreatorStats>({
-      url: "http://localhost:8081/v1/internal/creator/stats",
+      url: "https://api.ystv.co.uk/v1/internal/creator/stats",
+      withCredentials: true,
     }).then((response) => {
       setCreatorStat(response.data);
       setLoading(false);
@@ -107,7 +110,8 @@ const VideoCalendar = () => {
   }
   const getData = async () => {
     await Axios.request<IVideoCalendar[]>({
-      url: `http://localhost:8081/v1/internal/creator/calendar/${selectedMonth}`,
+      url: `https://api.ystv.co.uk/v1/internal/creator/calendar/${selectedMonth}`,
+      withCredentials: true,
     }).then((response) => {
       setCalendarData(response.data);
       setLoading(false);
@@ -149,6 +153,10 @@ const VideoCalendar = () => {
     return <Calendar dateCellRender={dateCellRender} onChange={refreshMonth} />;
   }
   return <Calendar />;
+};
+
+const UserCard = () => {
+  return <Card title="User Stats">TODO user data</Card>;
 };
 
 export default Home;

@@ -12,7 +12,7 @@ const useGetCreationService = () => {
   });
 
   useEffect(() => {
-    fetch("http://localhost:8081/v1/internal/creator", {
+    fetch("https://api.ystv.co.uk/v1/internal/creator", {
       method: "GET",
       headers: { Accept: "application/json" },
     })
