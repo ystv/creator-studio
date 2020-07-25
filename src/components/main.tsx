@@ -3,7 +3,7 @@ import Home from "./home";
 import Videos from "./videos/videos";
 import UploadForm from "./uploadForm";
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
-import { Layout, Menu, Breadcrumb } from "antd";
+import { Layout, Menu } from "antd";
 import {
   UserOutlined,
   TeamOutlined,
@@ -11,13 +11,11 @@ import {
   UploadOutlined,
   CloudServerOutlined,
   SettingOutlined,
-  CalendarOutlined,
 } from "@ant-design/icons";
 import "antd/dist/antd.css";
 import "../styles/main.css";
 import logo from "../ystv.png";
 import UserContext from "./userContext";
-import Creation from "./videos/video";
 import Settings from "./settings";
 import Series from "./series/series";
 import Playlists from "./playlists/playlists";
@@ -31,7 +29,7 @@ const Main = () => {
     <Router>
       <Layout style={{ height: "100vh" }}>
         <Header className="header">
-          <img src={logo} className="logo" />
+          <img src={logo} alt="logo" className="logo" />
           <Menu theme="dark" mode="horizontal" defaultSelectedKeys={["1"]}>
             <Menu.Item key="1">Creator Studio</Menu.Item>
             <Menu.Item key="2">Calendar</Menu.Item>

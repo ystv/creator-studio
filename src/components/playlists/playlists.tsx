@@ -1,17 +1,10 @@
 import React, { useState, useEffect } from "react";
-import {
-  Switch,
-  Route,
-  Link,
-  useRouteMatch,
-  useParams,
-} from "react-router-dom";
+import { Switch, Route, Link, useRouteMatch } from "react-router-dom";
 import { Typography, Button, Table, Space, Tag } from "antd";
 import Axios from "axios";
 const { Title } = Typography;
 
 const Playlists = () => {
-  let { CreationId } = useParams();
   const [playlistMeta, setPlaylistMeta] = useState<playlistMeta[] | undefined>(
     undefined
   );

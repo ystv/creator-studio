@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { Formik, Form } from "formik";
 import "../styles/form.css";
 import Upload from "./forms/upload";
 import Meta from "./forms/metadata";
