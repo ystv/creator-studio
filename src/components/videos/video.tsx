@@ -18,52 +18,19 @@ import {
   Spin,
 } from "antd";
 import { useParams, Link } from "react-router-dom";
-import { string } from "yup";
 import FormatBytes from "../../utils/formatBytes";
 import Capitalise from "../../utils/capitalise";
 import TagColours from "../../utils/tagColours";
+import { VideoData } from "../../types/Video";
 const { Title, Paragraph } = Typography;
 const { Content, Sider } = Layout;
 
 const Creation = () => {
   let { CreationId } = useParams();
   const [videoData, setVideoData] = useState<VideoData | undefined>(undefined);
-  const [loading, setLoading] = useState(true);
   const [cardView, setCardView] = useState("Files");
   useEffect(() => {
-    getData();
-  }, [loading]);
-
-  interface VideoData {
-    videoID: number;
-    seriesID: number;
-    name: string;
-    url: string;
-    description: string;
-    thumbnail: string;
-    duration: number;
-    views: number;
-    tags: string[];
-    seriesPosition: number;
-    status: string;
-    preset: string;
-    broadcastDate: Date;
-    createdAt: Date;
-    owner: string;
-    files: videoFiles[];
-  }
-
-  interface videoFiles {
-    id: number;
-    uri: string;
-    encodeFormat: string;
-    status: string;
-    size: number;
-    mimeType: string;
-  }
-
-  const getData = async () => {
-    await Axios.request<VideoData>({
+    Axios.request<VideoData>({
       url: `https://api.ystv.co.uk/v1/internal/creator/${CreationId}`,
       withCredentials: true,
     }).then((response) => {
@@ -71,12 +38,7 @@ const Creation = () => {
       data.status = Capitalise(data.status);
       setVideoData(data);
     });
-    setLoading(false);
-  };
-
-  const refresh = () => {
-    setLoading(true);
-  };
+  }, [CreationId]);
 
   const videoInfo = () => {
     const tabList = [
@@ -99,46 +61,6 @@ const Creation = () => {
     ];
 
     const contentList = (option: string) => {
-      const columns = () => {
-        // TODO sort out keys
-        return [
-          {
-            title: "Encode",
-            dataIndex: "encodeFormat",
-            key: "EncodeFormat",
-          },
-          {
-            title: "Type",
-            dataIndex: "mimeType",
-            key: "mimeType",
-          },
-          {
-            title: "Location",
-            dataIndex: "uri",
-            key: "location",
-            render: (text: any, record: any) => (
-              <a href={`https://cdn.ystv.co.uk/${text}`}>{text}</a>
-            ),
-          },
-          {
-            title: "Status",
-            dataIndex: "status",
-            key: "status",
-            render: (tag: string) => (
-              <Tag color={TagColours(tag)} key={tag}>
-                {Capitalise(tag)}
-              </Tag>
-            ),
-          },
-          {
-            title: "size",
-            dataIndex: "size",
-            key: "size",
-            render: (size: number) => <p>{FormatBytes(size)}</p>,
-          },
-        ];
-      };
-
       switch (option) {
         case "Details":
           return <h1>Test</h1>;
@@ -151,11 +73,7 @@ const Creation = () => {
                 <Button disabled>Re-encode</Button>
                 <Button>Refresh</Button>
               </Space>
-              <Table
-                columns={columns()}
-                dataSource={videoData?.files}
-                loading={loading}
-              />
+              <FileTable videoData={videoData} />
             </React.Fragment>
           );
         case "Manage":
@@ -232,7 +150,11 @@ const Creation = () => {
               </Descriptions>
             </Content>
             <Sider className="site-layout-background">
-              <img src="https://via.placeholder.com/384x216" width={216} />
+              <img
+                src="https://via.placeholder.com/384x216"
+                alt="thumbnail"
+                width={216}
+              />
               <Space style={{ marginTop: 5 }}>
                 <Button>Edit video</Button>
                 <Button href={"https://ystv.co.uk/watch/" + videoData.videoID}>
@@ -271,4 +193,60 @@ const Creation = () => {
     </React.Fragment>
   );
 };
+
+const FileTable = (props: any) => {
+  const [videoData, setVideoData] = useState<VideoData | undefined>(undefined);
+  useEffect(() => {
+    setVideoData(props.videoData);
+  }, [props.videoData]);
+
+  const columns = (id: number) => {
+    return [
+      {
+        title: "Encode",
+        dataIndex: "encodeFormat",
+        key: `EncodeFormat-${id}`,
+      },
+      {
+        title: "Type",
+        dataIndex: "mimeType",
+        key: `mimeType-${id}`,
+      },
+      {
+        title: "Location",
+        dataIndex: "uri",
+        key: `location-${id}`,
+        render: (text: any, record: any) => (
+          <a href={`https://cdn.ystv.co.uk/${text}`}>{text}</a>
+        ),
+      },
+      {
+        title: "Status",
+        dataIndex: "status",
+        key: `status-${id}`,
+        render: (tag: string) => (
+          <Tag color={TagColours(tag)} key={tag}>
+            {Capitalise(tag)}
+          </Tag>
+        ),
+      },
+      {
+        title: "size",
+        dataIndex: "size",
+        key: `size-${id}`,
+        render: (size: number) => <p>{FormatBytes(size)}</p>,
+      },
+    ];
+  };
+  if (videoData) {
+    return (
+      <Table
+        columns={columns(videoData.videoID)}
+        dataSource={videoData.files}
+      />
+    );
+  }
+  return <Table loading columns={columns(0)} />;
+};
+
 export default Creation;
