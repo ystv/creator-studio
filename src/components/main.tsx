@@ -116,40 +116,19 @@ const SideBar = () => {
   );
 };
 
-const Routes: React.FC = () => {
+const Routes: React.FC = (): JSX.Element => {
   return (
     <Switch>
-      <Route path="/upload">
-        <UploadForm />
-      </Route>
-      <Route path="/my/videos">
-        <NotImplemented />
-      </Route>
-      <Route path="/videos">
-        <Videos />
-      </Route>
-      <Route path="/series">
-        <Series />
-      </Route>
-      <Route path="/playlists">
-        <Playlists />
-      </Route>
-      <Route path="/settings">
-        <Settings />
-      </Route>
-      <Route exact path="/">
-        <Home />
-      </Route>
+      <Route exact path="/" component={Home} />
+      <Route path="/upload" component={UploadForm} />
+      <Route path="/my/videos" component={NotImplemented} />
+      <Route path="/videos" component={Videos} />
+      <Route path="/series" component={Series} />
+      <Route path="/playlists" component={Playlists} />
+      <Route path="/settings" component={Settings} />
       <Route component={NotFound} />
     </Switch>
   );
-};
-
-const Authenticated: React.SFC = (children) => {
-  if (getSession()) {
-    return children as React.ReactElement<any>;
-  }
-  return children as React.ReactElement<any>;
 };
 
 const Main: React.FC = (): JSX.Element => {
@@ -164,9 +143,7 @@ const Main: React.FC = (): JSX.Element => {
               className="site-layout-background"
               style={{ padding: 24, margin: 0, minHeight: 280 }}
             >
-              <Authenticated>
-                <Routes />
-              </Authenticated>
+              <Routes />
             </Content>
           </Layout>
         </Layout>
