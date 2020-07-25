@@ -13,3 +13,8 @@
   display: flex;
   justify-content: center;
 }
+
+.avatar {
+  width: 35px;
+  border-radius: 50%;
+}
