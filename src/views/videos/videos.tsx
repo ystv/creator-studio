@@ -77,7 +77,7 @@ const Videos = () => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   useEffect(() => {
-    Axios.get("https://api.ystv.co.uk/v1/internal/creator", {
+    Axios.get(`${process.env.REACT_APP_API_BASEURL}/v1/internal/creator`, {
       withCredentials: true,
     }).then((res) => {
       // TODO Want to get types in here

@@ -46,7 +46,7 @@ const StatCard = () => {
   }
   const getData = async () => {
     await Axios.request<ICreatorStats>({
-      url: "https://api.ystv.co.uk/v1/internal/creator/stats",
+      url: `${process.env.REACT_APP_API_BASEURL}/v1/internal/creator/stats`,
       withCredentials: true,
     }).then((response) => {
       setCreatorStat(response.data);
@@ -90,7 +90,7 @@ const VideoCalendar = () => {
   );
   useEffect(() => {
     Axios.request<IVideoCalendar[]>({
-      url: `https://api.ystv.co.uk/v1/internal/creator/calendar/${selectedMonth}`,
+      url: `${process.env.REACT_APP_API_BASEURL}/v1/internal/creator/calendar/${selectedMonth}`,
       withCredentials: true,
     }).then((response) => {
       setCalendarData(response.data);
