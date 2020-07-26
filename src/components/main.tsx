@@ -15,12 +15,15 @@ import {
 import "antd/dist/antd.css";
 import "../styles/main.css";
 import logo from "../ystv.png";
-import Cookies from "js-cookie";
 import Settings from "./settings";
 import Series from "./series/series";
 import Playlists from "./playlists/playlists";
-import { UserInfo } from "../user-context";
+import { UserInfo } from "../contexts/UserContext";
 import NotFound from "../views/NotFound";
+import AuthRoute from "../lib/Routing";
+import { AuthRoutes, NonAuthRoutes } from "../lib/Routes";
+import { UserRoles } from "../lib/UserRoles";
+import UserProvider from "../contexts/UserProvider";
 
 const { Header, Content, Sider } = Layout;
 const { SubMenu } = Menu;
@@ -38,7 +41,7 @@ const MenuUser = (props: any) => {
   );
 };
 
-const Head = () => {
+const GlobalNavigation: React.FC = (): JSX.Element => {
   return (
     <Header className="header">
       <img src={logo} alt="logo" className="logo" />
@@ -55,7 +58,7 @@ const Head = () => {
   );
 };
 
-const SideBar = () => {
+const Navigation: React.FC = (): JSX.Element => {
   return (
     <Sider width={200} className="site-layout-background">
       <Menu
@@ -119,13 +122,24 @@ const SideBar = () => {
 const Routes: React.FC = (): JSX.Element => {
   return (
     <Switch>
-      <Route exact path="/" component={Home} />
+      <AuthRoute
+        exact
+        path={AuthRoutes.home}
+        Component={Home}
+        requiredRoles={UserRoles.admin}
+      />
       <Route path="/upload" component={UploadForm} />
       <Route path="/my/videos" component={NotImplemented} />
       <Route path="/videos" component={Videos} />
       <Route path="/series" component={Series} />
       <Route path="/playlists" component={Playlists} />
+      <AuthRoute
+        path={AuthRoutes.moderation}
+        Component={NotImplemented}
+        requiredRoles={UserRoles.moderator}
+      />
       <Route path="/settings" component={Settings} />
+      <Route path={NonAuthRoutes.unauthorized} component={NotImplemented} />
       <Route component={NotFound} />
     </Switch>
   );
@@ -133,39 +147,25 @@ const Routes: React.FC = (): JSX.Element => {
 
 const Main: React.FC = (): JSX.Element => {
   return (
-    <Router>
-      <Layout style={{ height: "100vh" }}>
-        <Head />
-        <Layout>
-          <SideBar />
-          <Layout style={{ padding: "24px 24px 24px" }}>
-            <Content
-              className="site-layout-background"
-              style={{ padding: 24, margin: 0, minHeight: 280 }}
-            >
-              <Routes />
-            </Content>
+    <UserProvider>
+      <Router>
+        <Layout style={{ height: "100vh" }}>
+          <GlobalNavigation />
+          <Layout>
+            <Navigation />
+            <Layout style={{ padding: "24px 24px 24px" }}>
+              <Content
+                className="site-layout-background"
+                style={{ padding: 24, margin: 0, minHeight: 280 }}
+              >
+                <Routes />
+              </Content>
+            </Layout>
           </Layout>
         </Layout>
-      </Layout>
-    </Router>
+      </Router>
+    </UserProvider>
   );
-};
-
-const getSession = () => {
-  const jwt = Cookies.get("token");
-  let session;
-  try {
-    if (jwt) {
-      const base64Url = jwt.split(".")[1];
-      const base64 = base64Url.replace("-", "+").replace("_", "/");
-      session = JSON.parse(window.atob(base64));
-    }
-  } catch (error) {
-    console.log(error);
-  }
-  console.log(session);
-  return session;
 };
 
 const NotImplemented = () => <h1>Not implemented</h1>;

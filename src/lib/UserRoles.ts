@@ -1,19 +1,17 @@
-enum UserRoles {
-  compTeam = "Computing Team",
-  hop = "Head of Presentation",
-  archiveTeam = "Archive Team",
-  member = "Member",
+export enum UserRoles {
+  admin = "creatorAdmin",
+  moderator = "creatorModerator",
+  member = "member",
 }
 
 // Some views will be for certain groups and
 // some will be available for all
 const userRoles = {
-  compTeam: [String(UserRoles.compTeam)],
-  hop: [String(UserRoles.hop), String(UserRoles.compTeam)],
+  admin: [String(UserRoles.admin)],
+  moderator: [String(UserRoles.moderator), String(UserRoles.admin)],
   all: [
-    String(UserRoles.compTeam),
-    String(UserRoles.hop),
-    String(UserRoles.archiveTeam),
+    String(UserRoles.admin),
+    String(UserRoles.moderator),
     String(UserRoles.member),
   ],
 };
