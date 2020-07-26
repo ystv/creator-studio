@@ -5,7 +5,7 @@ const defaultUser = {
   userID: 0,
   nickname: "User",
   avatar: "https://ystv.co.uk/static/images/members/thumb/3348.jpg",
-  roles: ["creatorAdmin"],
+  roles: ["member"],
 };
 
 const UserContext = createContext<User>(defaultUser);

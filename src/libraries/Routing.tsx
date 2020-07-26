@@ -2,14 +2,14 @@ import React from "react";
 import { RouteComponentProps, Route, Redirect } from "react-router-dom";
 import getToken from "./Auth";
 import { UserInfo } from "../contexts/UserContext";
-import { UserRoles } from "./UserRoles";
+import userRoles from "../types/User";
 import { NonAuthRoutes } from "./Routes";
 
 interface Props {
   Component: React.FC<RouteComponentProps>;
   path: string;
   exact?: boolean;
-  requiredRoles: UserRoles;
+  requiredRoles: string[];
 }
 
 const AuthRoute = ({
@@ -27,6 +27,7 @@ const AuthRoute = ({
   console.log(roles);
   console.log(requiredRoles);
   console.log(userHasRequiredRole);
+  console.log(userRoles.all);
   const message = userHasRequiredRole
     ? "Please log in to view this page"
     : "Unauthorized";
