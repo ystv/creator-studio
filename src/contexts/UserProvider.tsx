@@ -5,6 +5,7 @@ import { User } from "../types/User";
 
 const defaultUser = {
   userID: 0,
+  username: "user",
   nickname: "User",
   avatar: "https://ystv.co.uk/static/images/members/thumb/3348.jpg",
   roles: ["creatorAdmin"],
@@ -14,7 +15,7 @@ const UserProvider: React.FC = (props) => {
   const [userData, setUserData] = useState<User>(defaultUser);
   useEffect(() => {
     Axios.request<User>({
-      url: "https://api.ystv.co.uk/v1/internal/user",
+      url: `${process.env.REACT_APP_API_BASEURL}/v1/internal/user`,
       withCredentials: true,
     }).then((response) => {
       setUserData(response.data);

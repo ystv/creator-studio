@@ -77,9 +77,12 @@ const Videos = () => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   useEffect(() => {
-    Axios.get(`${process.env.REACT_APP_API_BASEURL}/v1/internal/creator`, {
-      withCredentials: true,
-    }).then((res) => {
+    Axios.get(
+      `${process.env.REACT_APP_API_BASEURL}/v1/internal/creator/videos`,
+      {
+        withCredentials: true,
+      }
+    ).then((res) => {
       // TODO Want to get types in here
       setData(
         res.data.map((row: any) => ({
@@ -110,8 +113,8 @@ const Videos = () => {
       <Route exact path={path}>
         <Title>YSTV Videos</Title>
         <Space style={{ marginBottom: 16 }}>
-          <Button disabled>Move to</Button>
-          <Button disabled>Disable</Button>
+          <Button>Move to</Button>
+          <Button>Disable</Button>
           <Input placeholder="Search" />
         </Space>
         <Button onClick={refresh} style={{ float: "right" }}>

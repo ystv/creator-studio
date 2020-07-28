@@ -9,8 +9,6 @@ import UserProvider from "../contexts/UserProvider";
 import Home from "../views/home";
 import Videos from "../views/videos/videos";
 import UploadForm from "../views/uploadForm";
-import "antd/dist/antd.css";
-import "../styles/main.css";
 import Settings from "../views/settings";
 import Series from "../views/series/series";
 import Playlists from "../views/playlists/playlists";

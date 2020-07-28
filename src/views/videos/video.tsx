@@ -30,9 +30,8 @@ const Creation = () => {
   const [videoData, setVideoData] = useState<VideoData | undefined>(undefined);
   const [cardView, setCardView] = useState("Files");
   useEffect(() => {
-    console.log(process.env.REACT_APP_API_BASEURL);
     Axios.request<VideoData>({
-      url: `${process.env.REACT_APP_API_BASEURL}/v1/internal/creator/${CreationId}`,
+      url: `${process.env.REACT_APP_API_BASEURL}/v1/internal/creator/videos/${CreationId}`,
       withCredentials: true,
     }).then((response) => {
       const { data } = response;
