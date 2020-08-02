@@ -36,7 +36,8 @@ const AuthRoute = ({
       exact={exact}
       path={path}
       render={(props: RouteComponentProps) =>
-        token && userHasRequiredRole ? (
+        process.env.REACT_APP_SECURITY_TYPE === "NONE" ||
+        (token && userHasRequiredRole) ? (
           <Component {...props} />
         ) : (
           <Redirect
