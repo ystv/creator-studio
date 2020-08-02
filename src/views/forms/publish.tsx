@@ -1,15 +1,15 @@
 import React from "react";
-import { Typography, Button, Divider } from "antd";
-import tada from "../../tada.png";
-const { Title } = Typography;
+import { Button, Result } from "antd";
 
 const Publish = () => {
   return (
     <React.Fragment>
-      <Title>Published video!</Title>
-      <img src={tada} alt="tada" />
-      <Divider />
-      <Button type="primary">Upload another</Button>
+      <Result
+        status="success"
+        title="Published video!"
+        subTitle="video set for release on 18th April"
+        extra={<Button type="primary">Upload another</Button>}
+      />
     </React.Fragment>
   );
 };
