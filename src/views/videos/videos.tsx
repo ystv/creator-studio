@@ -51,8 +51,8 @@ const columns = (url: string) => {
       key: "action",
       render: (text: any, record: any) => (
         <Space>
-          <Link to={`${url}/${record.videoID}`}>Details</Link>
-          <a href={`https://ystv.co.uk/watch/${record.videoID}`}>Watch</a>
+          <Link to={`${url}/${record.id}`}>Details</Link>
+          <a href={`https://ystv.co.uk/watch/${record.id}`}>Watch</a>
         </Space>
       ),
     },
@@ -86,8 +86,8 @@ const Videos = () => {
       // TODO Want to get types in here
       setData(
         res.data.map((row: any) => ({
-          videoID: row.videoID,
-          seriesID: row.seriesID,
+          id: row.id,
+          SeriesID: row.SeriesID,
           name: row.name,
           url: row.url,
           duration: row.duration,

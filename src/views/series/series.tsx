@@ -23,7 +23,7 @@ const columns = (id: number) => {
     },
     {
       title: "ID",
-      dataIndex: "seriesID",
+      dataIndex: "id",
       key: `id-${id}`,
     },
     {

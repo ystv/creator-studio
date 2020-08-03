@@ -157,7 +157,7 @@ const Creation = () => {
               />
               <Space style={{ marginTop: 5 }}>
                 <Button>Edit video</Button>
-                <Button href={"https://ystv.co.uk/watch/" + videoData.videoID}>
+                <Button href={"https://ystv.co.uk/watch/" + videoData.id}>
                   Watch video
                 </Button>
               </Space>
@@ -240,10 +240,7 @@ const FileTable = (props: any) => {
   };
   if (videoData) {
     return (
-      <Table
-        columns={columns(videoData.videoID)}
-        dataSource={videoData.files}
-      />
+      <Table columns={columns(videoData.id)} dataSource={videoData.files} />
     );
   }
   return <Table loading columns={columns(0)} />;

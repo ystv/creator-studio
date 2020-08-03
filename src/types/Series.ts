@@ -1,5 +1,5 @@
 export interface SeriesData {
-  seriesID: number;
+  id: number;
   url: string;
   seriesName: string;
   description: string;

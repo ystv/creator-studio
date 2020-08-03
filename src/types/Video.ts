@@ -1,6 +1,6 @@
 export interface VideoData {
-  videoID: number;
-  seriesID: number;
+  id: number;
+  SeriesID: number;
   name: string;
   url: string;
   description: string;
