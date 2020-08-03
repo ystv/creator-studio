@@ -1,5 +1,5 @@
 import React from "react";
-import { Layout, Menu } from "antd";
+import { Layout, Menu, Avatar } from "antd";
 import "antd/dist/antd.css";
 import "../styles/main.css";
 import { UserInfo } from "../contexts/UserContext";
@@ -22,14 +22,21 @@ const GlobalNavigation: React.FC = (): JSX.Element => {
 };
 
 const MenuUser = (props: any) => {
-  const { nickname, avatar } = UserInfo();
+  const userinfo = UserInfo();
+  if (userinfo) {
+    return (
+      <Menu.Item
+        key={props.key}
+        icon={<img src={userinfo.avatar} alt="avatar" className="avatar" />}
+        style={{ float: "right" }}
+      >
+        {" " + userinfo.displayName}
+      </Menu.Item>
+    );
+  }
   return (
-    <Menu.Item
-      key={props.key}
-      icon={<img src={avatar} alt="avatar" className="avatar" />}
-      style={{ float: "right" }}
-    >
-      {" " + nickname}
+    <Menu.Item key={props.key} icon={<Avatar />} style={{ float: "right" }}>
+      {" Login"}
     </Menu.Item>
   );
 };

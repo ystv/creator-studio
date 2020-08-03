@@ -1,9 +1,15 @@
 export interface User {
   userID: number;
-  username: string;
-  nickname: string;
+  displayName: string;
   avatar: string;
-  roles: string[];
+  firstName: string;
+  lastName: string;
+  permissions: Permission[];
+}
+
+export interface Permission {
+  permissionID: number;
+  name: string;
 }
 
 enum UserRoles {

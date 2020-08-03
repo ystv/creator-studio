@@ -3,22 +3,15 @@ import UserContext from "./UserContext";
 import Axios from "axios";
 import { User } from "../types/User";
 
-const defaultUser = {
-  userID: 0,
-  username: "user",
-  nickname: "User",
-  avatar: "https://ystv.co.uk/static/images/members/thumb/3348.jpg",
-  roles: ["creatorAdmin"],
-};
-
 const UserProvider: React.FC = (props) => {
-  const [userData, setUserData] = useState<User>(defaultUser);
+  const [userData, setUserData] = useState<User | null>(null);
   useEffect(() => {
     Axios.request<User>({
-      url: `${process.env.REACT_APP_API_BASEURL}/v1/internal/user`,
+      url: `${process.env.REACT_APP_API_BASEURL}/v1/internal/people/user`,
       withCredentials: true,
     }).then((response) => {
       setUserData(response.data);
+      console.log(response.data);
     });
   }, []);
   const { Provider } = UserContext;

@@ -2,7 +2,6 @@ import React from "react";
 import { RouteComponentProps, Route, Redirect } from "react-router-dom";
 import getToken from "./Auth";
 import { UserInfo } from "../contexts/UserContext";
-import userRoles from "../types/User";
 import { NonAuthRoutes } from "./Routes";
 
 interface Props {
@@ -17,44 +16,42 @@ const AuthRoute = ({
   path,
   exact = false,
   requiredRoles,
-}: Props): JSX.Element => {
+}: Props) => {
   const token = getToken();
-  const { roles } = UserInfo();
-  const userHasRequiredRole = roles.some((role) =>
-    requiredRoles.includes(role)
-  );
-  console.log(token);
-  console.log(roles);
-  console.log(requiredRoles);
-  console.log(userHasRequiredRole);
-  console.log(userRoles.all);
-  const message = userHasRequiredRole
-    ? "Please log in to view this page"
-    : "Unauthorized";
-  return (
-    <Route
-      exact={exact}
-      path={path}
-      render={(props: RouteComponentProps) =>
-        process.env.REACT_APP_SECURITY_TYPE === "NONE" ||
-        (token && userHasRequiredRole) ? (
-          <Component {...props} />
-        ) : (
-          <Redirect
-            to={{
-              pathname: userHasRequiredRole
-                ? NonAuthRoutes.unauthorized
-                : NonAuthRoutes.login,
-              state: {
-                message,
-                requestedPath: path,
-              },
-            }}
-          />
-        )
-      }
-    />
-  );
+  const userinfo = UserInfo();
+  if (userinfo) {
+    const userHasRequiredRole = userinfo.permissions.some((permission) =>
+      requiredRoles.includes(permission.name)
+    );
+    const message = userHasRequiredRole
+      ? "Please log in to view this page"
+      : "Unauthorized";
+    return (
+      <Route
+        exact={exact}
+        path={path}
+        render={(props: RouteComponentProps) =>
+          process.env.REACT_APP_SECURITY_TYPE === "NONE" ||
+          (token && userHasRequiredRole) ? (
+            <Component {...props} />
+          ) : (
+            <Redirect
+              to={{
+                pathname: userHasRequiredRole
+                  ? NonAuthRoutes.unauthorized
+                  : NonAuthRoutes.login,
+                state: {
+                  message,
+                  requestedPath: path,
+                },
+              }}
+            />
+          )
+        }
+      />
+    );
+  }
+  return <Redirect to={"/"} />;
 };
 
 export default AuthRoute;

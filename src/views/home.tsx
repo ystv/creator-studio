@@ -98,7 +98,7 @@ const VideoCalendar = () => {
   }, [selectedMonth]);
 
   interface IVideoCalendar {
-    videoID: number;
+    id: number;
     name: string;
     status: string;
     broadcastDate: Date;
@@ -114,12 +114,12 @@ const VideoCalendar = () => {
         return (
           <ul className="events">
             {events.map((item) => (
-              <li key={item.videoID}>
+              <li key={item.id}>
                 <Badge
                   status="success"
                   text={
                     <span title={item.name}>
-                      <Link to={`/videos/${item.videoID}`}>{item.name}</Link>
+                      <Link to={`/videos/${item.id}`}>{item.name}</Link>
                     </span>
                   }
                 />

@@ -12,7 +12,6 @@ const getToken = () => {
   } catch (error) {
     console.log(error);
   }
-  console.log(token);
   return token;
 };
 

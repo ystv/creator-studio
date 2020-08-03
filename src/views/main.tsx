@@ -18,6 +18,7 @@ import userRoles from "../types/User";
 import NotImplemented from "../views/NotImplemented";
 import { AuthRoutes, NonAuthRoutes } from "../libraries/Routes";
 import NotAuthorized from "./NotAuthorized";
+import Login from "./login";
 
 const { Content } = Layout;
 
@@ -56,6 +57,7 @@ const Main: React.FC = (): JSX.Element => {
                     path={NonAuthRoutes.unauthorized}
                     component={NotAuthorized}
                   />
+                  <Route path="/login" component={Login} />
                   <Route component={NotFound} />
                 </Switch>
               </Content>
