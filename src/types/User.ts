@@ -1,6 +1,6 @@
 export interface User {
   userID: number;
-  displayName: string;
+  nickname: string;
   avatar: string;
   firstName: string;
   lastName: string;

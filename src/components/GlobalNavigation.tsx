@@ -3,6 +3,7 @@ import { Layout, Menu, Avatar } from "antd";
 import "antd/dist/antd.css";
 import "../styles/main.css";
 import { UserInfo } from "../contexts/UserContext";
+import { UserOutlined } from "@ant-design/icons";
 
 const { Header } = Layout;
 
@@ -15,29 +16,29 @@ const GlobalNavigation: React.FC = (): JSX.Element => {
         <Menu.Item key="2">Live</Menu.Item>
         <Menu.Item key="3">MyTV</Menu.Item>
         <Menu.Item key="4">CompServ</Menu.Item>
-        <MenuUser key="5" />
+        <Menu.Item key="5" style={{ float: "right" }}>
+          <User />
+        </Menu.Item>
       </Menu>
     </Header>
   );
 };
 
-const MenuUser = (props: any) => {
+const User = () => {
   const userinfo = UserInfo();
   if (userinfo) {
     return (
-      <Menu.Item
-        key={props.key}
-        icon={<img src={userinfo.avatar} alt="avatar" className="avatar" />}
-        style={{ float: "right" }}
-      >
-        {" " + userinfo.displayName}
-      </Menu.Item>
+      <div>
+        <Avatar src={userinfo.avatar} />
+        {" " + userinfo.nickname}
+      </div>
     );
   }
   return (
-    <Menu.Item key={props.key} icon={<Avatar />} style={{ float: "right" }}>
+    <div>
+      <Avatar icon={<UserOutlined />} />
       {" Login"}
-    </Menu.Item>
+    </div>
   );
 };
 
