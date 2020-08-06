@@ -4,13 +4,18 @@ import "antd/dist/antd.css";
 import "../styles/main.css";
 import { UserInfo } from "../contexts/UserContext";
 import { UserOutlined } from "@ant-design/icons";
+import { Link } from "react-router-dom";
 
 const { Header } = Layout;
 
 const GlobalNavigation: React.FC = (): JSX.Element => {
   return (
     <Header className="header">
-      <h1 className="logo">CreatorStudio</h1>
+      <h1 className="logo">
+        <Link to="/" style={{ color: "#FFF" }}>
+          CreatorStudio
+        </Link>
+      </h1>
       <Menu theme="dark" mode="horizontal" defaultSelectedKeys={["1"]}>
         <Menu.Item key="1">VOD</Menu.Item>
         <Menu.Item key="2">Live</Menu.Item>

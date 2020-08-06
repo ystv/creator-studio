@@ -1,7 +1,6 @@
 import React from "react";
 import { RouteComponentProps, Route, Redirect } from "react-router-dom";
 import getToken from "./Auth";
-import { UserInfo } from "../contexts/UserContext";
 import { NonAuthRoutes } from "./Routes";
 
 interface Props {
@@ -18,9 +17,8 @@ const AuthRoute = ({
   requiredRoles,
 }: Props) => {
   const token = getToken();
-  const userinfo = UserInfo();
-  if (userinfo) {
-    const userHasRequiredRole = userinfo.permissions.some((permission) =>
+  if (token) {
+    const userHasRequiredRole = token.perms.some((permission) =>
       requiredRoles.includes(permission.name)
     );
     const message = userHasRequiredRole

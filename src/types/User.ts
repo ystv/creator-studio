@@ -14,6 +14,7 @@ export interface Permission {
 
 enum UserRoles {
   admin = "creatorAdmin",
+  superUser = "SuperUser", //Here since ystv uses this as a universal role
   moderator = "creatorModerator",
   member = "member",
 }
@@ -21,10 +22,11 @@ enum UserRoles {
 // Some views will be for certain groups and
 // some will be available for all
 const userRoles = {
-  admin: [UserRoles.admin],
-  moderator: [UserRoles.moderator, UserRoles.admin],
+  admin: [UserRoles.admin, UserRoles.superUser],
+  moderator: [UserRoles.moderator, UserRoles.admin, UserRoles.superUser],
   all: [
     String(UserRoles.admin),
+    String(UserRoles.superUser),
     String(UserRoles.moderator),
     String(UserRoles.member),
   ],

@@ -13,7 +13,6 @@ import {
 import "antd/dist/antd.css";
 import "../styles/main.css";
 import getToken from "../libraries/Auth";
-import { UserInfo } from "../contexts/UserContext";
 import userRoles from "../types/User";
 
 const { Sider } = Layout;
@@ -39,15 +38,11 @@ const LoginMenu: React.FC = (): JSX.Element => {
 const Navigation: React.FC = (): JSX.Element => {
   const token = getToken();
   const requiredRoles = userRoles.all;
-  const userinfo = UserInfo();
-  if (userinfo) {
-    const userHasRequiredRole = userinfo.permissions.some((role) =>
+  if (token) {
+    const userHasRequiredRole = token.perms.some((role) =>
       requiredRoles.includes(role.name)
     );
-    if (
-      process.env.REACT_APP_SECURITY_TYPE === "NONE" ||
-      (token && userHasRequiredRole)
-    ) {
+    if (process.env.REACT_APP_SECURITY_TYPE === "NONE" || userHasRequiredRole) {
       return (
         <Sider width={200} className="site-layout-background">
           <Menu
