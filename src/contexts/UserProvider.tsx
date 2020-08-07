@@ -11,7 +11,6 @@ const UserProvider: React.FC = (props) => {
       withCredentials: true,
     }).then((response) => {
       setUserData(response.data);
-      console.log(response.data);
     });
   }, []);
   const { Provider } = UserContext;

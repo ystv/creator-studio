@@ -24,7 +24,6 @@ const AuthRoute = ({
   const [token, setToken] = useState<APIToken | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   useEffect(() => {
-    console.log("fetching");
     async function getData() {
       getToken()
         .then((gotToken) => {
@@ -38,7 +37,6 @@ const AuthRoute = ({
   }, []);
 
   if (!isLoading) {
-    console.log(token);
     if (token === null) {
       return <Redirect to="/login" />;
     }

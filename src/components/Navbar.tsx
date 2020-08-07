@@ -41,7 +41,6 @@ const Navigation: React.FC = () => {
     const userHasRequiredRole = token.perms.some((role) =>
       requiredRoles.includes(role.name)
     );
-    console.log(userHasRequiredRole);
 
     if (process.env.REACT_APP_SECURITY_TYPE === "NONE" || userHasRequiredRole) {
       return (
