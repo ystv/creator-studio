@@ -1,22 +1,13 @@
 import React, { useState, useEffect } from "react";
-import {
-  Typography,
-  Card,
-  Row,
-  Col,
-  Calendar,
-  Layout,
-  Button,
-  Badge,
-} from "antd";
-import { number } from "yup";
+import { Typography, Card, Calendar, Layout, Button, Badge } from "antd";
 import Axios from "axios";
 import FormatBytes from "../utils/formatBytes";
 import NumberWithCommas from "../utils/numberWithCommas";
 import Moment from "moment";
 import "../styles/calendar.css";
 import { Link } from "react-router-dom";
-const { Title, Paragraph } = Typography;
+
+const { Paragraph } = Typography;
 const { Content, Sider } = Layout;
 const Home = () => {
   return (
@@ -34,6 +25,7 @@ const Home = () => {
             <Button type="primary">Get Started</Button>
           </Card>
           <StatCard />
+          <UserCard />
         </Sider>
       </Layout>
     </React.Fragment>
@@ -54,7 +46,8 @@ const StatCard = () => {
   }
   const getData = async () => {
     await Axios.request<ICreatorStats>({
-      url: "http://localhost:8081/v1/internal/creator/stats",
+      url: `${process.env.REACT_APP_API_BASEURL}/v1/internal/creator/stats`,
+      withCredentials: true,
     }).then((response) => {
       setCreatorStat(response.data);
       setLoading(false);
@@ -91,47 +84,42 @@ const StatCard = () => {
 
 const VideoCalendar = () => {
   const [calendarData, setCalendarData] = useState<IVideoCalendar[]>();
-  const [loading, setLoading] = useState(true);
   const now = Moment();
   const [selectedMonth, setSelectedMonth] = useState(
     now.year() + "/" + now.month()
   );
   useEffect(() => {
-    getData();
-  }, [loading]);
+    Axios.request<IVideoCalendar[]>({
+      url: `${process.env.REACT_APP_API_BASEURL}/v1/internal/creator/calendar/${selectedMonth}`,
+      withCredentials: true,
+    }).then((response) => {
+      setCalendarData(response.data);
+    });
+  }, [selectedMonth]);
+
   interface IVideoCalendar {
-    videoID: number;
+    id: number;
     name: string;
     status: string;
     broadcastDate: Date;
   }
-  const getData = async () => {
-    await Axios.request<IVideoCalendar[]>({
-      url: `http://localhost:8081/v1/internal/creator/calendar/${selectedMonth}`,
-    }).then((response) => {
-      setCalendarData(response.data);
-      setLoading(false);
-    });
-  };
 
   if (calendarData) {
     const dateCellRender = (date: moment.Moment) => {
       let events: IVideoCalendar[] = [];
-      calendarData.map((event) => {
-        if (date.isSame(Moment(event.broadcastDate), "day")) {
-          events.push(event);
-        }
-      });
+      events = calendarData.filter((event) =>
+        date.isSame(Moment(event.broadcastDate), "day")
+      );
       if (events.length !== 0) {
         return (
           <ul className="events">
             {events.map((item) => (
-              <li key={item.videoID}>
+              <li key={item.id}>
                 <Badge
                   status="success"
                   text={
                     <span title={item.name}>
-                      <Link to={`/videos/${item.videoID}`}>{item.name}</Link>
+                      <Link to={`/videos/${item.id}`}>{item.name}</Link>
                     </span>
                   }
                 />
@@ -143,12 +131,15 @@ const VideoCalendar = () => {
     };
     const refreshMonth = (date: moment.Moment) => {
       setSelectedMonth(date.year() + "/" + (date.month() + 1));
-      setLoading(true);
     };
 
     return <Calendar dateCellRender={dateCellRender} onChange={refreshMonth} />;
   }
   return <Calendar />;
+};
+
+const UserCard = () => {
+  return <Card title="User Stats">TODO user data</Card>;
 };
 
 export default Home;

@@ -1,13 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Axios from "axios";
 import { Table, Tag, Typography, Button, Space, Input } from "antd";
-import {
-  Link,
-  useRouteMatch,
-  Switch,
-  Route,
-  useParams,
-} from "react-router-dom";
+import { Link, useRouteMatch, Switch, Route } from "react-router-dom";
 import Creation from "./video";
 import TagColours from "../../utils/tagColours";
 import Capitalise from "../../utils/capitalise";
@@ -57,8 +51,8 @@ const columns = (url: string) => {
       key: "action",
       render: (text: any, record: any) => (
         <Space>
-          <Link to={`${url}/${record.videoID}`}>Details</Link>
-          <a href={`https://ystv.co.uk/watch/${record.videoID}`}>Watch</a>
+          <Link to={`${url}/${record.id}`}>Details</Link>
+          <a href={`https://ystv.co.uk/watch/${record.id}`}>Watch</a>
         </Space>
       ),
     },
@@ -83,17 +77,17 @@ const Videos = () => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   useEffect(() => {
-    getData();
-  }, [loading]);
-  let { path, url } = useRouteMatch();
-
-  const getData = async () => {
-    await Axios.get("http://localhost:8081/v1/internal/creator").then((res) => {
+    Axios.get(
+      `${process.env.REACT_APP_API_BASEURL}/v1/internal/creator/videos`,
+      {
+        withCredentials: true,
+      }
+    ).then((res) => {
       // TODO Want to get types in here
       setData(
         res.data.map((row: any) => ({
-          videoID: row.videoID,
-          seriesID: row.seriesID,
+          id: row.id,
+          SeriesID: row.SeriesID,
           name: row.name,
           url: row.url,
           duration: row.duration,
@@ -107,9 +101,8 @@ const Videos = () => {
       );
       setLoading(false);
     });
-    setData(data);
-    setLoading(false);
-  };
+  }, [loading]);
+  let { path, url } = useRouteMatch();
 
   const refresh = () => {
     setLoading(true);
@@ -120,8 +113,8 @@ const Videos = () => {
       <Route exact path={path}>
         <Title>YSTV Videos</Title>
         <Space style={{ marginBottom: 16 }}>
-          <Button disabled>Move to</Button>
-          <Button disabled>Disable</Button>
+          <Button>Move to</Button>
+          <Button>Disable</Button>
           <Input placeholder="Search" />
         </Space>
         <Button onClick={refresh} style={{ float: "right" }}>

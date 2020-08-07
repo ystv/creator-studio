@@ -6,3 +6,6 @@
 
 # logs
 /yarn-error.log
+
+# dev environment file
+/.env.local

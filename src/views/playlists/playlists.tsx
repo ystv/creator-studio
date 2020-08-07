@@ -1,17 +1,10 @@
 import React, { useState, useEffect } from "react";
-import {
-  Switch,
-  Route,
-  Link,
-  useRouteMatch,
-  useParams,
-} from "react-router-dom";
+import { Switch, Route, Link, useRouteMatch } from "react-router-dom";
 import { Typography, Button, Table, Space, Tag } from "antd";
 import Axios from "axios";
 const { Title } = Typography;
 
 const Playlists = () => {
-  let { CreationId } = useParams();
   const [playlistMeta, setPlaylistMeta] = useState<playlistMeta[] | undefined>(
     undefined
   );
@@ -29,7 +22,7 @@ const Playlists = () => {
 
   const getData = async () => {
     await Axios.request<playlistMeta[]>({
-      url: `http://localhost:8081/v1/internal/creator/playlists`,
+      url: `https://api.ystv.co.uk/v1/internal/creator/playlists`,
     }).then((response) => {
       const { data } = response;
       setPlaylistMeta(data);

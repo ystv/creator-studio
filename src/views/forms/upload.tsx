@@ -1,7 +1,7 @@
 import React from "react";
 import Uppy from "@uppy/core";
 import Tus from "@uppy/tus";
-import { Dashboard, DashboardModal } from "@uppy/react";
+import { Dashboard } from "@uppy/react";
 import GoogleDrive from "@uppy/google-drive";
 import Dropbox from "@uppy/dropbox";
 import OneDrive from "@uppy/onedrive";
