@@ -7,6 +7,7 @@ import Modal from "antd/lib/modal/Modal";
 import CreateModal from "./create";
 import Capitalise from "../../utils/capitalise";
 import TagColours from "../../utils/tagColours";
+import Playlist from "./playlist";
 const { Title } = Typography;
 
 const Playlists = () => {
@@ -25,7 +26,7 @@ const Playlists = () => {
       url: `${process.env.REACT_APP_API_BASEURL}/v1/internal/creator/playlists`,
     }).then((response) => {
       const { data } = response;
-      data.map((playlist) => {
+      data.forEach((playlist) => {
         playlist.status = Capitalise(playlist.status);
       });
       setPlaylistMeta(data);
@@ -93,8 +94,8 @@ const Playlists = () => {
           <CreateModal />
         </Modal>
       </Route>
-      <Route path={`${path}/:CreationId`}>
-        <h1>Playlist</h1>
+      <Route path={`${path}/:playlistID`}>
+        <Playlist />
       </Route>
     </Switch>
   );
