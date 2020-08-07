@@ -1,32 +1,34 @@
 import Cookies from "js-cookie";
 import Axios from "axios";
 
-const getToken = (): APIToken | null => {
-  let jwt = Cookies.get("token");
-  if (!jwt) {
-    Axios.get(`${process.env.REACT_APP_SECURITY_ENDPOINT}/api/set_token`, {
-      withCredentials: true,
-    }).catch((error) => {
-      if (error.response) {
-        console.log(error.response.data);
-        console.log(error.response.status);
-        console.log(error.response.headers);
-      }
-    });
-    jwt = Cookies.get("token");
-  }
-  let token;
-  try {
-    if (jwt) {
-      const base64Url = jwt.split(".")[1];
-      const base64 = base64Url.replace("-", "+").replace("_", "/");
-      token = JSON.parse(window.atob(base64));
+const getToken = () =>
+  new Promise<APIToken>((resolve, reject) => {
+    let jwt = Cookies.get("token");
+    if (!jwt) {
+      Axios.get(`${process.env.REACT_APP_SECURITY_ENDPOINT}/api/set_token`, {
+        withCredentials: true,
+      }).then(() => {
+        jwt = Cookies.getJSON("token");
+      });
     }
-  } catch (error) {
-    console.log(error);
-  }
-  return token as APIToken;
-};
+    let token;
+    try {
+      if (jwt) {
+        const base64Url = jwt.split(".")[1];
+        const base64 = base64Url.replace("-", "+").replace("_", "/");
+        token = JSON.parse(window.atob(base64));
+      }
+    } catch (error) {
+      console.log(error);
+    }
+    if (token) {
+      console.log("gottem");
+      return resolve(token as APIToken);
+    } else {
+      console.log("uh oh");
+      return reject(new Error("Failed to get token"));
+    }
+  });
 
 export default getToken;
 

@@ -1,6 +1,6 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { RouteComponentProps, Route, Redirect } from "react-router-dom";
-import getToken from "./Auth";
+import getToken, { APIToken } from "./Auth";
 import { NonAuthRoutes } from "./Routes";
 
 interface Props {
@@ -16,28 +16,32 @@ const AuthRoute = ({
   exact = false,
   requiredRoles,
 }: Props) => {
-  const token = getToken();
+  const [token, setToken] = useState<APIToken>();
+  useEffect(() => {
+    const getEnv = async () => {
+      await getToken().then((token) => {
+        setToken(token);
+      });
+      getEnv();
+    };
+  }, []);
   if (token) {
     const userHasRequiredRole = token.perms.some((permission) =>
       requiredRoles.includes(permission.name)
     );
-    const message = userHasRequiredRole
-      ? "Please log in to view this page"
-      : "Unauthorized";
+    const message = "Unauthorized";
     return (
       <Route
         exact={exact}
         path={path}
         render={(props: RouteComponentProps) =>
           process.env.REACT_APP_SECURITY_TYPE === "NONE" ||
-          (token && userHasRequiredRole) ? (
+          userHasRequiredRole ? (
             <Component {...props} />
           ) : (
             <Redirect
               to={{
-                pathname: userHasRequiredRole
-                  ? NonAuthRoutes.unauthorized
-                  : NonAuthRoutes.login,
+                pathname: NonAuthRoutes.unauthorized,
                 state: {
                   message,
                   requestedPath: path,
@@ -49,7 +53,7 @@ const AuthRoute = ({
       />
     );
   }
-  return <Redirect to={"/"} />;
+  return <h1>Uh oh</h1>;
 };
 
 export default AuthRoute;
