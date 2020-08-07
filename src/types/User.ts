@@ -1,13 +1,13 @@
-export interface User {
+export interface IUser {
   userID: number;
   nickname: string;
   avatar: string;
   firstName: string;
   lastName: string;
-  permissions: Permission[];
+  permissions: IPermission[];
 }
 
-export interface Permission {
+export interface IPermission {
   permissionID: number;
   name: string;
 }

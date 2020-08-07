@@ -1,4 +1,4 @@
-export interface VideoData {
+export interface IVideo {
   id: number;
   SeriesID: number;
   name: string;
@@ -14,10 +14,10 @@ export interface VideoData {
   broadcastDate: Date;
   createdAt: Date;
   owner: string;
-  files: videoFiles[];
+  files: IVideoFile[];
 }
 
-export interface videoFiles {
+export interface IVideoFile {
   id: number;
   uri: string;
   encodeFormat: string;

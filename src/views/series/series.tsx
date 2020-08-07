@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Typography, Table } from "antd";
 import Axios from "axios";
-import { SeriesData } from "../../types/Series";
+import { ISeries } from "../../types/Series";
 const { Title } = Typography;
 
 const columns = (id: number) => {
@@ -35,11 +35,11 @@ const columns = (id: number) => {
 };
 
 const SeriesTable = () => {
-  const [seriesData, setSeriesData] = useState<SeriesData[] | undefined>(
+  const [seriesData, setSeriesData] = useState<ISeries[] | undefined>(
     undefined
   );
   useEffect(() => {
-    Axios.request<SeriesData[]>({
+    Axios.request<ISeries[]>({
       url: `${process.env.REACT_APP_API_BASEURL}/v1/internal/creator/series`,
       withCredentials: true,
     }).then((response) => {

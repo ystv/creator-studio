@@ -21,16 +21,16 @@ import { useParams, Link } from "react-router-dom";
 import FormatBytes from "../../utils/formatBytes";
 import Capitalise from "../../utils/capitalise";
 import TagColours from "../../utils/tagColours";
-import { VideoData } from "../../types/Video";
+import { IVideo } from "../../types/Video";
 const { Title, Paragraph } = Typography;
 const { Content, Sider } = Layout;
 
 const Creation = () => {
   let { CreationId } = useParams();
-  const [videoData, setVideoData] = useState<VideoData | undefined>(undefined);
+  const [videoData, setVideoData] = useState<IVideo | undefined>(undefined);
   const [cardView, setCardView] = useState("Files");
   useEffect(() => {
-    Axios.request<VideoData>({
+    Axios.request<IVideo>({
       url: `${process.env.REACT_APP_API_BASEURL}/v1/internal/creator/videos/${CreationId}`,
       withCredentials: true,
     }).then((response) => {
@@ -195,7 +195,7 @@ const Creation = () => {
 };
 
 const FileTable = (props: any) => {
-  const [videoData, setVideoData] = useState<VideoData | undefined>(undefined);
+  const [videoData, setVideoData] = useState<IVideo | undefined>(undefined);
   useEffect(() => {
     setVideoData(props.videoData);
   }, [props.videoData]);

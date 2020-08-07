@@ -1,4 +1,4 @@
-export interface SeriesData {
+export interface ISeries {
   id: number;
   url: string;
   seriesName: string;
