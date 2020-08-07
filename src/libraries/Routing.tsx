@@ -10,23 +10,39 @@ interface Props {
   requiredRoles: string[];
 }
 
+interface APIWithLoad {
+  api?: APIToken;
+  loaded: boolean;
+}
+
 const AuthRoute = ({
   Component,
   path,
   exact = false,
   requiredRoles,
 }: Props) => {
-  const [token, setToken] = useState<APIToken>();
+  const [token, setToken] = useState<APIToken | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
   useEffect(() => {
-    const getEnv = async () => {
-      await getToken().then((token) => {
-        setToken(token);
-      });
-      getEnv();
-    };
+    console.log("fetching");
+    async function getData() {
+      getToken()
+        .then((gotToken) => {
+          setToken(gotToken);
+        })
+        .finally(() => {
+          setIsLoading(false);
+        });
+    }
+    getData();
   }, []);
-  if (token) {
-    const userHasRequiredRole = token.perms.some((permission) =>
+
+  if (!isLoading) {
+    console.log(token);
+    if (token === null) {
+      return <Redirect to="/login" />;
+    }
+    const userHasRequiredRole = token?.perms.some((permission) =>
       requiredRoles.includes(permission.name)
     );
     const message = "Unauthorized";
@@ -53,7 +69,8 @@ const AuthRoute = ({
       />
     );
   }
-  return <h1>Uh oh</h1>;
+
+  return <h1>Loading</h1>;
 };
 
 export default AuthRoute;

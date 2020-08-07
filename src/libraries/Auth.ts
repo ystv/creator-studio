@@ -2,14 +2,20 @@ import Cookies from "js-cookie";
 import Axios from "axios";
 
 const getToken = () =>
-  new Promise<APIToken>((resolve, reject) => {
+  new Promise<APIToken>(async (resolve, reject) => {
     let jwt = Cookies.get("token");
     if (!jwt) {
-      Axios.get(`${process.env.REACT_APP_SECURITY_ENDPOINT}/api/set_token`, {
-        withCredentials: true,
-      }).then(() => {
-        jwt = Cookies.getJSON("token");
-      });
+      try {
+        await Axios.get(
+          `${process.env.REACT_APP_SECURITY_ENDPOINT}/api/set_token`,
+          {
+            withCredentials: true,
+          }
+        );
+      } catch (err) {
+        return reject(err);
+      }
+      jwt = Cookies.get("token");
     }
     let token;
     try {
@@ -22,10 +28,8 @@ const getToken = () =>
       console.log(error);
     }
     if (token) {
-      console.log("gottem");
       return resolve(token as APIToken);
     } else {
-      console.log("uh oh");
       return reject(new Error("Failed to get token"));
     }
   });
