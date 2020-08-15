@@ -27,8 +27,9 @@ const Uploader = (props: any) => {
       companionUrl: "https://upload.ystv.co.uk/companion",
     })
     .use(Tus, {
-      endpoint: "https://upload.ystv.co.uk/files/",
+      endpoint: `${process.env.REACT_APP_UPLOAD_ENDPOINT}`,
       resume: true,
+      withCredentials: true,
       autoretry: true,
       retryDelays: [0, 1000, 3000, 5000],
     })
@@ -39,6 +40,11 @@ const Uploader = (props: any) => {
 
   uppy.on("complete", (result) => {
     console.log("successful files:", result.successful);
+    console.log(
+      result.successful[0].response?.uploadURL?.substring(
+        result.successful[0].response?.uploadURL?.lastIndexOf("/") + 1
+      )
+    ); // contains the object key
     console.log("failed files:", result.failed);
   });
 

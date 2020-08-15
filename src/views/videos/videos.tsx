@@ -90,6 +90,10 @@ const Videos: React.FC<VideosProps> = ({ user = "" }) => {
       }
     ).then((res) => {
       res.data.forEach((video) => {
+        if (video.name === "") {
+          video.name = video.url;
+          video.tags.push("un-named");
+        }
         video.status = Capitalise(video.status);
       });
       setMetaData(res.data);
