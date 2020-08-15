@@ -43,7 +43,9 @@ const Main: React.FC = (): JSX.Element => {
                     requiredRoles={userRoles.all}
                   />
                   <Route path="/upload" component={UploadForm} />
-                  <Route path="/my/videos" component={NotImplemented} />
+                  <Route path="/my/videos">
+                    <Videos user="my" />
+                  </Route>
                   <Route path="/videos" component={Videos} />
                   <Route path="/series" component={Series} />
                   <Route path="/playlists" component={Playlists} />

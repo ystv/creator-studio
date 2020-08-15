@@ -1,3 +1,17 @@
+export interface IVideoMeta {
+  id: number;
+  seriesID: number;
+  name: string;
+  url: string;
+  duration: number;
+  views: number;
+  tags: string[];
+  seriesPosition?: number;
+  status: string;
+  broadcastDate: Date;
+  createdAt: Date;
+}
+
 export interface IVideo {
   id: number;
   SeriesID: number;

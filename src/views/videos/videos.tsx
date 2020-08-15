@@ -5,6 +5,7 @@ import { Link, useRouteMatch, Switch, Route } from "react-router-dom";
 import Creation from "./video";
 import TagColours from "../../utils/tagColours";
 import Capitalise from "../../utils/capitalise";
+import { IVideoMeta } from "../../types/Video";
 const { Title } = Typography;
 
 const columns = (url: string) => {
@@ -73,35 +74,28 @@ const rowSelection = {
   }),
 };
 
-const Videos = () => {
-  const [data, setData] = useState([]);
+interface VideosProps {
+  children?: React.ReactNode;
+  user: string;
+}
+
+const Videos: React.FC<VideosProps> = ({ user = "" }) => {
+  const [metaData, setMetaData] = useState<IVideoMeta[] | undefined>(undefined);
   const [loading, setLoading] = useState(true);
   useEffect(() => {
-    Axios.get(
-      `${process.env.REACT_APP_API_BASEURL}/v1/internal/creator/videos`,
+    Axios.get<IVideoMeta[]>(
+      `${process.env.REACT_APP_API_BASEURL}/v1/internal/creator/videos/${user}`,
       {
         withCredentials: true,
       }
     ).then((res) => {
-      // TODO Want to get types in here
-      setData(
-        res.data.map((row: any) => ({
-          id: row.id,
-          SeriesID: row.SeriesID,
-          name: row.name,
-          url: row.url,
-          duration: row.duration,
-          views: row.views,
-          tags: row.tags,
-          seriesPosition: row.seriesPosition,
-          status: Capitalise(row.status),
-          broadcastDate: row.broadcastDate,
-          createdAt: row.createdAt,
-        }))
-      );
+      res.data.forEach((video) => {
+        video.status = Capitalise(video.status);
+      });
+      setMetaData(res.data);
       setLoading(false);
     });
-  }, [loading]);
+  }, [loading, user]);
   let { path, url } = useRouteMatch();
 
   const refresh = () => {
@@ -111,7 +105,7 @@ const Videos = () => {
   return (
     <Switch>
       <Route exact path={path}>
-        <Title>YSTV Videos</Title>
+        <Title>{user ? (user === "" ? user : "My") : "YSTV"} Videos</Title>
         <Space style={{ marginBottom: 16 }}>
           <Button>Move to</Button>
           <Button>Disable</Button>
@@ -122,7 +116,7 @@ const Videos = () => {
         </Button>
         <Table
           rowSelection={rowSelection}
-          dataSource={data}
+          dataSource={metaData}
           columns={columns(url)}
           loading={loading}
         />
