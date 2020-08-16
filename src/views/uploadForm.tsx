@@ -4,7 +4,7 @@ import "@uppy/core/dist/style.css";
 import "@uppy/dashboard/dist/style.css";
 import { Button } from "antd";
 import { Input, DatePicker, SubmitButton } from "formik-antd";
-import { Formik, Form, FormikConfig, FormikValues } from "formik";
+import { Formik, Form, FormikConfig } from "formik";
 import Uppy from "@uppy/core";
 import Tus from "@uppy/tus";
 import { Dashboard } from "@uppy/react";
@@ -12,34 +12,65 @@ import { Dashboard } from "@uppy/react";
 // export default UploadForm;
 
 interface IWizard {
-  fileID: number;
-  title: string;
+  fileID: string;
+  seriesID: number;
+  name: string;
   description: string;
   tags: string;
-  publish: string;
-  date: Date;
+  publishType: string;
+  broadcastDate: Date;
 }
 
 const Wizard = () => {
   const initialValues: IWizard = {
-    fileID: 0,
-    title: "",
+    fileID: "",
+    seriesID: 0,
+    name: "",
     description: "",
     tags: "",
-    publish: "internal",
-    date: new Date(),
+    publishType: "internal",
+    broadcastDate: new Date(),
   };
+
+  let fileID = "";
+
+  const uppy = Uppy({
+    restrictions: { maxNumberOfFiles: 1, allowedFileTypes: ["video/*"] },
+    autoProceed: true,
+  }).use(Tus, {
+    endpoint: `${process.env.REACT_APP_UPLOAD_ENDPOINT}`,
+    resume: true,
+    withCredentials: true,
+    autoretry: true,
+    retryDelays: [0, 1000, 3000, 5000],
+  });
+
+  uppy.on("complete", (result) => {
+    const video = result.successful[0].response;
+    if (video) {
+      if (video.uploadURL) {
+        fileID = video.uploadURL.substring(
+          video.uploadURL.lastIndexOf("/") + 1
+        ); // contains the object key
+      }
+    }
+  });
+
   return (
     <>
       <FormikStepper
         initialValues={initialValues}
         onSubmit={(values, actions) => {
+          values.fileID = fileID;
           console.log({ values, actions });
         }}
       >
         <FormikStep>
-          file
-          <Input name="fileID" />
+          <Dashboard uppy={uppy} showProgressDetails={true} theme="auto" />
+        </FormikStep>
+        <FormikStep>
+          series ID
+          <Input name="seriesID" />
         </FormikStep>
         <FormikStep>
           name
@@ -49,9 +80,9 @@ const Wizard = () => {
           tags
           <Input name="tags" />
           publish
-          <Input name="publish" />
+          <Input name="publishType" />
           date
-          <DatePicker name="date" />
+          <DatePicker name="broadcastDate" />
         </FormikStep>
       </FormikStepper>
     </>
@@ -59,13 +90,13 @@ const Wizard = () => {
 };
 
 interface FormikStepProps
-  extends Pick<FormikConfig<FormikValues>, "children" | "validationSchema"> {}
+  extends Pick<FormikConfig<IWizard>, "children" | "validationSchema"> {}
 
 function FormikStep({ children }: FormikStepProps) {
   return <>{children}</>;
 }
 
-function FormikStepper({ children, ...props }: FormikConfig<FormikValues>) {
+function FormikStepper({ children, ...props }: FormikConfig<IWizard>) {
   const childrenArray = React.Children.toArray(children) as React.ReactElement<
     FormikStepProps
   >[];
@@ -96,13 +127,7 @@ function FormikStepper({ children, ...props }: FormikConfig<FormikValues>) {
         <Button onClick={() => setStep((s) => s - 1)} disabled={step === 0}>
           Back
         </Button>
-        <SubmitButton
-          onClick={() => {
-            console.log("bop");
-          }}
-        >
-          {isLastStep() ? "Finish" : "Next"}
-        </SubmitButton>
+        <SubmitButton>{isLastStep() ? "Finish" : "Next"}</SubmitButton>
       </Form>
     </Formik>
   );
