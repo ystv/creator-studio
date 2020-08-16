@@ -9,37 +9,19 @@ import Url from "@uppy/url";
 import "@uppy/core/dist/style.css";
 import "@uppy/dashboard/dist/style.css";
 
-const Uploader = (props: any) => {
+const Uploader = () => {
   const uppy = Uppy({
     restrictions: { maxNumberOfFiles: 1, allowedFileTypes: ["video/*"] },
     autoProceed: true,
-  })
-    .use(GoogleDrive, {
-      companionUrl: "https://upload.ystv.co.uk/companion",
-    })
-    .use(Dropbox, {
-      companionUrl: "https://upload.ystv.co.uk/companion",
-    })
-    .use(OneDrive, {
-      companionUrl: "https://upload.ystv.co.uk/companion",
-    })
-    .use(Url, {
-      companionUrl: "https://upload.ystv.co.uk/companion",
-    })
-    .use(Tus, {
-      endpoint: `${process.env.REACT_APP_UPLOAD_ENDPOINT}`,
-      resume: true,
-      withCredentials: true,
-      autoretry: true,
-      retryDelays: [0, 1000, 3000, 5000],
-    })
-    .on("file-added", (result) => {
-      console.log(result);
-      props.next();
-    });
+  }).use(Tus, {
+    endpoint: `${process.env.REACT_APP_UPLOAD_ENDPOINT}`,
+    resume: true,
+    withCredentials: true,
+    autoretry: true,
+    retryDelays: [0, 1000, 3000, 5000],
+  });
 
   uppy.on("complete", (result) => {
-    console.log("successful files:", result.successful);
     console.log(
       result.successful[0].response?.uploadURL?.substring(
         result.successful[0].response?.uploadURL?.lastIndexOf("/") + 1
@@ -58,5 +40,4 @@ const Uploader = (props: any) => {
   );
 };
 
-Uploader.displayName = "UppyPageComponent";
 export default Uploader;

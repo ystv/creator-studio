@@ -1,89 +1,111 @@
 import React, { useState } from "react";
 import "../styles/form.css";
-import Upload from "./forms/upload";
-import Meta from "./forms/metadata";
-import Publish from "./forms/publish";
-import { Steps, Button } from "antd";
-const { Step } = Steps;
+import "@uppy/core/dist/style.css";
+import "@uppy/dashboard/dist/style.css";
+import { Button } from "antd";
+import { Input, DatePicker, SubmitButton } from "formik-antd";
+import { Formik, Form, FormikConfig, FormikValues } from "formik";
+import Uppy from "@uppy/core";
+import Tus from "@uppy/tus";
+import { Dashboard } from "@uppy/react";
 
-// const Wizard = ({ children, initialValues, onSubmit}) => {
-//     const [stepNumber, setStepNumber] = useState(0);
-//     const steps = React.Children.toArray(children);
-//     const [snapshot, setSnapshot] = useState(initialValues);
+// export default UploadForm;
 
-//     const step = steps[stepNumber];
-//     const totalSteps = steps.length;
-//     const isLastStep = stepNumber === totalSteps - 1;
+interface IWizard {
+  fileID: number;
+  title: string;
+  description: string;
+  tags: string;
+  publish: string;
+  date: Date;
+}
 
-//     const next = (values) => {
-//         setSnapshot(values);
-//         setStepNumber(Math.min(stepNumber + 1, totalSteps -1 ))
-//     };
-
-//     const previous = values => {
-//         setSnapshot(values);
-//         setStepNumber(Math.max(stepNumber - 1, 0));
-//     };
-
-//     const handleSubmit = async (values, bag) => {
-//         if (step.props.onSubmit) {
-//             await step.props.onSubmit(values, bag);
-//         }
-//         if (isLastStep) {
-//             return onSubmit(values, bag);
-//         } else {
-//             bag.setTouched({});
-//             next(values);
-//         }
-//     }
-
-//     return (
-//         <Formik
-//             initialValues={snapshot}
-//             onSubmit={handleSubmit}
-//             validationSchema={step.props.validationSchema}
-//     )
-// }
-
-const UploadForm = () => {
-  const [currentStep, setCurrentStep] = useState(0);
-
-  const next = () => {
-    setCurrentStep(currentStep + 1);
+const Wizard = () => {
+  const initialValues: IWizard = {
+    fileID: 0,
+    title: "",
+    description: "",
+    tags: "",
+    publish: "internal",
+    date: new Date(),
   };
-
-  const steps = [
-    {
-      title: "Upload Video",
-      content: <Upload nextStep={next} />,
-    },
-    {
-      title: "Video details",
-      content: <Meta />,
-    },
-    {
-      title: "Publish",
-      content: <Publish />,
-    },
-  ];
-
   return (
-    <React.Fragment>
-      <Steps current={currentStep}>
-        {steps.map((item: any) => (
-          <Step key={item.title} title={item.title} />
-        ))}
-      </Steps>
-      <div className="steps-content">{steps[currentStep].content}</div>
-      <div className="steps-action">
-        {currentStep < steps.length - 1 && (
-          <Button type="primary" onClick={() => next()}>
-            Next
-          </Button>
-        )}
-      </div>
-    </React.Fragment>
+    <>
+      <FormikStepper
+        initialValues={initialValues}
+        onSubmit={(values, actions) => {
+          console.log({ values, actions });
+        }}
+      >
+        <FormikStep>
+          file
+          <Input name="fileID" />
+        </FormikStep>
+        <FormikStep>
+          name
+          <Input name="name" />
+          description
+          <Input.TextArea name="description" />
+          tags
+          <Input name="tags" />
+          publish
+          <Input name="publish" />
+          date
+          <DatePicker name="date" />
+        </FormikStep>
+      </FormikStepper>
+    </>
   );
 };
 
-export default UploadForm;
+interface FormikStepProps
+  extends Pick<FormikConfig<FormikValues>, "children" | "validationSchema"> {}
+
+function FormikStep({ children }: FormikStepProps) {
+  return <>{children}</>;
+}
+
+function FormikStepper({ children, ...props }: FormikConfig<FormikValues>) {
+  const childrenArray = React.Children.toArray(children) as React.ReactElement<
+    FormikStepProps
+  >[];
+  const [step, setStep] = useState(0);
+  const currentChild = childrenArray[step] as React.ReactElement<
+    FormikStepProps
+  >;
+  console.log("children", currentChild);
+
+  const isLastStep = () => {
+    return step === childrenArray.length - 1;
+  };
+
+  return (
+    <Formik
+      {...props}
+      validationSchema={currentChild.props.validationSchema}
+      onSubmit={async (values, helpers) => {
+        if (isLastStep()) {
+          await props.onSubmit(values, helpers);
+        } else {
+          setStep((s) => s + 1);
+        }
+      }}
+    >
+      <Form autoComplete="off">
+        {currentChild}
+        <Button onClick={() => setStep((s) => s - 1)} disabled={step === 0}>
+          Back
+        </Button>
+        <SubmitButton
+          onClick={() => {
+            console.log("bop");
+          }}
+        >
+          {isLastStep() ? "Finish" : "Next"}
+        </SubmitButton>
+      </Form>
+    </Formik>
+  );
+}
+
+export default Wizard;

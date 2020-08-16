@@ -51,6 +51,7 @@ const Meta: React.FC = () => {
               <Radio.Button value="now">Now</Radio.Button>
               <Radio.Button value="schedule">Schedule</Radio.Button>
               <Radio.Button value="internal">Internal</Radio.Button>
+              <Radio.Button value="private">Private</Radio.Button>
             </Radio.Group>
           </Form.Item>
           <Space>

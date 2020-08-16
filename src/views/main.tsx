@@ -19,6 +19,7 @@ import NotImplemented from "../views/NotImplemented";
 import { AuthRoutes, NonAuthRoutes } from "../libraries/Routes";
 import NotAuthorized from "./NotAuthorized";
 import Login from "./login";
+import Wizard from "../views/uploadForm";
 
 const { Content } = Layout;
 
@@ -42,7 +43,7 @@ const Main: React.FC = (): JSX.Element => {
                     Component={Home}
                     requiredRoles={userRoles.all}
                   />
-                  <Route path="/upload" component={UploadForm} />
+                  <Route path="/upload" component={Wizard} />
                   <Route path="/my/videos">
                     <Videos user="my" />
                   </Route>
