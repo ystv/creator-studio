@@ -145,7 +145,7 @@ const Creation = () => {
 
               <Descriptions>
                 <Descriptions.Item label="Creator">
-                  {videoData.owner}
+                  {videoData.createdBy ? videoData.createdBy : "YSTV Member"}
                 </Descriptions.Item>
               </Descriptions>
             </Content>

@@ -2,12 +2,13 @@ import React, { useState } from "react";
 import "../styles/form.css";
 import "@uppy/core/dist/style.css";
 import "@uppy/dashboard/dist/style.css";
-import { Button } from "antd";
+import { Button, InputNumber } from "antd";
 import { Input, DatePicker, SubmitButton } from "formik-antd";
 import { Formik, Form, FormikConfig } from "formik";
 import Uppy from "@uppy/core";
 import Tus from "@uppy/tus";
 import { Dashboard } from "@uppy/react";
+import Axios from "axios";
 
 // export default UploadForm;
 
@@ -15,8 +16,9 @@ interface IWizard {
   fileID: string;
   seriesID: number;
   name: string;
+  urlName: string;
   description: string;
-  tags: string;
+  tags: string[];
   publishType: string;
   broadcastDate: Date;
 }
@@ -24,10 +26,11 @@ interface IWizard {
 const Wizard = () => {
   const initialValues: IWizard = {
     fileID: "",
-    seriesID: 0,
+    seriesID: 1,
     name: "",
+    urlName: "",
     description: "",
-    tags: "",
+    tags: ["Funky", "Epic"],
     publishType: "internal",
     broadcastDate: new Date(),
   };
@@ -62,7 +65,16 @@ const Wizard = () => {
         initialValues={initialValues}
         onSubmit={(values, actions) => {
           values.fileID = fileID;
-          console.log({ values, actions });
+          values.tags = values.tags;
+          Axios.post<IWizard>(
+            `${process.env.REACT_APP_API_BASEURL}/v1/internal/creator/videos`,
+            { ...values },
+            { withCredentials: true }
+          ).then((res) => {
+            console.log(res);
+          });
+          alert(JSON.stringify(values, null, 2));
+          actions.setSubmitting(false);
         }}
       >
         <FormikStep>
@@ -70,15 +82,17 @@ const Wizard = () => {
         </FormikStep>
         <FormikStep>
           series ID
-          <Input name="seriesID" />
+          <InputNumber name="seriesID" id="seriesiD" />
         </FormikStep>
         <FormikStep>
           name
           <Input name="name" />
+          url name
+          <Input name="urlName" />
           description
           <Input.TextArea name="description" />
-          tags
-          <Input name="tags" />
+          {/* tags
+          <Input name="tags" /> */}
           publish
           <Input name="publishType" />
           date
