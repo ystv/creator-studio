@@ -6,28 +6,15 @@ export interface IVideoMeta {
   duration: number;
   views: number;
   tags: string[];
-  seriesPosition?: number;
   status: string;
   broadcastDate: Date;
   createdAt: Date;
 }
 
-export interface IVideo {
-  id: number;
-  SeriesID: number;
-  name: string;
-  url: string;
+export interface IVideo extends IVideoMeta {
   description: string;
   thumbnail: string;
-  duration: number;
-  views: number;
-  tags: string[];
-  seriesPosition: number;
-  status: string;
-  preset: string;
-  broadcastDate: Date;
-  createdAt: Date;
-  owner: string;
+  createdBy?: string;
   files: IVideoFile[];
 }
 
