@@ -15,6 +15,9 @@ const columns = (url: string) => {
       title: "Name",
       dataIndex: "name",
       key: "name",
+      render: (text: string, record: any) => (
+        <Link to={`${url}/${record.id}`}>{text}</Link>
+      ),
     },
     {
       title: "Status",
@@ -52,7 +55,6 @@ const columns = (url: string) => {
       key: "action",
       render: (text: any, record: any) => (
         <Space>
-          <Link to={`${url}/${record.id}`}>Details</Link>
           <a href={`https://ystv.co.uk/watch/${record.id}`}>Watch</a>
         </Space>
       ),

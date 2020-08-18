@@ -145,7 +145,15 @@ const Creation = () => {
 
               <Descriptions>
                 <Descriptions.Item label="Creator">
-                  {videoData.createdBy ? videoData.createdBy : "YSTV Member"}
+                  {videoData.createdBy ? (
+                    <a
+                      href={`https://internal.ystv.co.uk/user/${videoData.createdBy.userID}`}
+                    >
+                      {videoData.createdBy.userNickname}
+                    </a>
+                  ) : (
+                    "YSTV Member"
+                  )}
                 </Descriptions.Item>
               </Descriptions>
             </Content>
@@ -216,7 +224,7 @@ const FileTable = (props: any) => {
         title: "Location",
         dataIndex: "uri",
         key: `location-${id}`,
-        render: (text: any, record: any) => (
+        render: (text: string) => (
           <a href={`https://cdn.ystv.co.uk/${text}`}>{text}</a>
         ),
       },

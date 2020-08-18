@@ -25,7 +25,7 @@ const CreateModal: React.FC = () => {
     createdBy: 0,
   };
   return (
-    <React.Fragment>
+    <>
       <Formik
         validateOnChange={true}
         initialValues={initialValues}
@@ -100,7 +100,7 @@ const CreateModal: React.FC = () => {
           </Form>
         )}
       </Formik>
-    </React.Fragment>
+    </>
   );
 };
 

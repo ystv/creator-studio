@@ -24,6 +24,7 @@ const Playlists = () => {
   const getData = async () => {
     await Axios.request<IPlaylist[]>({
       url: `${process.env.REACT_APP_API_BASEURL}/v1/internal/creator/playlists`,
+      withCredentials: true,
     }).then((response) => {
       const { data } = response;
       data.forEach((playlist) => {

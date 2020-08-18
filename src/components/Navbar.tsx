@@ -91,8 +91,12 @@ const Navigation: React.FC = () => {
               icon={<CloudServerOutlined />}
               title="Encode Farm"
             >
-              <Menu.Item key="11">Current Jobs</Menu.Item>
-              <Menu.Item key="12">Encode Profiles</Menu.Item>
+              <Menu.Item key="11">
+                <Link to="/encodes">Current Jobs</Link>
+              </Menu.Item>
+              <Menu.Item key="12">
+                <Link to="/encodes/profiles">Encode Profiles</Link>
+              </Menu.Item>
             </SubMenu>
             <Menu.Divider />
             <Menu.Item

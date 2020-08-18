@@ -20,6 +20,7 @@ import { AuthRoutes, NonAuthRoutes } from "../libraries/Routes";
 import NotAuthorized from "./NotAuthorized";
 import Login from "./login";
 import Wizard from "../views/uploadForm";
+import EncodeProfiles from "./encodes/encodeProfiles";
 
 const { Content } = Layout;
 
@@ -50,6 +51,8 @@ const Main: React.FC = (): JSX.Element => {
                   <Route path="/videos" component={Videos} />
                   <Route path="/series" component={Series} />
                   <Route path="/playlists" component={Playlists} />
+                  <Route path="/encodes/profiles" component={EncodeProfiles} />
+                  <Route path="/encodes" component={NotImplemented} />
                   <AuthRoute
                     path={AuthRoutes.moderation}
                     Component={NotImplemented}

@@ -14,7 +14,7 @@ export interface IVideoMeta {
 export interface IVideo extends IVideoMeta {
   description: string;
   thumbnail: string;
-  createdBy?: string;
+  createdBy: IVideoUser;
   files: IVideoFile[];
 }
 
@@ -25,4 +25,9 @@ export interface IVideoFile {
   status: string;
   size: number;
   mimeType: string;
+}
+
+export interface IVideoUser {
+  userID: number;
+  userNickname: string;
 }
