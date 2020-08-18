@@ -4,7 +4,7 @@ interface IPreset {
   id: number;
   name: string;
   description: string;
-  formats: IEncodeFormat[];
+  formats?: IEncodeFormat[];
 }
 
 export default IPreset;
