@@ -65,7 +65,6 @@ const Wizard = () => {
         initialValues={initialValues}
         onSubmit={(values, actions) => {
           values.fileID = fileID;
-          values.tags = values.tags;
           Axios.post<IWizard>(
             `${process.env.REACT_APP_API_BASEURL}/v1/internal/creator/videos`,
             { ...values },

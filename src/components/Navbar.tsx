@@ -95,12 +95,15 @@ const Navigation: React.FC = () => {
                 <Link to="/encodes">Current Jobs</Link>
               </Menu.Item>
               <Menu.Item key="12">
-                <Link to="/encodes/profiles">Encode Profiles</Link>
+                <Link to="/encodes/presets">Presets</Link>
+              </Menu.Item>
+              <Menu.Item key="13">
+                <Link to="/encodes/profiles">Profiles</Link>
               </Menu.Item>
             </SubMenu>
             <Menu.Divider />
             <Menu.Item
-              key="13"
+              key="14"
               style={{ marginTop: "auto" }}
               icon={<SettingOutlined />}
             >

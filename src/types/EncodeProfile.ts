@@ -7,7 +7,7 @@ interface IEncodeFormat {
   width: number;
   height: number;
   arguments: string;
-  watermarked: number;
+  watermarked: boolean;
 }
 
 export default IEncodeFormat;

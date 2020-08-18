@@ -8,7 +8,6 @@ import "../styles/main.css";
 import UserProvider from "../contexts/UserProvider";
 import Home from "../views/home";
 import Videos from "../views/videos/videos";
-import UploadForm from "../views/uploadForm";
 import Settings from "../views/settings";
 import Series from "../views/series/series";
 import Playlists from "../views/playlists/playlists";
@@ -20,7 +19,8 @@ import { AuthRoutes, NonAuthRoutes } from "../libraries/Routes";
 import NotAuthorized from "./NotAuthorized";
 import Login from "./login";
 import Wizard from "../views/uploadForm";
-import EncodeProfiles from "./encodes/encodeProfiles";
+import EncodeFormats from "./encodes/formats";
+import EncodePresets from "./encodes/presets";
 
 const { Content } = Layout;
 
@@ -51,7 +51,8 @@ const Main: React.FC = (): JSX.Element => {
                   <Route path="/videos" component={Videos} />
                   <Route path="/series" component={Series} />
                   <Route path="/playlists" component={Playlists} />
-                  <Route path="/encodes/profiles" component={EncodeProfiles} />
+                  <Route path="/encodes/profiles" component={EncodeFormats} />
+                  <Route path="/encodes/presets" component={EncodePresets} />
                   <Route path="/encodes" component={NotImplemented} />
                   <AuthRoute
                     path={AuthRoutes.moderation}
