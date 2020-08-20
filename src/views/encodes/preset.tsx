@@ -3,7 +3,10 @@ import IPreset from "../../types/EncodePreset";
 import Modal from "antd/lib/modal/Modal";
 import { Formik } from "formik";
 import Axios from "axios";
-import { SubmitButton, Form, Input } from "formik-antd";
+import { SubmitButton, Form, Input, Table } from "formik-antd";
+import { ColumnsType } from "antd/lib/table";
+import IEncodeFormat from "../../types/EncodeProfile";
+import SearchEncodeFormats from "../../components/EncodeFormatSearch";
 
 interface ModalProps {
   state: string;
@@ -13,7 +16,7 @@ interface ModalProps {
 }
 
 const PresetModal: React.FC<ModalProps> = ({ state, onCancel, data }) => {
-  const initialValues: IPreset = data
+  let initialValues: IPreset = data
     ? {
         id: data.id,
         name: data.name,
@@ -25,6 +28,36 @@ const PresetModal: React.FC<ModalProps> = ({ state, onCancel, data }) => {
         name: "",
         description: "",
       };
+
+  const encodeColumns: ColumnsType<IEncodeFormat> = [
+    {
+      title: "Name",
+      dataIndex: "name",
+      key: `name`,
+    },
+    {
+      title: "Description",
+      dataIndex: "description",
+      key: `description`,
+    },
+    {
+      title: "Width",
+      dataIndex: "width",
+      key: `width`,
+    },
+    {
+      title: "Height",
+      dataIndex: "height",
+      key: `height`,
+    },
+    {
+      title: "Watermarked",
+      dataIndex: "watermarked",
+      key: `watermarked`,
+      render: (watermarked: boolean) => <p>{watermarked ? "Yes" : "No"}</p>,
+    },
+  ];
+
   return (
     <Modal
       visible={state ? true : false}
@@ -34,6 +67,7 @@ const PresetModal: React.FC<ModalProps> = ({ state, onCancel, data }) => {
     >
       <Formik
         initialValues={initialValues}
+        enableReinitialize
         onSubmit={(values, actions) => {
           switch (state) {
             case "Create":
@@ -64,6 +98,12 @@ const PresetModal: React.FC<ModalProps> = ({ state, onCancel, data }) => {
           <Form.Item name="description" label="Description">
             <Input.TextArea name="description" />
           </Form.Item>
+          <Table<IEncodeFormat>
+            name="formats"
+            columns={encodeColumns}
+            pagination={false}
+          />
+          <SearchEncodeFormats />
           <SubmitButton>{state}</SubmitButton>
         </Form>
       </Formik>

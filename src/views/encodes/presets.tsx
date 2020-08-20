@@ -42,45 +42,6 @@ const EncodePresets: React.FC = () => {
     });
   });
 
-  const expandedRowRender = (record: IPreset) => {
-    const columns: ColumnsType<IEncodeFormat> = [
-      {
-        title: "Name",
-        dataIndex: "name",
-        key: `name`,
-      },
-      {
-        title: "Description",
-        dataIndex: "description",
-        key: `description`,
-      },
-      {
-        title: "Width",
-        dataIndex: "width",
-        key: `width`,
-      },
-      {
-        title: "Height",
-        dataIndex: "height",
-        key: `height`,
-      },
-      {
-        title: "Watermarked",
-        dataIndex: "watermarked",
-        key: `watermarked`,
-        render: (watermarked: boolean) => <p>{watermarked ? "Yes" : "No"}</p>,
-      },
-    ];
-    return (
-      <Table<IEncodeFormat>
-        columns={columns}
-        dataSource={record.formats}
-        pagination={false}
-        size="small"
-      />
-    );
-  };
-
   return (
     <>
       <Title>Encode Presets</Title>
@@ -92,7 +53,9 @@ const EncodePresets: React.FC = () => {
       <Space>
         <Button
           onClick={() => {
+            console.log(modalData);
             setModalData(undefined);
+            console.log(modalData);
             setModalState("Create");
           }}
           type="primary"
@@ -103,7 +66,6 @@ const EncodePresets: React.FC = () => {
       <Table<IPreset>
         columns={columns}
         dataSource={presetData}
-        expandable={{ expandedRowRender }}
         onRow={(data) => {
           return {
             onClick: () => {
