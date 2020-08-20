@@ -1,21 +1,36 @@
-import React from "react";
+import React, { useState } from "react";
 import IPreset from "../../types/EncodePreset";
 import Modal from "antd/lib/modal/Modal";
 import { Formik } from "formik";
 import Axios from "axios";
-import { SubmitButton, Form, Input, Table } from "formik-antd";
+import {
+  SubmitButton,
+  Form,
+  Input,
+  Table,
+  AddRowButton,
+  RemoveRowButton,
+} from "formik-antd";
 import { ColumnsType } from "antd/lib/table";
 import IEncodeFormat from "../../types/EncodeProfile";
 import SearchEncodeFormats from "../../components/EncodeFormatSearch";
+import { DeleteOutlined } from "@ant-design/icons";
 
 interface ModalProps {
   state: string;
   onCancel: () => void;
+  onSubmit: () => void;
   data?: IPreset;
   children?: React.ReactNode;
 }
 
-const PresetModal: React.FC<ModalProps> = ({ state, onCancel, data }) => {
+const PresetModal: React.FC<ModalProps> = ({
+  state,
+  onCancel,
+  onSubmit,
+  data,
+}) => {
+  const [searchData, setSearchData] = useState<IEncodeFormat | undefined>();
   let initialValues: IPreset = data
     ? {
         id: data.id,
@@ -30,6 +45,17 @@ const PresetModal: React.FC<ModalProps> = ({ state, onCancel, data }) => {
       };
 
   const encodeColumns: ColumnsType<IEncodeFormat> = [
+    {
+      key: "actions",
+      render: (text, record, index) => (
+        <RemoveRowButton
+          style={{ border: "none" }}
+          icon={<DeleteOutlined />}
+          name="formats"
+          index={index}
+        />
+      ),
+    },
     {
       title: "Name",
       dataIndex: "name",
@@ -64,6 +90,7 @@ const PresetModal: React.FC<ModalProps> = ({ state, onCancel, data }) => {
       onCancel={onCancel}
       title={state}
       okText={state}
+      width={800}
     >
       <Formik
         initialValues={initialValues}
@@ -86,9 +113,8 @@ const PresetModal: React.FC<ModalProps> = ({ state, onCancel, data }) => {
               );
               break;
           }
-
-          alert(JSON.stringify(values, null, 2));
           actions.setSubmitting(false);
+          onSubmit();
         }}
       >
         <Form>
@@ -103,7 +129,20 @@ const PresetModal: React.FC<ModalProps> = ({ state, onCancel, data }) => {
             columns={encodeColumns}
             pagination={false}
           />
-          <SearchEncodeFormats />
+          Add video format:
+          <SearchEncodeFormats
+            onSelect={(option) => {
+              setSearchData(option);
+            }}
+          />
+          <AddRowButton
+            disabled={!searchData ? true : false}
+            name="formats"
+            createNewRow={() => searchData}
+          >
+            Add
+          </AddRowButton>
+          <br />
           <SubmitButton>{state}</SubmitButton>
         </Form>
       </Formik>

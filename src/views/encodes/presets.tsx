@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Typography, Space, Button } from "antd";
 import Table, { ColumnsType } from "antd/lib/table";
 import Axios from "axios";
@@ -33,14 +33,16 @@ const EncodePresets: React.FC = () => {
   );
   const [modalState, setModalState] = useState("");
   const [modalData, setModalData] = useState<IPreset | undefined>(undefined);
-  useState(() => {
+  const [loading, setLoading] = useState(true);
+  useEffect(() => {
     Axios.request<IPreset[]>({
       url: `${process.env.REACT_APP_API_BASEURL}/v1/internal/creator/encodes/presets`,
       withCredentials: true,
     }).then((response) => {
       setPresetData(response.data);
+      setLoading(false);
     });
-  });
+  }, [loading]);
 
   return (
     <>
@@ -79,6 +81,11 @@ const EncodePresets: React.FC = () => {
       <PresetModal
         state={modalState}
         onCancel={() => {
+          setModalData(undefined);
+          setModalState("");
+        }}
+        onSubmit={() => {
+          setLoading(true);
           setModalData(undefined);
           setModalState("");
         }}

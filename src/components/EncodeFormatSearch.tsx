@@ -4,46 +4,40 @@ import { SelectProps } from "antd/es/select";
 import Axios from "axios";
 import IEncodeFormat from "../types/EncodeProfile";
 
-const SearchEncodeFormats: React.FC = () => {
-  const [formats, setFormats] = useState<IEncodeFormat[] | undefined>(
-    undefined
-  );
+interface option {
+  value: string;
+  data: IEncodeFormat;
+}
+
+interface Props {
+  onSelect: (item: IEncodeFormat) => void;
+}
+
+const SearchEncodeFormats: React.FC<Props> = ({ onSelect }) => {
+  const [formats, setFormats] = useState<option[] | undefined>(undefined);
   useState(() => {
     Axios.request<IEncodeFormat[]>({
       url: `${process.env.REACT_APP_API_BASEURL}/v1/internal/creator/encodes/profiles`,
       withCredentials: true,
     }).then((response) => {
-      setFormats(response.data);
+      let options = Array<option>();
+      response.data.forEach((item) => {
+        options.push({ value: item.name, data: item });
+      });
+      setFormats(options);
     });
   });
-
-  const searchResult = (query: string) => {
-    console.log(query);
-    console.log(formats);
-    return formats?.map((item, idx) => {
-      const category = `${query}${idx}`;
-      return {
-        value: category,
-        label: (
-          <div style={{ display: "flex", justifyContent: "space-between" }}>
-            <span>
-              {item.name}
-              <a>{category}</a>
-            </span>
-          </div>
-        ),
-      };
-    });
-  };
-  const [options, setOptions] = useState<SelectProps<object>["options"]>([]);
   return (
     <AutoComplete
-      onSearch={(value) => {
-        setOptions(value ? searchResult(value) : []);
+      style={{ width: 200 }}
+      options={formats}
+      filterOption={(inputValue, option) =>
+        option?.value.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1
+      }
+      onSelect={(value, option) => {
+        onSelect(option.data);
       }}
-    >
-      <Input.Search size="large" placeholder="Enter format name" />
-    </AutoComplete>
+    />
   );
 };
 

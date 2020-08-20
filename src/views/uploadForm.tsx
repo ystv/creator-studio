@@ -81,7 +81,7 @@ const Wizard = () => {
         </FormikStep>
         <FormikStep>
           series ID
-          <InputNumber name="seriesID" id="seriesiD" />
+          <InputNumber name="seriesID" id="seriesID" />
         </FormikStep>
         <FormikStep>
           name
