@@ -147,7 +147,7 @@ const Creation = () => {
                 <Descriptions.Item label="Creator">
                   {videoData.createdBy ? (
                     <a
-                      href={`https://internal.ystv.co.uk/user/${videoData.createdBy.userID}`}
+                      href={`https://my.ystv.co.uk/user/${videoData.createdBy.userID}`}
                     >
                       {videoData.createdBy.userNickname}
                     </a>

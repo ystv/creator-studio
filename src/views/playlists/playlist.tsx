@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from "react";
 import TagColours from "../../utils/tagColours";
-import { IVideo } from "../../types/Video";
-import { Table, Tag, Space } from "antd";
+import { IVideoMeta } from "../../types/Video";
+import { Table, Tag, Space, Typography, Descriptions, Button } from "antd";
 import { IPlaylist } from "../../types/Playlist";
 import Axios from "axios";
 import { useParams, Link, useRouteMatch } from "react-router-dom";
+import PlaylistModifier from "./update";
+
+const { Title, Paragraph } = Typography;
 
 const Playlist: React.FC = () => {
   const { playlistID } = useParams();
@@ -12,6 +15,7 @@ const Playlist: React.FC = () => {
     undefined
   );
   const [loading, setLoading] = useState(true);
+  const [modalVisible, setModalVisible] = useState(false);
   useEffect(() => {
     const getData = async () => {
       await Axios.request<IPlaylist>({
@@ -29,23 +33,64 @@ const Playlist: React.FC = () => {
     return null;
   }
   return (
-    <div>
-      <FileTable videoData={playlistData.files} />
-    </div>
+    <>
+      <>
+        <Title>
+          <Space>
+            {playlistData.name}
+            <Tag
+              color={TagColours(playlistData.status)}
+              key={playlistData.status}
+            >
+              {playlistData.status}
+            </Tag>
+          </Space>
+        </Title>
+        <Paragraph>{playlistData.description}</Paragraph>
+
+        <Descriptions>
+          <Descriptions.Item label="Creator">
+            {playlistData.createdBy ? (
+              <a href={`https://my.ystv.co.uk/user/${playlistData.createdBy}`}>
+                {playlistData.createdBy}
+              </a>
+            ) : (
+              "YSTV Member"
+            )}
+          </Descriptions.Item>
+        </Descriptions>
+        <Button
+          onClick={() => {
+            setModalVisible(true);
+          }}
+        >
+          Update
+        </Button>
+        <PlaylistModifier
+          visible={modalVisible}
+          onCancel={() => {
+            setModalVisible(false);
+          }}
+          onSubmit={() => {
+            setModalVisible(false);
+          }}
+        />
+      </>
+      <VideoTable videoData={playlistData.videos} />
+    </>
   );
 };
 
-const FileTable = (props: any) => {
+const VideoTable = (props: any) => {
   let { url } = useRouteMatch();
-  const [videoData, setVideoData] = useState<IVideo[] | undefined>(undefined);
+  const [videoData, setVideoData] = useState<IVideoMeta[] | undefined>(
+    undefined
+  );
   useEffect(() => {
     setVideoData(props.videoData);
   }, [props.videoData]);
 
-  if (videoData) {
-    return <Table columns={columns(url)} dataSource={videoData} />;
-  }
-  return <Table loading columns={columns("")} />;
+  return <Table columns={columns(url)} dataSource={videoData} />;
 };
 
 const columns = (url: string) => {

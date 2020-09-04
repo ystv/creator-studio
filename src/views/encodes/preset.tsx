@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import IPreset from "../../types/EncodePreset";
-import Modal from "antd/lib/modal/Modal";
+import { Modal } from "antd";
 import { Formik } from "formik";
 import Axios from "axios";
 import {

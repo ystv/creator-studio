@@ -19,6 +19,7 @@ interface IWizard {
   urlName: string;
   description: string;
   tags: string[];
+  preset: number;
   publishType: string;
   broadcastDate: Date;
 }
@@ -31,6 +32,7 @@ const Wizard = () => {
     urlName: "",
     description: "",
     tags: ["Funky", "Epic"],
+    preset: 0,
     publishType: "internal",
     broadcastDate: new Date(),
   };
@@ -92,6 +94,8 @@ const Wizard = () => {
           <Input.TextArea name="description" />
           {/* tags
           <Input name="tags" /> */}
+          preset ID
+          <InputNumber name="preset" />
           publish
           <Input name="publishType" />
           date

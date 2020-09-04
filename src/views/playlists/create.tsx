@@ -1,6 +1,6 @@
 import React from "react";
 import { Formik } from "formik";
-import { IPlaylist } from "../../types/Playlist";
+import { IPlaylistNew } from "../../types/Playlist";
 import { Form, Input, SubmitButton, Radio } from "formik-antd";
 import { InboxOutlined } from "@ant-design/icons";
 import { Upload, message } from "antd";
@@ -15,14 +15,12 @@ const normFile = (e: any) => {
 };
 
 const CreateModal: React.FC = () => {
-  const initialValues: IPlaylist = {
-    playlistID: 0,
+  const initialValues: IPlaylistNew = {
     name: "",
     description: "",
     thumbnail: "",
     status: "internal",
-    createdAt: new Date(),
-    createdBy: 0,
+    videos: [],
   };
   return (
     <>
@@ -31,7 +29,7 @@ const CreateModal: React.FC = () => {
         initialValues={initialValues}
         onSubmit={(values, actions) => {
           console.log({ values, actions });
-          Axios.post<IPlaylist>(
+          Axios.post<IPlaylistNew>(
             `${process.env.REACT_APP_API_BASEURL}/v1/internal/creator/playlists`,
             { ...values },
             { withCredentials: true }
@@ -67,7 +65,7 @@ const CreateModal: React.FC = () => {
                 <Upload.Dragger
                   name="thumbail"
                   multiple={false}
-                  action="/upload.do"
+                  action={`${process.env.REACT_APP_API_BASEURL}/v1/internal/creator/playlists/thumb`}
                   onChange={(info) => {
                     const { status } = info.file;
                     if (status !== "uploading") {

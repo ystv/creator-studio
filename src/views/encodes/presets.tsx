@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { Typography, Space, Button } from "antd";
 import Table, { ColumnsType } from "antd/lib/table";
 import Axios from "axios";
-import IEncodeFormat from "../../types/EncodeProfile";
 import IPreset from "../../types/EncodePreset";
 import PresetModal from "./preset";
 const { Title, Paragraph } = Typography;
@@ -55,9 +54,7 @@ const EncodePresets: React.FC = () => {
       <Space>
         <Button
           onClick={() => {
-            console.log(modalData);
             setModalData(undefined);
-            console.log(modalData);
             setModalState("Create");
           }}
           type="primary"
