@@ -145,11 +145,11 @@ const Creation = () => {
 
               <Descriptions>
                 <Descriptions.Item label="Creator">
-                  {videoData.createdBy ? (
+                  {videoData.createdByID ? (
                     <a
-                      href={`https://my.ystv.co.uk/user/${videoData.createdBy.userID}`}
+                      href={`https://my.ystv.co.uk/user/${videoData.createdByID}`}
                     >
-                      {videoData.createdBy.userNickname}
+                      {videoData.createdByNick}
                     </a>
                   ) : (
                     "YSTV Member"
