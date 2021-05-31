@@ -1,6 +1,6 @@
 export enum AuthRoutes {
   home = "/",
-  upload = "upload",
+  upload = "/upload",
   my = "/my",
   videos = "/videos",
   series = "/series",
