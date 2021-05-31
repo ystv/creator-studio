@@ -38,34 +38,29 @@ const Main: React.FC = (): JSX.Element => {
                 style={{ padding: 24, margin: 0, minHeight: 280 }}
               >
                 <Switch>
-                  <AuthRoute
-                    exact
-                    path={AuthRoutes.home}
-                    Component={Home}
-                    requiredRoles={userRoles.all}
-                  />
-                  <Route path="/upload" component={Wizard} />
-                  <Route path="/my/videos">
+                  <AuthRoute exact path={AuthRoutes.home} component={Home} />
+                  <AuthRoute path={AuthRoutes.upload} component={Wizard} />
+                  <AuthRoute path="/my/videos">
                     <Videos user="my" />
-                  </Route>
-                  <Route path="/videos" component={Videos} />
-                  <Route path="/series" component={Series} />
-                  <Route path="/playlists" component={Playlists} />
-                  <Route path="/encodes/profiles" component={EncodeFormats} />
-                  <Route path="/encodes/presets" component={EncodePresets} />
-                  <Route path="/encodes" component={NotImplemented} />
+                  </AuthRoute>
+                  <AuthRoute path={AuthRoutes.videos} component={Videos} />
+                  <AuthRoute path={AuthRoutes.series} component={Series} />
+                  <AuthRoute path={AuthRoutes.playlists} component={Playlists} />
+                  <AuthRoute path="/encodes/profiles" component={EncodeFormats} />
+                  <AuthRoute path="/encodes/presets" component={EncodePresets} />
+                  <AuthRoute path={AuthRoutes.encodes} component={NotImplemented} />
                   <AuthRoute
                     path={AuthRoutes.moderation}
-                    Component={NotImplemented}
+                    component={NotImplemented}
                     requiredRoles={userRoles.moderator}
                   />
-                  <Route path="/settings" component={Settings} />
+                  <AuthRoute path={AuthRoutes.settings} component={Settings} />
                   <Route
                     path={NonAuthRoutes.unauthorized}
                     component={NotAuthorized}
                   />
                   <Route path="/login" component={Login} />
-                  <Route component={NotFound} />
+                  <AuthRoute component={NotFound} />
                 </Switch>
               </Content>
             </Layout>
