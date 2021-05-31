@@ -127,9 +127,9 @@ const Videos: React.FC<VideosProps> = ({ user = "" }) => {
           loading={loading}
         />
       </Route>
-      <Route path={`${path}/:CreationId`}>
-        <Creation />
-      </Route>
+      <Route path={`${path}/:CreationID`} render={(props) => (
+        <Creation creationID={+props.match.params.CreationID} />
+      )} />
     </Switch>
   );
 };

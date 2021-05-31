@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import Axios from "axios";
 import {
   Table,
   Tag,
@@ -17,28 +16,34 @@ import {
   Cascader,
   Spin,
 } from "antd";
-import { useParams, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import FormatBytes from "../../utils/formatBytes";
 import Capitalise from "../../utils/capitalise";
 import TagColours from "../../utils/tagColours";
 import { IVideo } from "../../types/Video";
+import { Video } from "../../api/api";
 const { Title, Paragraph } = Typography;
 const { Content, Sider } = Layout;
 
-const Creation = () => {
-  let { CreationId } = useParams();
+interface CreationProps {
+  creationID: number
+}
+
+const Creation = ({creationID}:CreationProps):JSX.Element => {
   const [videoData, setVideoData] = useState<IVideo | undefined>(undefined);
   const [cardView, setCardView] = useState("Files");
+
+  console.log("creationID: ", creationID);
+
   useEffect(() => {
-    Axios.request<IVideo>({
-      url: `${process.env.REACT_APP_API_BASEURL}/v1/internal/creator/videos/${CreationId}`,
-      withCredentials: true,
-    }).then((response) => {
-      const { data } = response;
-      data.status = Capitalise(data.status);
-      setVideoData(data);
-    });
-  }, [CreationId]);
+    Video.getVideo(creationID)
+      .then((data) => {
+        setVideoData(data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, [creationID]);
 
   const videoInfo = () => {
     const tabList = [
@@ -195,7 +200,7 @@ const Creation = () => {
         <Breadcrumb.Item>
           <Link to="/videos">Videos</Link>
         </Breadcrumb.Item>
-        <Breadcrumb.Item>{CreationId}</Breadcrumb.Item>
+        <Breadcrumb.Item>{creationID}</Breadcrumb.Item>
       </Breadcrumb>
       {videoInfo()}
     </React.Fragment>
