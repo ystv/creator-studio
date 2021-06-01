@@ -1,7 +1,7 @@
 import Cookies from "js-cookie";
 import Axios from "axios";
 
-const getToken = () =>
+const getToken = (): Promise<APIToken> =>
   new Promise<APIToken>(async (resolve, reject) => {
     let jwt = Cookies.get("token");
     if (!jwt) {

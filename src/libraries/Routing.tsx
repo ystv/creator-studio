@@ -30,6 +30,7 @@ const AuthRoute:React.FC<Props> = (props) => {
     }
 
     let reqRoles: string[]
+    // if a reqRole wasn't given, default to all
     props.requiredRoles ? reqRoles = props.requiredRoles : reqRoles = userRoles.all
     
     const userHasRequiredRole = token?.perms.some((permission) =>
@@ -37,7 +38,7 @@ const AuthRoute:React.FC<Props> = (props) => {
     );
     const message = "Unauthorized";
     if (process.env.REACT_APP_SECURITY_TYPE === "NONE" ||
-    userHasRequiredRole) {
+    userHasRequiredRole || reqRoles === userRoles.all) {
       return (
         <Route
           {...props}
