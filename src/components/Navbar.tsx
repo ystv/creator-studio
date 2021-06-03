@@ -8,6 +8,7 @@ import {
   UploadOutlined,
   CloudServerOutlined,
   SettingOutlined,
+  ExportOutlined,
 } from "@ant-design/icons";
 import "antd/dist/antd.css";
 import "../styles/main.css";
@@ -104,7 +105,6 @@ const Navigation: React.FC = () => {
             <Menu.Divider />
             <Menu.Item
               key="14"
-              style={{ marginTop: "auto" }}
               icon={<SettingOutlined />}
             >
               <Link to="/settings">Settings</Link>
