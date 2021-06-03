@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { AutoComplete } from "antd";
-import Axios from "axios";
 import IEncodeFormat from "../types/EncodeProfile";
 import { Encodes } from "../api/api";
 

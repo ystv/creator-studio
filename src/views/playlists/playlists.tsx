@@ -95,9 +95,9 @@ const Playlists = () => {
           <CreateModal />
         </Modal>
       </Route>
-      <Route path={`${path}/:playlistID`}>
-        <Playlist />
-      </Route>
+      <Route path={`${path}/:PlaylistID`} render={(props) => (
+        <Playlist playlistID={+props.match.params.PlaylistID} />
+      )} />
     </Switch>
   );
 };

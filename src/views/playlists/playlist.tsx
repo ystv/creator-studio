@@ -1,16 +1,19 @@
 import React, { useState, useEffect } from "react";
 import TagColours from "../../utils/tagColours";
 import { IVideoMeta } from "../../types/Video";
-import { Table, Tag, Space, Typography, Descriptions, Button } from "antd";
+import { Table, Tag, Space, Typography, Descriptions, Button, Spin } from "antd";
 import { IPlaylist } from "../../types/Playlist";
 import Axios from "axios";
-import { useParams, Link, useRouteMatch } from "react-router-dom";
+import { Link, useRouteMatch } from "react-router-dom";
 import PlaylistModifier from "./update";
 
 const { Title, Paragraph } = Typography;
 
-const Playlist: React.FC = () => {
-  const { playlistID } = useParams();
+interface PlaylistProps {
+  playlistID: number
+}
+
+const Playlist = ({playlistID}:PlaylistProps):JSX.Element => {
   const [playlistData, setPlaylistData] = useState<IPlaylist | undefined>(
     undefined
   );
@@ -30,7 +33,11 @@ const Playlist: React.FC = () => {
   }, [loading, playlistID]);
 
   if (playlistData === undefined) {
-    return null;
+    return (
+      <div className="loading">
+          <Spin size="large" />
+        </div>
+    );
   }
   return (
     <>
