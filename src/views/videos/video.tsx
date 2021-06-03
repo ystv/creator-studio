@@ -152,7 +152,7 @@ const Creation = ({creationID}:CreationProps):JSX.Element => {
                 <Descriptions.Item label="Creator">
                   {videoData.createdByID ? (
                     <a
-                      href={`https://my.ystv.co.uk/user/${videoData.createdByID}`}
+                      href={`${process.env.REACT_APP_MYTV_BASEURL}/user/${videoData.createdByID}`}
                     >
                       {videoData.createdByNick}
                     </a>

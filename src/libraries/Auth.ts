@@ -7,7 +7,7 @@ const getToken = (): Promise<APIToken> =>
     if (!jwt) {
       try {
         await Axios.get(
-          `${process.env.REACT_APP_SECURITY_ENDPOINT}/api/set_token`,
+          `${process.env.REACT_APP_SECURITY_BASEURL}/api/set_token`,
           {
             withCredentials: true,
           }

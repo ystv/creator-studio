@@ -51,7 +51,7 @@ const Playlist: React.FC = () => {
         <Descriptions>
           <Descriptions.Item label="Creator">
             {playlistData.createdBy ? (
-              <a href={`https://my.ystv.co.uk/user/${playlistData.createdBy}`}>
+              <a href={`${process.env.REACT_APP_MYTV_BASEURL}/user/${playlistData.createdBy}`}>
                 {playlistData.createdBy}
               </a>
             ) : (
