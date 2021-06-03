@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import IPreset from "../../types/EncodePreset";
 import { Modal } from "antd";
 import { Formik } from "formik";
-import Axios from "axios";
 import {
   SubmitButton,
   Form,
@@ -15,6 +14,7 @@ import { ColumnsType } from "antd/lib/table";
 import IEncodeFormat from "../../types/EncodeProfile";
 import SearchEncodeFormats from "../../components/EncodeFormatSearch";
 import { DeleteOutlined } from "@ant-design/icons";
+import { Encodes } from "../../api/api";
 
 interface ModalProps {
   state: string;
@@ -98,19 +98,10 @@ const PresetModal: React.FC<ModalProps> = ({
         onSubmit={(values, actions) => {
           switch (state) {
             case "Create":
-              Axios.post<IPreset>(
-                `${process.env.REACT_APP_API_BASEURL}/v1/internal/creator/encodes/presets`,
-                { ...values },
-                { withCredentials: true }
-              );
+              Encodes.createPreset(values);
               break;
             case "Update":
-              console.log(values);
-              Axios.put<IPreset>(
-                `${process.env.REACT_APP_API_BASEURL}/v1/internal/creator/encodes/presets`,
-                { ...values },
-                { withCredentials: true }
-              );
+              Encodes.updatePreset(values);
               break;
           }
           actions.setSubmitting(false);

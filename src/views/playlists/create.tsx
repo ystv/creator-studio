@@ -4,7 +4,7 @@ import { IPlaylistNew } from "../../types/Playlist";
 import { Form, Input, SubmitButton, Radio } from "formik-antd";
 import { InboxOutlined } from "@ant-design/icons";
 import { Upload, message } from "antd";
-import Axios from "axios";
+import { Playlist } from "../../api/api";
 
 const normFile = (e: any) => {
   console.log("Upload event:", e);
@@ -29,14 +29,14 @@ const CreateModal: React.FC = () => {
         initialValues={initialValues}
         onSubmit={(values, actions) => {
           console.log({ values, actions });
-          Axios.post<IPlaylistNew>(
-            `${process.env.REACT_APP_API_BASEURL}/v1/internal/creator/playlists`,
-            { ...values },
-            { withCredentials: true }
-          ).then((res) => {
+          Playlist.createPlaylist(values)
+          .then((res) => {
             console.log(res);
+          })
+          .catch(err => {
+            console.log(err);
+            alert(JSON.stringify(values, null, 2));
           });
-          alert(JSON.stringify(values, null, 2));
           actions.setSubmitting(false);
         }}
       >

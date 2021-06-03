@@ -1,10 +1,10 @@
 import React from "react";
-import Axios from "axios";
 import { Modal, Upload, message } from "antd";
 import { IPlaylistNew } from "../../types/Playlist";
 import { Formik } from "formik";
 import { Form, Input, Radio } from "formik-antd";
 import { InboxOutlined } from "@ant-design/icons";
+import { Playlist } from "../../api/api";
 
 interface ModalProps {
   visible: boolean;
@@ -35,11 +35,7 @@ const PlaylistModifier: React.FC<ModalProps> = (props) => {
     <Formik
       initialValues={initialValues}
       onSubmit={(values, actions) => {
-        Axios.put<IPlaylistNew>(
-          `${process.env.REACT_APP_API_BASEURL}/v1/internal/creator/playlists`,
-          { ...values },
-          { withCredentials: true }
-        );
+        Playlist.updatePlaylist(values);
         actions.setSubmitting(false);
         props.onSubmit();
       }}

@@ -31,3 +31,10 @@ export interface IVideoFile {
   size: number;
   mimeType: string;
 }
+
+export interface IVideoCalendar {
+  id: number;
+  name: string;
+  status: string;
+  broadcastDate: Date;
+}

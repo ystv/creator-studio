@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { AutoComplete } from "antd";
 import Axios from "axios";
 import IEncodeFormat from "../types/EncodeProfile";
+import { Encodes } from "../api/api";
 
 interface option {
   value: string;
@@ -13,14 +14,11 @@ interface Props {
 }
 
 const SearchEncodeFormats: React.FC<Props> = ({ onSelect }) => {
-  const [formats, setFormats] = useState<option[] | undefined>(undefined);
+  const [formats, setFormats] = useState<option[]>();
   useState(() => {
-    Axios.request<IEncodeFormat[]>({
-      url: `${process.env.REACT_APP_API_BASEURL}/v1/internal/creator/encodes/profiles`,
-      withCredentials: true,
-    }).then((response) => {
+    Encodes.getAllProfiles().then(data => {
       let options = Array<option>();
-      response.data.forEach((item) => {
+      data.forEach((item) => {
         options.push({ value: item.name, data: item });
       });
       setFormats(options);

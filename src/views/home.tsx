@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { Typography, Card, Calendar, Layout, Button, Badge } from "antd";
-import Axios from "axios";
 import FormatBytes from "../utils/formatBytes";
 import NumberWithCommas from "../utils/numberWithCommas";
 import Moment from "moment";
 import "../styles/calendar.css";
 import { Link } from "react-router-dom";
+import ICreatorStats from "../types/Creator";
+import { Creator, Video } from "../api/api";
+import { IVideoCalendar } from "../types/Video";
 
 const { Paragraph } = Typography;
 const { Content, Sider } = Layout;
@@ -34,25 +36,16 @@ const Home = () => {
 
 const StatCard = () => {
   const [creatorStat, setCreatorStat] = useState<ICreatorStats>();
-  const [loading, setLoading] = useState(true);
   useEffect(() => {
-    getData();
-  }, [loading]);
-  interface ICreatorStats {
-    totalVideos: number;
-    totalPendingVideos: number;
-    totalVideoHits: number;
-    totalStorageUsed: number;
-  }
-  const getData = async () => {
-    await Axios.request<ICreatorStats>({
-      url: `${process.env.REACT_APP_API_BASEURL}/v1/internal/creator/stats`,
-      withCredentials: true,
-    }).then((response) => {
-      setCreatorStat(response.data);
-      setLoading(false);
+    Creator.getStats()
+    .then(data => {
+      setCreatorStat(data);
+    })
+    .catch(err => {
+      console.log(err);
     });
-  };
+  }, []);
+  
   if (creatorStat) {
     return (
       <Card title="Statistics">
@@ -84,25 +77,17 @@ const StatCard = () => {
 
 const VideoCalendar = () => {
   const [calendarData, setCalendarData] = useState<IVideoCalendar[]>();
-  const now = Moment();
-  const [selectedMonth, setSelectedMonth] = useState(
-    now.year() + "/" + now.month()
-  );
+  const [selectedDate, setSelectedDate] = useState<moment.Moment>(Moment());
   useEffect(() => {
-    Axios.request<IVideoCalendar[]>({
-      url: `${process.env.REACT_APP_API_BASEURL}/v1/internal/creator/calendar/${selectedMonth}`,
-      withCredentials: true,
-    }).then((response) => {
-      setCalendarData(response.data);
+    Video.getVideosByMonth(selectedDate.year(), selectedDate.month())
+      .then(data => {
+      setCalendarData(data);
     });
-  }, [selectedMonth]);
+  }, [selectedDate]);
 
-  interface IVideoCalendar {
-    id: number;
-    name: string;
-    status: string;
-    broadcastDate: Date;
-  }
+  const refreshMonth = (date: moment.Moment) => {
+    setSelectedDate(date);
+  };
 
   if (calendarData) {
     const dateCellRender = (date: moment.Moment) => {
@@ -128,9 +113,6 @@ const VideoCalendar = () => {
           </ul>
         );
       }
-    };
-    const refreshMonth = (date: moment.Moment) => {
-      setSelectedMonth(date.year() + "/" + (date.month() + 1));
     };
 
     return <Calendar dateCellRender={dateCellRender} onChange={refreshMonth} />;

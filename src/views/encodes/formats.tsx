@@ -8,9 +8,9 @@ import {
   Radio,
   Switch,
 } from "antd";
-import Axios from "axios";
 import IEncodeFormat from "../../types/EncodeProfile";
 import Modal from "antd/lib/modal/Modal";
+import { Encodes } from "../../api/api";
 const { Title, Paragraph } = Typography;
 
 const columns = (id: number) => {
@@ -50,11 +50,9 @@ const EncodeFormats: React.FC = () => {
   );
   const [selectedRec, setSelectedRec] = useState<number | undefined>(undefined);
   useState(() => {
-    Axios.request<IEncodeFormat[]>({
-      url: `${process.env.REACT_APP_API_BASEURL}/v1/internal/creator/encodes/profiles`,
-      withCredentials: true,
-    }).then((response) => {
-      setEncodeData(response.data);
+    Encodes.getAllProfiles()
+    .then((data) => {
+      setEncodeData(data);
     });
   });
 

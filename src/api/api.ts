@@ -2,9 +2,9 @@ import axios, { AxiosResponse } from "axios";
 import ICreatorStats from "../types/Creator";
 import IPreset from "../types/EncodePreset";
 import IEncodeFormat from "../types/EncodeProfile";
-import { IPlaylist } from "../types/Playlist";
+import { IPlaylist, IPlaylistNew } from "../types/Playlist";
 import { ISeries } from "../types/Series";
-import { IVideo, IVideoMeta } from "../types/Video";
+import { IVideo, IVideoCalendar, IVideoMeta } from "../types/Video";
 
 
 
@@ -24,7 +24,8 @@ const reqs = {
 
 export const Video = {
   getVideos: (): Promise<IVideoMeta[]> => reqs.get("/v1/internal/creator/videos"),
-  getVideosByCurrentUser: (): Promise<IVideo> => reqs.get("/v1/internal/creator/videos/my"),
+  getVideosByCurrentUser: (): Promise<IVideo[]> => reqs.get("/v1/internal/creator/videos/my"), //TODO: Implement get by user ID and move this endpoint
+  getVideosByMonth: (year: number, month: number): Promise<IVideoCalendar[]> => reqs.get(`/v1/internal/creator/calendar/${year}/${month}`),
   getVideo: (id: number): Promise<IVideo> => reqs.get(`/v1/internal/creator/videos/${id}`),
   createVideo: (v: IVideo): Promise<IVideo> => reqs.post("/v1/internal/videos", v),
   updateVideo: (v: IVideo): Promise<IVideo> => reqs.put("/v1/internal/creator/videos", v)
@@ -37,8 +38,8 @@ export const Series = {
 
 export const Playlist = {
   getPlaylists: (): Promise<IPlaylist[]> => reqs.get("/v1/internal/creator/playlists"),
-  createPlaylist: (p: IPlaylist): Promise<IPlaylist> => reqs.post("/v1/internal/creator/playlists", p),
-  updatePlaylist: (p: IPlaylist): Promise<IPlaylist> => reqs.put("/v1/internal/creator/playlists", p),
+  createPlaylist: (p: IPlaylistNew): Promise<IPlaylist> => reqs.post("/v1/internal/creator/playlists", p),
+  updatePlaylist: (p: IPlaylistNew): Promise<IPlaylist> => reqs.put("/v1/internal/creator/playlists", p),
   getPlaylist: (id: number): Promise<IPlaylist> => reqs.get(`/v1/internal/creator/playlist/${id}`)
 }
 
