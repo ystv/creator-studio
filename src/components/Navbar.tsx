@@ -8,7 +8,6 @@ import {
   UploadOutlined,
   CloudServerOutlined,
   SettingOutlined,
-  ExportOutlined,
 } from "@ant-design/icons";
 import "antd/dist/antd.css";
 import "../styles/main.css";
