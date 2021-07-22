@@ -18,12 +18,12 @@ pipeline {
                         tag pattern: "^v(?P<major>0|[1-9]\\d*)\\.(?P<minor>0|[1-9]\\d*)\\.(?P<patch>0|[1-9]\\d*)", comparator: "REGEXP" // Checking if it is main semantic version release
                     }
                     environment {
-                        TARGET_SERVER = credentials('dev-server-address')
-                        TARGET_PATH = credentials('dev-server-path')
+                        TARGET_SERVER = credentials('prod-server-address')
+                        TARGET_PATH = credentials('prod-server-path')
                     }
                     steps {
-                        sshagent(credentials: ['dev-server-key']) {
-                            sh 'rsync -av --delete-after build deploy@$TARGET_SERVER:$TARGET_PATH'
+                        sshagent(credentials: ['prod-server-key']) {
+                            sh 'rsync -av --delete-after build deploy@$TARGET_SERVER:$TARGET_PATH/creator-studio'
                         }
                     }
                 }
@@ -35,12 +35,12 @@ pipeline {
                         }
                     }
                     environment {
-                        TARGET_SERVER = credentials('prod-server-address')
-                        TARGET_PATH = credentials('prod-server-path')
+                        TARGET_SERVER = credentials('dev-server-address')
+                        TARGET_PATH = credentials('dev-server-path')
                     }
                     steps {
-                        sshagent(credentials: ['prod-server-key']) {
-                            sh 'rsync -av --delete-after build deploy@$TARGET_SERVER:$TARGET_PATH'
+                        sshagent(credentials: ['dev-server-key']) {
+                            sh 'rsync -av --delete-after build deploy@$TARGET_SERVER:$TARGET_PATH/creator-studio'
                         }
                     }
                 }
