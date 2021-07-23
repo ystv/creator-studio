@@ -7,12 +7,57 @@ pipeline {
             }
         }
         stage('Build') {
-            steps {
-                sh 'yarn run build'
+            stages {
+                stage('Staging') {
+                    when {
+                        branch 'master'
+                        not {
+                            tag pattern: "^v(?P<major>0|[1-9]\\d*)\\.(?P<minor>0|[1-9]\\d*)\\.(?P<patch>0|[1-9]\\d*)", comparator: "REGEXP" // Checking if it is main semantic version release
+                        }
+                    }
+                    environment {
+                        APP_ENV = credentials('creator-staging-env')
+                    }
+                    steps {
+                        sh 'cp $APP_ENV .env'
+                        sh 'yarn run build'
+                        sh 'rm .env'
+                    }
+                }
+                stage('Production') {
+                    when {
+                        tag pattern: "^v(?P<major>0|[1-9]\\d*)\\.(?P<minor>0|[1-9]\\d*)\\.(?P<patch>0|[1-9]\\d*)", comparator: "REGEXP" // Checking if it is main semantic version release
+                    }
+                    environment {
+                        APP_ENV = credentials('creator-prod-env')
+                    }
+                    steps {
+                        sh 'cp $APP_ENV .env'
+                        sh 'yarn run build'
+                        sh 'rm .env'
+                    }
+                }
             }
         }
         stage('Deploy') {
             stages {
+                stage('Staging') {
+                    when {
+                        branch 'master'
+                        not {
+                            tag pattern: "^v(?P<major>0|[1-9]\\d*)\\.(?P<minor>0|[1-9]\\d*)\\.(?P<patch>0|[1-9]\\d*)", comparator: "REGEXP" // Checking if it is main semantic version release
+                        }
+                    }
+                    environment {
+                        TARGET_SERVER = credentials('staging-server-address')
+                        TARGET_PATH = credentials('staging-server-path')
+                    }
+                    steps {
+                        sshagent(credentials: ['staging-server-key']) {
+                            sh 'rsync -av --delete-after build deploy@$TARGET_SERVER:$TARGET_PATH/creator-studio'
+                        }
+                    }
+                }
                 stage('Production') {
                     when {
                         tag pattern: "^v(?P<major>0|[1-9]\\d*)\\.(?P<minor>0|[1-9]\\d*)\\.(?P<patch>0|[1-9]\\d*)", comparator: "REGEXP" // Checking if it is main semantic version release
@@ -23,23 +68,6 @@ pipeline {
                     }
                     steps {
                         sshagent(credentials: ['prod-server-key']) {
-                            sh 'rsync -av --delete-after build deploy@$TARGET_SERVER:$TARGET_PATH/creator-studio'
-                        }
-                    }
-                }
-                stage('Development') {
-                    when {
-                        branch 'master'
-                        not {
-                            tag pattern: "^v(?P<major>0|[1-9]\\d*)\\.(?P<minor>0|[1-9]\\d*)\\.(?P<patch>0|[1-9]\\d*)", comparator: "REGEXP" // Checking if it is main semantic version release
-                        }
-                    }
-                    environment {
-                        TARGET_SERVER = credentials('dev-server-address')
-                        TARGET_PATH = credentials('dev-server-path')
-                    }
-                    steps {
-                        sshagent(credentials: ['dev-server-key']) {
                             sh 'rsync -av --delete-after build deploy@$TARGET_SERVER:$TARGET_PATH/creator-studio'
                         }
                     }
