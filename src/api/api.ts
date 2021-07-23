@@ -4,9 +4,8 @@ import IPreset from "../types/EncodePreset";
 import IEncodeFormat from "../types/EncodeProfile";
 import { IPlaylist, IPlaylistNew } from "../types/Playlist";
 import { ISeries } from "../types/Series";
-import { IVideo, IVideoCalendar, IVideoMeta } from "../types/Video";
-
-
+import { IUser } from "../types/User";
+import { INewVideo, IVideo, IVideoCalendar, IVideoMeta } from "../types/Video";
 
 const instance = axios.create({
   baseURL: process.env.REACT_APP_API_BASEURL,
@@ -27,7 +26,7 @@ export const Video = {
   getVideosByCurrentUser: (): Promise<IVideo[]> => reqs.get("/v1/internal/creator/videos/my"), //TODO: Implement get by user ID and move this endpoint
   getVideosByMonth: (year: number, month: number): Promise<IVideoCalendar[]> => reqs.get(`/v1/internal/creator/calendar/${year}/${month}`),
   getVideo: (id: number): Promise<IVideo> => reqs.get(`/v1/internal/creator/videos/${id}`),
-  createVideo: (v: IVideo): Promise<IVideo> => reqs.post("/v1/internal/videos", v),
+  createVideo: (v: INewVideo): Promise<IVideo> => reqs.post("/v1/internal/videos", v),
   updateVideo: (v: IVideo): Promise<IVideo> => reqs.put("/v1/internal/creator/videos", v)
 }
 
@@ -52,4 +51,8 @@ export const Encodes = {
 
 export const Creator = {
   getStats: (): Promise<ICreatorStats> => reqs.get("/v1/internal/creator/stats")
+}
+
+export const User = {
+  getUser: (): Promise<IUser> => reqs.get("/v1/internal/people/user")
 }

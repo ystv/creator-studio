@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Typography, Space, Button } from "antd";
 import Table, { ColumnsType } from "antd/lib/table";
-import Axios from "axios";
 import IPreset from "../../types/EncodePreset";
 import PresetModal from "./preset";
+import { Encodes } from "../../api/api";
 const { Title, Paragraph } = Typography;
 
 const columns: ColumnsType<IPreset> = [
@@ -34,11 +34,9 @@ const EncodePresets: React.FC = () => {
   const [modalData, setModalData] = useState<IPreset | undefined>(undefined);
   const [loading, setLoading] = useState(true);
   useEffect(() => {
-    Axios.request<IPreset[]>({
-      url: `${process.env.REACT_APP_API_BASEURL}/v1/internal/creator/encodes/presets`,
-      withCredentials: true,
-    }).then((response) => {
-      setPresetData(response.data);
+    Encodes.getAllPresets()
+    .then(res => {
+      setPresetData(res);
       setLoading(false);
     });
   }, [loading]);

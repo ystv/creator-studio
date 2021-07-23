@@ -8,24 +8,11 @@ import { Formik, Form, FormikConfig } from "formik";
 import Uppy from "@uppy/core";
 import Tus from "@uppy/tus";
 import { Dashboard } from "@uppy/react";
-import Axios from "axios";
-
-// export default UploadForm;
-
-interface IWizard {
-  fileID: string;
-  seriesID: number;
-  name: string;
-  urlName: string;
-  description: string;
-  tags: string[];
-  preset: number;
-  publishType: string;
-  broadcastDate: Date;
-}
+import { Video } from "../api/api";
+import { INewVideo } from "../types/Video";
 
 const Wizard = () => {
-  const initialValues: IWizard = {
+  const initialValues: INewVideo = {
     fileID: "",
     seriesID: 1,
     name: "",
@@ -67,11 +54,7 @@ const Wizard = () => {
         initialValues={initialValues}
         onSubmit={(values, actions) => {
           values.fileID = fileID;
-          Axios.post<IWizard>(
-            `${process.env.REACT_APP_API_BASEURL}/v1/internal/creator/videos`,
-            { ...values },
-            { withCredentials: true }
-          ).then((res) => {
+          Video.createVideo(values).then((res) => {
             console.log(res);
           });
           alert(JSON.stringify(values, null, 2));
@@ -107,13 +90,13 @@ const Wizard = () => {
 };
 
 interface FormikStepProps
-  extends Pick<FormikConfig<IWizard>, "children" | "validationSchema"> {}
+  extends Pick<FormikConfig<INewVideo>, "children" | "validationSchema"> {}
 
 function FormikStep({ children }: FormikStepProps) {
   return <>{children}</>;
 }
 
-function FormikStepper({ children, ...props }: FormikConfig<IWizard>) {
+function FormikStepper({ children, ...props }: FormikConfig<INewVideo>) {
   const childrenArray = React.Children.toArray(children) as React.ReactElement<
     FormikStepProps
   >[];
