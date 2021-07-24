@@ -32,6 +32,19 @@ export interface IVideoFile {
   mimeType: string;
 }
 
+export interface INewVideo {
+  fileID: string;
+  seriesID: number;
+  name: string;
+  urlName: string;
+  description: string;
+  tags: string[];
+  preset: number;
+  publishType: string;
+  broadcastDate: Date;
+}
+
+
 export interface IVideoCalendar {
   id: number;
   name: string;

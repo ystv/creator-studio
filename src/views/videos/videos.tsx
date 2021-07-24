@@ -131,7 +131,7 @@ const Videos: React.FC<VideosProps> = ({ user = "" }) => {
   return (
     <Switch>
       <Route exact path={path}>
-        <Title>{user ? (user === "" ? user : "My") : "YSTV"} Videos</Title>
+        <Title>{user ? (user === "" ? user : "My") : process.env.REACT_APP_TITLE} Videos</Title>
         <Space style={{ marginBottom: 16 }}>
           <Button>Move to</Button>
           <Button>Disable</Button>

@@ -1,0 +1,14 @@
+version: "3"
+services:
+  creator:
+    build:
+      dockerfile: Dockerfile
+      context: .
+    environment:
+      - REACT_APP_API_BASEURL
+      - REACT_APP_SECURITY_TYPE
+      - REACT_APP_SECURITY_ENDPOINT
+      - REACT_APP_UPLOAD_ENDPOINT
+      - REACT_APP_TITLE
+    ports:
+      - "8080:80"

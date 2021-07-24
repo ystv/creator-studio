@@ -1,17 +1,12 @@
 import Cookies from "js-cookie";
-import Axios from "axios";
+import { Token } from "../api/auth";
 
 const getToken = (): Promise<APIToken> =>
   new Promise<APIToken>(async (resolve, reject) => {
     let jwt = Cookies.get("token");
     if (!jwt) {
       try {
-        await Axios.get(
-          `${process.env.REACT_APP_SECURITY_BASEURL}/api/set_token`,
-          {
-            withCredentials: true,
-          }
-        );
+        await Token.getToken()
       } catch (err) {
         return reject(err);
       }

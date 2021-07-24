@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Typography, Table } from "antd";
-import Axios from "axios";
+import { Series as s } from "../../api/api";
 import { ISeries } from "../../types/Series";
 const { Title } = Typography;
 
@@ -39,11 +39,9 @@ const SeriesTable = () => {
     undefined
   );
   useEffect(() => {
-    Axios.request<ISeries[]>({
-      url: `${process.env.REACT_APP_API_BASEURL}/v1/internal/creator/series`,
-      withCredentials: true,
-    }).then((response) => {
-      setSeriesData(response.data);
+    s.getAllSeries()
+    .then(res => {
+      setSeriesData(res);
     });
   }, []);
 

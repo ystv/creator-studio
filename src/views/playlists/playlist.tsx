@@ -3,9 +3,9 @@ import TagColours from "../../utils/tagColours";
 import { IVideoMeta } from "../../types/Video";
 import { Table, Tag, Space, Typography, Descriptions, Button, Spin } from "antd";
 import { IPlaylist } from "../../types/Playlist";
-import Axios from "axios";
 import { Link, useRouteMatch } from "react-router-dom";
 import PlaylistModifier from "./update";
+import { Playlist as p } from "../../api/api";
 
 const { Title, Paragraph } = Typography;
 
@@ -21,11 +21,9 @@ const Playlist = ({playlistID}:PlaylistProps):JSX.Element => {
   const [modalVisible, setModalVisible] = useState(false);
   useEffect(() => {
     const getData = async () => {
-      await Axios.request<IPlaylist>({
-        url: `${process.env.REACT_APP_API_BASEURL}/v1/internal/creator/playlists/${playlistID}`,
-      }).then((response) => {
-        const { data } = response;
-        setPlaylistData(data);
+      await p.getPlaylist(playlistID)
+      .then(res => {
+        setPlaylistData(res);
       });
       setLoading(false);
     };

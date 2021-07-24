@@ -1,107 +1,78 @@
 pipeline {
     agent any
-
     stages {
         stage('Install Dependencies') {
             steps {
                 sh 'yarn --no-progress --non-interactive --skip-integrity-check --frozen-lockfile install'
             }
         }
-
         stage('Build') {
-            steps {
-                sh 'yarn run build'
+            stages {
+                stage('Staging') {
+                    when {
+                        branch 'master'
+                        not {
+                            expression { return env.TAG_NAME ==~ /v(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)/ } // Checking if it is main semantic version release
+                        }
+                    }
+                    environment {
+                        APP_ENV = credentials('creator-staging-env')
+                    }
+                    steps {
+                        sh 'cp $APP_ENV .env'
+                        sh 'yarn run build'
+                        sh 'rm .env'
+                    }
+                }
+                stage('Production') {
+                    when {
+                        expression { return env.TAG_NAME ==~ /v(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)/ } // Checking if it is main semantic version release
+                    }
+                    environment {
+                        APP_ENV = credentials('creator-prod-env')
+                    }
+                    steps {
+                        sh 'cp $APP_ENV .env'
+                        sh 'yarn run build'
+                        sh 'rm .env'
+                    }
+                }
             }
         }
-
         stage('Deploy') {
-            steps {
-                sshagent(credentials: ['web']) {
-                    sh 'rsync -av --delete-after build deploy@web:/data/webs/creator-studio'
+            stages {
+                stage('Staging') {
+                    when {
+                        branch 'master'
+                        not {
+                            expression { return env.TAG_NAME ==~ /v(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)/ } // Checking if it is main semantic version release
+                        }
+                    }
+                    environment {
+                        TARGET_SERVER = credentials('staging-server-address')
+                        TARGET_PATH = credentials('staging-server-path')
+                    }
+                    steps {
+                        sshagent(credentials: ['staging-server-key']) {
+                            sh 'rsync -av --delete-after build deploy@$TARGET_SERVER:$TARGET_PATH/creator-studio'
+                        }
+                    }
+                }
+                stage('Production') {
+                    when {
+                        expression { return env.TAG_NAME ==~ /v(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)/ } // Checking if it is main semantic version release
+                    }
+                    environment {
+                        TARGET_SERVER = credentials('prod-server-address')
+                        TARGET_PATH = credentials('prod-server-path')
+                    }
+                    steps {
+                        sshagent(credentials: ['prod-server-key']) {
+                            sh 'rsync -av --delete-after build deploy@$TARGET_SERVER:$TARGET_PATH/creator-studio'
+                        }
+                    }
                 }
             }
         }
     }
 }
-
-// pipeline {
-//     agent any
-
-//     stages {
-//         stage('Update Components') {
-//             when {
-//                 anyOf {
-//                     branch 'master'
-//                     }
-//                 }
-//             steps {
-//                 echo "Updating"
-//                 sh "docker pull nginx:stable-alpine"
-//                 sh "docker pull node:alpine"
-//             }
-//         }
-//         stage('Build') {
-//             when {
-//                 anyOf {
-//                     branch 'master'
-//                     }
-//                 }
-//             steps {
-//                 echo "Building"
-//                 sh "docker build --build-arg BUILD_ID=${env.BUILD_ID} ."
-//             }
-//         }
-//         stage('Cleanup') {
-//             when {
-//                 anyOf {
-//                     branch 'master'
-//                     }
-//                 }
-//             steps {
-//                 echo "Uploading To Registry"
-//                 sh "docker push localhost:5000/ystv/creator-studio:$BUILD_ID" // Uploaded to registry
-//                 echo "Performing Cleanup"
-//                 script {
-//                     try {
-//                         sh "docker image prune -f --filter label=site=creator-studio --filter label=stage=builder --filter label=build=\$((${env.BUILD_NUMBER} - 1))" // Removing the previous local builder image
-//                     }
-//                     catch (err) {
-//                         echo "Couldn't find old build to delete"
-//                         echo err.getMessage()
-//                     }
-//                 }
-//                 sh "docker image rm localhost:5000/ystv/creator-studio:$BUILD_ID" // Removing the local builder image
-//             }
-//         }
-//         stage('Deploy') {
-//             when {
-//                 anyOf {
-//                     branch 'master'
-//                     }
-//                 }
-//             steps {
-//                 echo "Deploying"
-//                 sh "docker pull localhost:5000/ystv/creator-studio:$BUILD_ID" // Pulling image from local registry
-//                 script {
-//                     try {
-//                         sh "docker kill ystv-creator-studio" // Stop old container
-//                     }
-//                     catch (err) {
-//                         echo "Couldn't find container to stop"
-//                         echo err.getMessage()
-//                     }
-//                 }
-//                 sh "docker run -d --rm -p 8050:80 --name ystv-creator-studio localhost:5000/ystv/creator-studio:$BUILD_ID" // Deploying site
-//                 sh 'docker image prune -a -f --filter "label=site=creator-studio" --filter "label=stage=final"' // remove old image
-//             }
-//         }
-//     }
-//     post {
-//         success {
-//             echo 'Very cash-money'
-//         }
-//         failure {
-//             echo 'That is not ideal'
-//         }
-//     }
-// }

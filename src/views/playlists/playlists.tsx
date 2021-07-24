@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { Switch, Route, Link, useRouteMatch } from "react-router-dom";
 import { Typography, Button, Table, Space, Tag } from "antd";
-import Axios from "axios";
 import { IPlaylist } from "../../types/Playlist";
 import Modal from "antd/lib/modal/Modal";
 import CreateModal from "./create";
 import Capitalise from "../../utils/capitalise";
 import TagColours from "../../utils/tagColours";
 import Playlist from "./playlist";
+import { Playlist as p } from "../../api/api";
 const { Title } = Typography;
 
 const Playlists = () => {
@@ -22,15 +22,11 @@ const Playlists = () => {
   let { path, url } = useRouteMatch();
 
   const getData = async () => {
-    await Axios.request<IPlaylist[]>({
-      url: `${process.env.REACT_APP_API_BASEURL}/v1/internal/creator/playlists`,
-      withCredentials: true,
-    }).then((response) => {
-      const { data } = response;
-      data.forEach((playlist) => {
+    await p.getPlaylists().then(res => {
+      res.forEach((playlist) => {
         playlist.status = Capitalise(playlist.status);
       });
-      setPlaylistMeta(data);
+      setPlaylistMeta(res);
     });
     setLoading(false);
   };
