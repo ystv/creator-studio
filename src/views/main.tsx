@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import GlobalNavigation from "../components/GlobalNavigation";
 import Navbar from "../components/Navbar";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
@@ -13,7 +13,7 @@ import Series from "../views/series/series";
 import Playlists from "../views/playlists/playlists";
 import NotFound from "../views/NotFound";
 import AuthRoute from "../libraries/Routing";
-import userRoles from "../types/User";
+import userRoles, { IUser } from "../types/User";
 import NotImplemented from "../views/NotImplemented";
 import { AuthRoutes, NonAuthRoutes } from "../libraries/Routes";
 import NotAuthorized from "./NotAuthorized";
@@ -21,12 +21,41 @@ import Login from "./login";
 import Wizard from "../views/uploadForm";
 import EncodeFormats from "./encodes/formats";
 import EncodePresets from "./encodes/presets";
+import { User } from "../api/api";
+import Loading from "./loading";
 
 const { Content } = Layout;
 
 const Main: React.FC = (): JSX.Element => {
+  const [userData, setUserData] = useState<IUser>();
+  const [motd, setMotd] = useState<string>("Loading...");
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>();
+  useEffect(() => {
+    User.getUser()
+    .then(data => {
+      setUserData(data);
+      setIsLoggedIn(true);
+    })
+    .catch(err => {
+      if (err.response) {
+        // The request was made and the server responded with a status code
+        // that falls out of the range of 2xx
+        if (err.response.status === 500) {
+          setMotd("Server side error, message computing team");
+        } else {
+          setMotd("No session found")
+          setIsLoggedIn(false);
+        }
+      } else {
+        setMotd("Failed to get user data: " + err.message);
+      }
+    });
+  }, [isLoggedIn]);
+
   return (
-    <UserProvider>
+    <>
+    {(isLoggedIn === undefined) ? <Loading msg={motd} /> : (isLoggedIn === true) ? (
+      <UserProvider user={userData}>
       <Router>
         <Layout style={{ height: "100vh" }}>
           <GlobalNavigation />
@@ -68,6 +97,9 @@ const Main: React.FC = (): JSX.Element => {
         </Layout>
       </Router>
     </UserProvider>
+    ) : <Login />}
+    
+    </>
   );
 };
 

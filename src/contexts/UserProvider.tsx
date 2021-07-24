@@ -1,20 +1,33 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import UserContext from "./UserContext";
-import Axios from "axios";
 import { IUser } from "../types/User";
 
-const UserProvider: React.FC = (props) => {
-  const [userData, setUserData] = useState<IUser | null>(null);
-  useEffect(() => {
-    Axios.request<IUser>({
-      url: `${process.env.REACT_APP_API_BASEURL}/v1/internal/people/user`,
-      withCredentials: true,
-    }).then((response) => {
-      setUserData(response.data);
-    });
-  }, []);
+interface ProviderProps {
+  user?: IUser
+}
+
+const UserProvider: React.FC<ProviderProps> = (props) => {
+  let defaultUser: IUser = {
+    userID: 0,
+    nickname: "Dev",
+    avatar: "",
+    firstName: "Development",
+    lastName: "Account",
+    permissions: [
+      {
+        permissionID: 0,
+        name: "dev"
+      }
+    ]
+  }
+  let user: IUser
+  if (props.user === undefined) {
+    user = defaultUser
+  } else {
+    user = props.user
+  }
   const { Provider } = UserContext;
-  return <Provider value={userData}>{props.children}</Provider>;
+  return <Provider value={user}>{props.children}</Provider>;
 };
 
 export default UserProvider;

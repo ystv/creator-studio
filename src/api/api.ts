@@ -4,6 +4,7 @@ import IPreset from "../types/EncodePreset";
 import IEncodeFormat from "../types/EncodeProfile";
 import { IPlaylist, IPlaylistNew } from "../types/Playlist";
 import { ISeries } from "../types/Series";
+import { IUser } from "../types/User";
 import { IVideo, IVideoCalendar, IVideoMeta } from "../types/Video";
 
 
@@ -20,6 +21,10 @@ const reqs = {
   post: (path: string, body: {}) => instance.post(path, body).then(resBody),
   put: (path: string, body: {}) => instance.put(path, body).then(resBody),
   delete: (path: string) => instance.delete(path).then(resBody),
+}
+
+export const User = {
+  getUser: (): Promise<IUser> => reqs.get("/v1/internal/people/user")
 }
 
 export const Video = {

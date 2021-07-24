@@ -8,7 +8,6 @@ import {
   UploadOutlined,
   CloudServerOutlined,
   SettingOutlined,
-  ExportOutlined,
 } from "@ant-design/icons";
 import "antd/dist/antd.css";
 import "../styles/main.css";
@@ -20,7 +19,7 @@ const { SubMenu } = Menu;
 
 const Navigation: React.FC = () => {
   const requiredRoles = userRoles.all;
-  const [token, setToken] = useState<APIToken | null>(null);
+  const [token, setToken] = useState<APIToken>();
   const [isLoading, setIsLoading] = useState(true);
   useEffect(() => {
     async function getData() {
@@ -36,7 +35,7 @@ const Navigation: React.FC = () => {
   }, []);
 
   if (!isLoading) {
-    if (token === null) {
+    if (token === undefined) {
       return null;
     }
     const userHasRequiredRole = token.perms.some((role) =>
