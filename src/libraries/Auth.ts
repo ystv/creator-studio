@@ -12,22 +12,22 @@ const getToken = (): Promise<APIToken> =>
       }
       jwt = Cookies.get("token");
     }
-    let token;
     try {
       if (jwt) {
         const base64Url = jwt.split(".")[1];
         const base64 = base64Url.replace("-", "+").replace("_", "/");
-        token = JSON.parse(window.atob(base64));
+        let token: APIToken = JSON.parse(window.atob(base64));
+        
+        if (Date.now() >= token.exp * 1000) {
+          return reject(new Error("expired token"));
+        }
+        return resolve(token);
       }
     } catch (error) {
-      console.log(error);
+      return reject(new Error("failed to get token: " + error))
     }
-    if (token) {
-      return resolve(token as APIToken);
-    } else {
-      return reject(new Error("Failed to get token"));
-    }
-  });
+  }
+  );
 
 export default getToken;
 

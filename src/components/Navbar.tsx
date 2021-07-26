@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
 import { Layout, Menu } from "antd";
 import {
@@ -11,38 +11,11 @@ import {
 } from "@ant-design/icons";
 import "antd/dist/antd.css";
 import "../styles/main.css";
-import getToken, { APIToken } from "../libraries/Auth";
-import userRoles from "../types/User";
 
 const { Sider } = Layout;
 const { SubMenu } = Menu;
 
 const Navigation: React.FC = () => {
-  const requiredRoles = userRoles.all;
-  const [token, setToken] = useState<APIToken>();
-  const [isLoading, setIsLoading] = useState(true);
-  useEffect(() => {
-    async function getData() {
-      getToken()
-        .then((gotToken) => {
-          setToken(gotToken);
-        })
-        .finally(() => {
-          setIsLoading(false);
-        });
-    }
-    getData();
-  }, []);
-
-  if (!isLoading) {
-    if (token === undefined) {
-      return null;
-    }
-    const userHasRequiredRole = token.perms.some((role) =>
-      requiredRoles.includes(role.name)
-    );
-
-    if (process.env.REACT_APP_SECURITY_TYPE === "NONE" || userHasRequiredRole) {
       return (
         <Sider width={200} className="site-layout-background">
           <Menu
@@ -111,9 +84,6 @@ const Navigation: React.FC = () => {
           </Menu>
         </Sider>
       );
-    }
-  }
-  return null;
 };
 
 export default Navigation;

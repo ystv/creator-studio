@@ -1,11 +1,12 @@
 import React from "react";
+import { BrowserRouter as Router } from "react-router-dom";
 import Main from "./views/main";
 
-function App() {
+const App:React.FC = ():JSX.Element => {
   return (
-    <div className="App">
+    <Router>
       <Main />
-    </div>
+    </Router>
   );
 }
 

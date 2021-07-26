@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import GlobalNavigation from "../components/GlobalNavigation";
 import Navbar from "../components/Navbar";
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import { Switch, Route } from "react-router-dom";
 import { Layout } from "antd";
 import "antd/dist/antd.css";
 import "../styles/main.css";
@@ -52,11 +52,14 @@ const Main: React.FC = (): JSX.Element => {
     });
   }, [isLoggedIn]);
 
-  return (
-    <>
-    {(isLoggedIn === undefined) ? <Loading msg={motd} /> : (isLoggedIn === true) ? (
-      <UserProvider user={userData}>
-      <Router>
+  switch(isLoggedIn) {
+    case undefined:
+      return <Loading msg={motd} />
+    case false:
+      return <Login />
+    case true:
+      return (
+        <UserProvider user={userData}>
         <Layout style={{ height: "100vh" }}>
           <GlobalNavigation />
           <Layout>
@@ -95,12 +98,9 @@ const Main: React.FC = (): JSX.Element => {
             </Layout>
           </Layout>
         </Layout>
-      </Router>
     </UserProvider>
-    ) : <Login />}
-    
-    </>
-  );
+      )
+  }
 };
 
 export default Main;
