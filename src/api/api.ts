@@ -26,7 +26,7 @@ export const Video = {
   getVideosByCurrentUser: (): Promise<IVideo[]> => reqs.get("/v1/internal/creator/videos/my"), //TODO: Implement get by user ID and move this endpoint
   getVideosByMonth: (year: number, month: number): Promise<IVideoCalendar[]> => reqs.get(`/v1/internal/creator/calendar/${year}/${month}`),
   getVideo: (id: number): Promise<IVideo> => reqs.get(`/v1/internal/creator/videos/${id}`),
-  createVideo: (v: INewVideo): Promise<IVideo> => reqs.post("/v1/internal/videos", v),
+  createVideo: (v: INewVideo): Promise<IVideo> => reqs.post("/v1/internal/creator/videos", v),
   updateVideo: (v: IVideo): Promise<IVideo> => reqs.put("/v1/internal/creator/videos", v)
 }
 

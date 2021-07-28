@@ -33,8 +33,6 @@ const Creation = ({creationID}:CreationProps):JSX.Element => {
   const [videoData, setVideoData] = useState<IVideo | undefined>(undefined);
   const [cardView, setCardView] = useState("Files");
 
-  console.log("creationID: ", creationID);
-
   useEffect(() => {
     Video.getVideo(creationID)
       .then((data) => {
