@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useHistory } from "react-router-dom";
 import "../styles/form.css";
 import "@uppy/core/dist/style.css";
 import "@uppy/dashboard/dist/style.css";
@@ -37,8 +38,12 @@ const Wizard = () => {
     retryDelays: [0, 1000, 3000, 5000],
   });
 
-  uppy.on("complete", (result) => {
-    const video = result.successful[0].response;
+  uppy.on("complete", (res) => {
+    if (res.successful.length === 0) {
+      console.log("no succesful uploads");
+      return
+    }
+    const video = res.successful[0].response;
     if (video) {
       if (video.uploadURL) {
         fileID = video.uploadURL.substring(
@@ -48,17 +53,23 @@ const Wizard = () => {
     }
   });
 
+  const history = useHistory();
+
   return (
     <>
       <FormikStepper
         initialValues={initialValues}
         onSubmit={(values, actions) => {
           values.fileID = fileID;
-          Video.createVideo(values).then((res) => {
-            console.log(res);
+          Video.createVideo(values)
+          .then(res => {
+            actions.setSubmitting(false);
+            history.push(`/videos/${res.id}`);
+          })
+          .catch(err => {
+            alert(JSON.stringify(err, null, 2));
+            actions.setSubmitting(false);
           });
-          alert(JSON.stringify(values, null, 2));
-          actions.setSubmitting(false);
         }}
       >
         <FormikStep>
