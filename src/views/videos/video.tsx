@@ -22,16 +22,18 @@ import Capitalise from "../../utils/capitalise";
 import TagColours from "../../utils/tagColours";
 import { IVideo } from "../../types/Video";
 import { Video } from "../../api/api";
+import EditVideo from "./editVideo";
 const { Title, Paragraph } = Typography;
 const { Content, Sider } = Layout;
 
 interface CreationProps {
-  creationID: number
+  creationID: number;
 }
 
-const Creation = ({creationID}:CreationProps):JSX.Element => {
+const Creation = ({ creationID }: CreationProps): JSX.Element => {
   const [videoData, setVideoData] = useState<IVideo | undefined>(undefined);
   const [cardView, setCardView] = useState("Files");
+  const [editVideoVisible, setEditVideoVisible] = useState<boolean>(false);
 
   useEffect(() => {
     Video.getVideo(creationID)
@@ -83,7 +85,6 @@ const Creation = ({creationID}:CreationProps):JSX.Element => {
           return (
             <React.Fragment>
               <Space>
-                <Button>Edit info</Button>
                 <Button>Delete video</Button>
                 <Button>Change video source</Button>
                 <Cascader />
@@ -116,6 +117,16 @@ const Creation = ({creationID}:CreationProps):JSX.Element => {
         <div>
           <Layout>
             <Content className="site-layout-background">
+              <EditVideo
+                visible={editVideoVisible}
+                initialValues={videoData}
+                onFinish={() => {
+                  setEditVideoVisible(false);
+                  Video.getVideo(videoData.id).then((v) => {
+                    setVideoData(v);
+                  });
+                }}
+              />
               <Title>
                 <Space>
                   {videoData.name}
@@ -162,12 +173,22 @@ const Creation = ({creationID}:CreationProps):JSX.Element => {
             </Content>
             <Sider className="site-layout-background">
               <img
-                src="https://via.placeholder.com/384x216"
+                src={
+                  videoData.thumbnail !== ""
+                    ? videoData.thumbnail
+                    : "https://via.placeholder.com/384x216"
+                }
                 alt="thumbnail"
                 width={216}
               />
               <Space style={{ marginTop: 5 }}>
-                <Button>Edit video</Button>
+                <Button
+                  onClick={() => {
+                    setEditVideoVisible(true);
+                  }}
+                >
+                  Edit video
+                </Button>
                 <Button href={"https://ystv.co.uk/watch/" + videoData.id}>
                   Watch video
                 </Button>

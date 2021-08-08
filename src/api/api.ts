@@ -93,8 +93,8 @@ export const Video = {
     reqs.post("/v1/internal/creator/videos", v),
   createVideoThumbnail: (f: Blob): Promise<string> =>
     reqs.post("/v1/internal/creator/videos/thumbnail", f),
-  updateVideo: (v: IVideo): Promise<IVideo> =>
-    reqs.put("/v1/internal/creator/videos", v),
+  updateVideoMeta: (v: IVideo): Promise<IVideo> =>
+    reqs.put("/v1/internal/creator/video/meta", v),
 };
 
 export const Series = {
