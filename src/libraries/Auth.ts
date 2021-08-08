@@ -1,5 +1,6 @@
 import Cookies from "js-cookie";
 import { Token } from "../api/auth";
+import { APIToken } from "../types/APIToken";
 
 const getToken = (): Promise<APIToken> =>
   new Promise<APIToken>(async (resolve, reject) => {
@@ -30,14 +31,3 @@ const getToken = (): Promise<APIToken> =>
   );
 
 export default getToken;
-
-export interface APIToken {
-  exp: number;
-  id: number;
-  perms: permission[];
-}
-
-interface permission {
-  id: number;
-  name: string;
-}

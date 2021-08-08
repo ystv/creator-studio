@@ -15,6 +15,6 @@ const instance = axios.create({
   }
 
 export const Token = {
-    getToken: () => reqs.get("/api/set_token"),
+    getToken: ():Promise<null> => reqs.get("/api/set_token"),
     testToken: () => reqs.get("/api/test"),
 }
