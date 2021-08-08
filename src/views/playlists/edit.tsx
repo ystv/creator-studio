@@ -1,16 +1,15 @@
-import React from "react";
+import React, { useState } from "react";
 import { Formik, FormikHelpers } from "formik";
-import { Form, Input, Radio, Select } from "formik-antd";
-import { Button, Modal, message } from "antd";
-import { IVideo } from "../../types/Video";
-import { DragDrop } from "@uppy/react";
+import { IPlaylist } from "../../types/Playlist";
+import { Form, Input, Radio } from "formik-antd";
+import { Button, message, Modal } from "antd";
+import { Playlist } from "../../api/api";
 import Uppy from "@uppy/core";
-import { getKey, TusConfig } from "../../api/upload";
 import Tus from "@uppy/tus";
+import { DragDrop } from "@uppy/react";
 import "@uppy/core/dist/style.css";
 import "@uppy/drag-drop/dist/style.css";
-import { useState } from "react";
-import { Video } from "../../api/api";
+import { getKey, TusConfig } from "../../api/upload";
 
 const uppy = Uppy({
   meta: { type: "thumbnail" },
@@ -19,26 +18,41 @@ const uppy = Uppy({
 
 interface editProps {
   visible: boolean;
-  initialValues: IVideo;
+  initialValues?: IPlaylist;
   onFinish: () => void;
 }
 
-const EditVideo: React.FC<editProps> = ({
+const EditPlaylist: React.FC<editProps> = ({
   visible,
   initialValues,
   onFinish,
 }): JSX.Element => {
+  const isNew = initialValues === undefined ? true : false;
   const [loading, setLoading] = useState<boolean>(false);
-  const handleSubmit = (values: IVideo, actions: FormikHelpers<IVideo>) => {
+  const handleSubmit = (
+    values: IPlaylist,
+    actions: FormikHelpers<IPlaylist>
+  ) => {
     const submit = (): Promise<void> => {
-      Video.updateVideoMeta(values).catch((err) => {
-        message.error(err.message);
-        setLoading(false);
-        return Promise.reject();
-      });
+      if (initialValues) {
+        Playlist.createPlaylist(values).catch((err) => {
+          message.error(JSON.stringify(err));
+          setLoading(false);
+          return Promise.reject();
+        });
+      } else {
+        Playlist.createPlaylist(values).catch((err) => {
+          message.error(JSON.stringify(err));
+          setLoading(false);
+          return Promise.reject();
+        });
+      }
+
       actions.setSubmitting(false);
       onFinish();
-      message.success("Updated video successfully!");
+      message.success(
+        `${isNew ? "Created" : "Updated"} playlist successfully!`
+      );
       return Promise.resolve();
     };
     setLoading(true);
@@ -59,48 +73,53 @@ const EditVideo: React.FC<editProps> = ({
     }
   };
 
+  const newValues: IPlaylist = {
+    playlistID: 0,
+    name: "",
+    description: "",
+    thumbnail: "",
+    status: "internal",
+    videos: [],
+    createdAt: new Date(),
+    createdBy: 0,
+  };
+
+  if (!initialValues) {
+    initialValues = newValues;
+  }
   return (
     <Modal
-      title="Update Video"
-      okText={"Update"}
+      title={(isNew ? "Create" : "Edit") + " Playlist"}
       visible={visible}
       onCancel={onFinish}
       footer={[
         <Button
           type="primary"
-          form="editVideo"
+          form="editPlaylist"
           key="submit"
           htmlType="submit"
           loading={loading}
         >
-          Update
+          {isNew ? "Create" : "Update"}
         </Button>,
       ]}
     >
-      <Formik initialValues={initialValues} onSubmit={handleSubmit}>
-        <Form id="editVideo">
+      <Formik
+        validateOnChange={true}
+        initialValues={initialValues}
+        onSubmit={handleSubmit}
+      >
+        <Form id="editPlaylist">
           <Form.Item name="name" label="Name">
             <Input name="name" />
-          </Form.Item>
-          <Form.Item name="url" label="URL Name">
-            <Input
-              prefix={
-                process.env.REACT_APP_PUBLIC_SITE_BASEURL +
-                "/watch/{series path}/"
-              }
-              name="url"
-            />
           </Form.Item>
           <Form.Item name="description" label="Description">
             <Input.TextArea name="description" />
           </Form.Item>
-          <Form.Item name="tags" label="Tags">
-            <Select name="tags" mode="tags" />
-          </Form.Item>
           <Form.Item name="thumbnail" label="Thumbnail">
             <DragDrop uppy={uppy} width="12rem" height="10rem" />
           </Form.Item>
-          <Form.Item name="status" label="Visibility">
+          <Form.Item name="status" label="Publish type">
             <Radio.Group name="status" buttonStyle="solid">
               <Radio.Button value="public">Public</Radio.Button>
               <Radio.Button value="internal">Internal</Radio.Button>
@@ -113,4 +132,4 @@ const EditVideo: React.FC<editProps> = ({
   );
 };
 
-export default EditVideo;
+export default EditPlaylist;

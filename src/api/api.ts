@@ -3,7 +3,7 @@ import IChannel from "../types/Channel";
 import ICreatorStats from "../types/Creator";
 import IPreset from "../types/EncodePreset";
 import IEncodeFormat from "../types/EncodeProfile";
-import { IPlaylist, IPlaylistNew } from "../types/Playlist";
+import { IPlaylist } from "../types/Playlist";
 import { ISeries } from "../types/Series";
 import { IUser } from "../types/User";
 import { INewVideo, IVideo, IVideoCalendar, IVideoMeta } from "../types/Video";
@@ -106,11 +106,11 @@ export const Series = {
 
 export const Playlist = {
   getPlaylists: (): Promise<IPlaylist[]> =>
-    reqs.get("/v1/internal/creator/playlists"),
-  createPlaylist: (p: IPlaylistNew): Promise<IPlaylist> =>
-    reqs.post("/v1/internal/creator/playlists", p),
-  updatePlaylist: (p: IPlaylistNew): Promise<IPlaylist> =>
-    reqs.put("/v1/internal/creator/playlists", p),
+    reqs.get("/v1/internal/creator/playlist"),
+  createPlaylist: (p: IPlaylist): Promise<IPlaylist> =>
+    reqs.post("/v1/internal/creator/playlist", p),
+  updatePlaylist: (p: IPlaylist): Promise<IPlaylist> =>
+    reqs.put("/v1/internal/creator/playlist", p),
   getPlaylist: (id: number): Promise<IPlaylist> =>
     reqs.get(`/v1/internal/creator/playlist/${id}`),
 };

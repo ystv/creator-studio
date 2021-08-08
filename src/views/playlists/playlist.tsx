@@ -1,40 +1,47 @@
 import React, { useState, useEffect } from "react";
 import TagColours from "../../utils/tagColours";
 import { IVideoMeta } from "../../types/Video";
-import { Table, Tag, Space, Typography, Descriptions, Button, Spin } from "antd";
+import {
+  Table,
+  Tag,
+  Space,
+  Typography,
+  Descriptions,
+  Button,
+  Spin,
+  message,
+} from "antd";
 import { IPlaylist } from "../../types/Playlist";
 import { Link, useRouteMatch } from "react-router-dom";
-import PlaylistModifier from "./update";
 import { Playlist as p } from "../../api/api";
+import EditPlaylist from "./edit";
 
 const { Title, Paragraph } = Typography;
 
 interface PlaylistProps {
-  playlistID: number
+  playlistID: number;
 }
 
-const Playlist = ({playlistID}:PlaylistProps):JSX.Element => {
+const Playlist = ({ playlistID }: PlaylistProps): JSX.Element => {
   const [playlistData, setPlaylistData] = useState<IPlaylist | undefined>(
     undefined
   );
-  const [loading, setLoading] = useState(true);
   const [modalVisible, setModalVisible] = useState(false);
   useEffect(() => {
-    const getData = async () => {
-      await p.getPlaylist(playlistID)
-      .then(res => {
+    p.getPlaylist(playlistID)
+      .then((res) => {
         setPlaylistData(res);
+      })
+      .catch((err) => {
+        message.error(err.message);
       });
-      setLoading(false);
-    };
-    getData();
-  }, [loading, playlistID]);
+  }, [playlistID]);
 
   if (playlistData === undefined) {
     return (
       <div className="loading">
-          <Spin size="large" />
-        </div>
+        <Spin size="large" />
+      </div>
     );
   }
   return (
@@ -56,7 +63,9 @@ const Playlist = ({playlistID}:PlaylistProps):JSX.Element => {
         <Descriptions>
           <Descriptions.Item label="Creator">
             {playlistData.createdBy ? (
-              <a href={`${process.env.REACT_APP_MYTV_BASEURL}/user/${playlistData.createdBy}`}>
+              <a
+                href={`${process.env.REACT_APP_MYTV_BASEURL}/user/${playlistData.createdBy}`}
+              >
                 {playlistData.createdBy}
               </a>
             ) : (
@@ -71,12 +80,10 @@ const Playlist = ({playlistID}:PlaylistProps):JSX.Element => {
         >
           Update
         </Button>
-        <PlaylistModifier
+        <EditPlaylist
           visible={modalVisible}
-          onCancel={() => {
-            setModalVisible(false);
-          }}
-          onSubmit={() => {
+          initialValues={playlistData}
+          onFinish={() => {
             setModalVisible(false);
           }}
         />
