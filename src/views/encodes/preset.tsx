@@ -1,15 +1,8 @@
 import React, { useState } from "react";
 import IPreset from "../../types/EncodePreset";
-import { Modal } from "antd";
+import { Button, Modal } from "antd";
 import { Formik } from "formik";
-import {
-  SubmitButton,
-  Form,
-  Input,
-  Table,
-  AddRowButton,
-  RemoveRowButton,
-} from "formik-antd";
+import { Form, Input, Table, AddRowButton, RemoveRowButton } from "formik-antd";
 import { ColumnsType } from "antd/lib/table";
 import IEncodeFormat from "../../types/EncodeProfile";
 import SearchEncodeFormats from "../../components/EncodeFormatSearch";
@@ -31,6 +24,7 @@ const PresetModal: React.FC<ModalProps> = ({
   data,
 }) => {
   const [searchData, setSearchData] = useState<IEncodeFormat | undefined>();
+  const [loading, setLoading] = useState<boolean>(false);
   let initialValues: IPreset = data
     ? {
         id: data.id,
@@ -88,14 +82,25 @@ const PresetModal: React.FC<ModalProps> = ({
     <Modal
       visible={state ? true : false}
       onCancel={onCancel}
-      title={state}
-      okText={state}
+      title={state + " Preset"}
       width={800}
+      footer={[
+        <Button
+          type="primary"
+          form="editPreset"
+          key="submit"
+          htmlType="submit"
+          loading={loading}
+        >
+          {state}
+        </Button>,
+      ]}
     >
       <Formik
         initialValues={initialValues}
         enableReinitialize
         onSubmit={(values, actions) => {
+          setLoading(false);
           switch (state) {
             case "Create":
               Encodes.createPreset(values);
@@ -105,10 +110,11 @@ const PresetModal: React.FC<ModalProps> = ({
               break;
           }
           actions.setSubmitting(false);
+          setLoading(false);
           onSubmit();
         }}
       >
-        <Form>
+        <Form id="editPreset">
           <Form.Item name="name" label="Name">
             <Input name="name" />
           </Form.Item>
@@ -133,8 +139,6 @@ const PresetModal: React.FC<ModalProps> = ({
           >
             Add
           </AddRowButton>
-          <br />
-          <SubmitButton>{state}</SubmitButton>
         </Form>
       </Formik>
     </Modal>
