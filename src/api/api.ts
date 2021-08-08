@@ -82,17 +82,19 @@ const reqs = {
 
 export const Video = {
   getVideos: (): Promise<IVideoMeta[]> =>
-    reqs.get("/v1/internal/creator/videos"),
+    reqs.get("/v1/internal/creator/video"),
   getVideosByCurrentUser: (): Promise<IVideo[]> =>
-    reqs.get("/v1/internal/creator/videos/my"), //TODO: Implement get by user ID and move this endpoint
+    reqs.get("/v1/internal/creator/video/my"), //TODO: Implement get by user ID and move this endpoint
   getVideosByMonth: (year: number, month: number): Promise<IVideoCalendar[]> =>
     reqs.get(`/v1/internal/creator/calendar/${year}/${month}`),
   getVideo: (id: number): Promise<IVideo> =>
-    reqs.get(`/v1/internal/creator/videos/${id}`),
+    reqs.get(`/v1/internal/creator/video/${id}`),
+  searchVideo: (query: string): Promise<IVideoMeta[]> =>
+    reqs.post("/v1/internal/creator/video/search", { query }),
   createVideo: (v: INewVideo): Promise<IVideo> =>
-    reqs.post("/v1/internal/creator/videos", v),
+    reqs.post("/v1/internal/creator/video", v),
   createVideoThumbnail: (f: Blob): Promise<string> =>
-    reqs.post("/v1/internal/creator/videos/thumbnail", f),
+    reqs.post("/v1/internal/creator/video/thumbnail", f),
   updateVideoMeta: (v: IVideo): Promise<IVideo> =>
     reqs.put("/v1/internal/creator/video/meta", v),
 };
