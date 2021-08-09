@@ -3,7 +3,7 @@ import { useHistory } from "react-router-dom";
 import "../styles/form.css";
 import "@uppy/core/dist/style.css";
 import "@uppy/dashboard/dist/style.css";
-import { Button, InputNumber } from "antd";
+import { Button, InputNumber, Typography } from "antd";
 import {
   Form,
   Input,
@@ -18,6 +18,8 @@ import Tus from "@uppy/tus";
 import { Dashboard } from "@uppy/react";
 import { Video } from "../api/api";
 import { INewVideo } from "../types/Video";
+
+const { Title, Paragraph } = Typography;
 
 const Wizard = () => {
   const initialValues: INewVideo = {
@@ -79,14 +81,31 @@ const Wizard = () => {
       }}
     >
       <FormikStep>
+        <Title>Upload Video</Title>
         <Dashboard uppy={uppy} showProgressDetails={true} theme="auto" />
       </FormikStep>
       <FormikStep>
+        <Title>Select Series</Title>
+        <Paragraph style={{ width: "30rem" }}>
+          The website is a lot like a file system, so series are the folders and
+          the videos are the files. Series' will introduce their name into the
+          URL that people will watch from which allows us to do lots of
+          grouping.
+        </Paragraph>
+        <Paragraph>
+          Note: This will be replaced with a file-like browser instead of
+          entering the ID.
+        </Paragraph>
         <Form.Item name="seriesID" label="Series ID">
           <InputNumber name="seriesID" />
         </Form.Item>
       </FormikStep>
       <FormikStep>
+        <Title>Video Information</Title>
+        <Paragraph style={{ width: "30rem" }}>
+          This information is used on the video pages and any extra information
+          will help the search algorithm be more accurate.
+        </Paragraph>
         <Form>
           <Form.Item name="name" label="Name">
             <Input name="name" />
@@ -106,8 +125,8 @@ const Wizard = () => {
           <Form.Item name="tags" label="Tags">
             <Select name="tags" mode="tags" />
           </Form.Item>
-          <Form.Item name="presetID" label="Preset ID">
-            <InputNumber name="presetID" />
+          <Form.Item name="preset.presetID" label="Preset ID">
+            <InputNumber name="preset.presetID" />
           </Form.Item>
           <Form.Item name="publishType" label="Publish Type">
             <Radio.Group name="publishType" buttonStyle="solid">
