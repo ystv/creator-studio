@@ -9,7 +9,7 @@ import { IUser } from "../types/User";
 import { INewVideo, IVideo, IVideoCalendar, IVideoMeta } from "../types/Video";
 import { setupInterceptorsTo } from "./interceptors";
 
-const instance = axios.create({
+export const instance = axios.create({
   baseURL: process.env.REACT_APP_API_BASEURL,
   withCredentials: true,
 });
