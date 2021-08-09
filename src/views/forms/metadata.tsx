@@ -10,11 +10,6 @@ const validationSchema = yup.object({
   Publish: yup.string().required(),
 });
 
-const layout = {
-  labelCol: { span: 8 },
-  wrapperCol: { span: 16 },
-};
-
 const Meta: React.FC = () => {
   return (
     <Formik
@@ -29,14 +24,13 @@ const Meta: React.FC = () => {
       }}
       validationSchema={validationSchema}
       onSubmit={(data, { setSubmitting }) => {
-        console.log(data);
         setSubmitting(true);
         // TODO POST API
         setSubmitting(false);
       }}
     >
       {({ values, errors, isSubmitting, isValid, dirty }) => (
-        <Form {...layout}>
+        <Form>
           <Form.Item label="Title" name="Title">
             <Input name="Title" />
           </Form.Item>

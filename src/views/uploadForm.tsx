@@ -4,8 +4,15 @@ import "../styles/form.css";
 import "@uppy/core/dist/style.css";
 import "@uppy/dashboard/dist/style.css";
 import { Button, InputNumber } from "antd";
-import { Input, DatePicker, SubmitButton } from "formik-antd";
-import { Formik, Form, FormikConfig } from "formik";
+import {
+  Form,
+  Input,
+  DatePicker,
+  SubmitButton,
+  Select,
+  Radio,
+} from "formik-antd";
+import { Formik, FormikConfig } from "formik";
 import Uppy from "@uppy/core";
 import Tus from "@uppy/tus";
 import { Dashboard } from "@uppy/react";
@@ -19,7 +26,7 @@ const Wizard = () => {
     name: "",
     urlName: "",
     description: "",
-    tags: ["Funky", "Epic"],
+    tags: [],
     preset: 0,
     publishType: "internal",
     broadcastDate: new Date(),
@@ -41,7 +48,7 @@ const Wizard = () => {
   uppy.on("complete", (res) => {
     if (res.successful.length === 0) {
       console.log("no succesful uploads");
-      return
+      return;
     }
     const video = res.successful[0].response;
     if (video) {
@@ -56,47 +63,65 @@ const Wizard = () => {
   const history = useHistory();
 
   return (
-    <>
-      <FormikStepper
-        initialValues={initialValues}
-        onSubmit={(values, actions) => {
-          values.fileID = fileID;
-          Video.createVideo(values)
-          .then(res => {
+    <FormikStepper
+      initialValues={initialValues}
+      onSubmit={(values, actions) => {
+        values.fileID = fileID;
+        Video.createVideo(values)
+          .then((res) => {
             actions.setSubmitting(false);
             history.push(`/videos/${res.id}`);
           })
-          .catch(err => {
+          .catch((err) => {
             alert(JSON.stringify(err, null, 2));
             actions.setSubmitting(false);
           });
-        }}
-      >
-        <FormikStep>
-          <Dashboard uppy={uppy} showProgressDetails={true} theme="auto" />
-        </FormikStep>
-        <FormikStep>
-          series ID
-          <InputNumber name="seriesID" id="seriesID" />
-        </FormikStep>
-        <FormikStep>
-          name
-          <Input name="name" />
-          url name
-          <Input name="urlName" />
-          description
-          <Input.TextArea name="description" />
-          {/* tags
-          <Input name="tags" /> */}
-          preset ID
-          <InputNumber name="preset" />
-          publish
-          <Input name="publishType" />
-          date
-          <DatePicker name="broadcastDate" />
-        </FormikStep>
-      </FormikStepper>
-    </>
+      }}
+    >
+      <FormikStep>
+        <Dashboard uppy={uppy} showProgressDetails={true} theme="auto" />
+      </FormikStep>
+      <FormikStep>
+        <Form.Item name="seriesID" label="Series ID">
+          <InputNumber name="seriesID" />
+        </Form.Item>
+      </FormikStep>
+      <FormikStep>
+        <Form>
+          <Form.Item name="name" label="Name">
+            <Input name="name" />
+          </Form.Item>
+          <Form.Item name="url" label="URL Name">
+            <Input
+              prefix={
+                process.env.REACT_APP_PUBLIC_SITE_BASEURL +
+                "/watch/{series path}/"
+              }
+              name="url"
+            />
+          </Form.Item>
+          <Form.Item name="description" label="Description">
+            <Input.TextArea name="description" />
+          </Form.Item>
+          <Form.Item name="tags" label="Tags">
+            <Select name="tags" mode="tags" />
+          </Form.Item>
+          <Form.Item name="preset" label="Preset ID">
+            <InputNumber name="preset" />
+          </Form.Item>
+          <Form.Item name="publishType" label="Publish Type">
+            <Radio.Group name="publishType" buttonStyle="solid">
+              <Radio.Button value="public">Public</Radio.Button>
+              <Radio.Button value="internal">Internal</Radio.Button>
+              <Radio.Button value="private">Private</Radio.Button>
+            </Radio.Group>
+          </Form.Item>
+          <Form.Item name="broadcastDate" label="Broadcast Date">
+            <DatePicker name="broadcastDate" />
+          </Form.Item>
+        </Form>
+      </FormikStep>
+    </FormikStepper>
   );
 };
 
@@ -108,13 +133,13 @@ function FormikStep({ children }: FormikStepProps) {
 }
 
 function FormikStepper({ children, ...props }: FormikConfig<INewVideo>) {
-  const childrenArray = React.Children.toArray(children) as React.ReactElement<
-    FormikStepProps
-  >[];
+  const childrenArray = React.Children.toArray(
+    children
+  ) as React.ReactElement<FormikStepProps>[];
   const [step, setStep] = useState(0);
-  const currentChild = childrenArray[step] as React.ReactElement<
-    FormikStepProps
-  >;
+  const currentChild = childrenArray[
+    step
+  ] as React.ReactElement<FormikStepProps>;
   console.log("children", currentChild);
 
   const isLastStep = () => {
