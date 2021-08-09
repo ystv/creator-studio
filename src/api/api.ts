@@ -7,67 +7,12 @@ import { IPlaylist } from "../types/Playlist";
 import { ISeries } from "../types/Series";
 import { IUser } from "../types/User";
 import { INewVideo, IVideo, IVideoCalendar, IVideoMeta } from "../types/Video";
-import { Token } from "./auth";
-import { AxiosError, AxiosInstance, AxiosRequestConfig } from "axios";
+import { setupInterceptorsTo } from "./interceptors";
 
 const instance = axios.create({
   baseURL: process.env.REACT_APP_API_BASEURL,
   withCredentials: true,
 });
-
-const onRequest = (config: AxiosRequestConfig): AxiosRequestConfig => {
-  console.info("[request]", config);
-  return config;
-};
-
-const onRequestError = (error: AxiosError): Promise<AxiosError> => {
-  console.error("[request error]", error);
-  return Promise.reject(error);
-};
-
-const onResponse = (response: AxiosResponse): AxiosResponse => {
-  console.info("[response]", response);
-  return response;
-};
-
-const onResponseError = (error: AxiosError): Promise<AxiosError> => {
-  console.error("[response error]", error);
-
-  // Attempt at refreshing the working token and trying again
-  // TODO: Better token check
-  if (error.config && error.response && error.response.status === 400) {
-    Token.getToken().then(() => {
-      return instance.request(error.config);
-    });
-  }
-
-  return Promise.reject(error);
-};
-
-const onResponseRetry = (error: AxiosError): Promise<AxiosError> => {
-  // Attempt at refreshing the working token and trying again
-  // TODO: Better token check
-  if (error.config && error.response && error.response.status === 400) {
-    Token.getToken().then(() => {
-      return instance.request(error.config);
-    });
-  }
-
-  return Promise.reject(error);
-};
-
-export function setupInterceptorsTo(
-  axiosInstance: AxiosInstance
-): AxiosInstance {
-  if (process.env.REACT_APP_DEBUG) {
-    axiosInstance.interceptors.request.use(onRequest, onRequestError);
-    axiosInstance.interceptors.response.use(onResponse, onResponseError);
-  } else {
-    axiosInstance.interceptors.response.use(undefined, onResponseRetry);
-  }
-
-  return axiosInstance;
-}
 
 setupInterceptorsTo(instance);
 
@@ -117,15 +62,23 @@ export const Playlist = {
     reqs.get(`/v1/internal/creator/playlist/${id}`),
 };
 
-export const Encodes = {
-  getAllPresets: (): Promise<IPreset[]> =>
-    reqs.get("/v1/internal/creator/encodes/presets"),
+export const Encode = {
+  getPresets: (): Promise<IPreset[]> =>
+    reqs.get("/v1/internal/creator/encode/preset"),
   createPreset: (p: IPreset): Promise<IPreset> =>
-    reqs.post("/v1/internal/creator/encodes/presets", p),
+    reqs.post("/v1/internal/creator/encode/preset", p),
   updatePreset: (p: IPreset): Promise<IPreset> =>
-    reqs.put("/v1/internal/creator/encodes/presets", p),
-  getAllProfiles: (): Promise<IEncodeFormat[]> =>
-    reqs.get("/v1/internal/creator/encodes/profiles"),
+    reqs.put("/v1/internal/creator/encode/preset", p),
+  deletePreset: (presetID: number): Promise<void> =>
+    reqs.delete(`/v1/internal/creator/encode/preset/${presetID}`),
+  getFormats: (): Promise<IEncodeFormat[]> =>
+    reqs.get("/v1/internal/creator/encode/format"),
+  createFormat: (f: IEncodeFormat): Promise<number> =>
+    reqs.post("/v1/internal/creator/encode/format", f),
+  updateFormat: (f: IEncodeFormat): Promise<void> =>
+    reqs.put("/v1/internal/creator/encode/format", f),
+  deleteFormat: (formatID: number): Promise<void> =>
+    reqs.delete(`/v1/internal/creator/encode/format/${formatID}`),
 };
 
 export const Creator = {
