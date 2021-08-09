@@ -1,6 +1,6 @@
 import React from "react";
 import { Formik, FormikHelpers } from "formik";
-import { Form, Input, Radio, Select } from "formik-antd";
+import { Form, Input, InputNumber, Radio, Select } from "formik-antd";
 import { Button, Modal, message } from "antd";
 import { IVideo } from "../../types/Video";
 import { DragDrop } from "@uppy/react";
@@ -30,8 +30,8 @@ const EditVideo: React.FC<editProps> = ({
 }): JSX.Element => {
   const [loading, setLoading] = useState<boolean>(false);
   const handleSubmit = (values: IVideo, actions: FormikHelpers<IVideo>) => {
-    const submit = (): Promise<void> => {
-      Video.updateVideoMeta(values).catch((err) => {
+    const submit = async (): Promise<void> => {
+      await Video.updateVideoMeta(values).catch((err) => {
         message.error(err.message);
         setLoading(false);
         return Promise.reject();
@@ -43,17 +43,25 @@ const EditVideo: React.FC<editProps> = ({
     };
     setLoading(true);
     if (uppy.getFiles().length === 0) {
-      submit().then(() => {
-        setLoading(false);
-      });
+      submit()
+        .then(() => {
+          setLoading(false);
+        })
+        .catch(() => {
+          return;
+        });
     } else {
       uppy.upload().then((res) => {
         if (res.successful.length === 1) {
           values.thumbnail = getKey(res.successful[0]);
-          submit().then(() => {
-            setLoading(false);
-            return;
-          });
+          submit()
+            .then(() => {
+              setLoading(false);
+              return;
+            })
+            .catch(() => {
+              return;
+            });
         }
       });
     }
@@ -106,6 +114,9 @@ const EditVideo: React.FC<editProps> = ({
               <Radio.Button value="internal">Internal</Radio.Button>
               <Radio.Button value="private">Private</Radio.Button>
             </Radio.Group>
+          </Form.Item>
+          <Form.Item name="preset.presetID" label="Preset ID">
+            <InputNumber name="preset.presetID" />
           </Form.Item>
         </Form>
       </Formik>

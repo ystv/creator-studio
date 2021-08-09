@@ -27,7 +27,7 @@ const Wizard = () => {
     urlName: "",
     description: "",
     tags: [],
-    preset: 0,
+    presetID: 0,
     publishType: "internal",
     broadcastDate: new Date(),
   };
@@ -106,8 +106,8 @@ const Wizard = () => {
           <Form.Item name="tags" label="Tags">
             <Select name="tags" mode="tags" />
           </Form.Item>
-          <Form.Item name="preset" label="Preset ID">
-            <InputNumber name="preset" />
+          <Form.Item name="presetID" label="Preset ID">
+            <InputNumber name="presetID" />
           </Form.Item>
           <Form.Item name="publishType" label="Publish Type">
             <Radio.Group name="publishType" buttonStyle="solid">

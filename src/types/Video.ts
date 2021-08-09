@@ -1,3 +1,5 @@
+import IPreset from "./EncodePreset";
+
 export interface IVideoMeta {
   id: number;
   seriesID: number;
@@ -7,6 +9,7 @@ export interface IVideoMeta {
   views: number;
   tags: string[];
   status: string;
+  preset?: IPreset;
   broadcastDate: Date;
   createdAt: Date;
 }
@@ -39,11 +42,10 @@ export interface INewVideo {
   urlName: string;
   description: string;
   tags: string[];
-  preset: number;
+  presetID: number;
   publishType: string;
   broadcastDate: Date;
 }
-
 
 export interface IVideoCalendar {
   id: number;
