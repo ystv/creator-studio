@@ -41,7 +41,9 @@ const EncodeFormats: React.FC = () => {
   const [encodeData, setEncodeData] = useState<IEncodeFormat[] | undefined>(
     undefined
   );
-  const [selectedRec, setSelectedRec] = useState<number | undefined>(undefined);
+  const [selectedRec, setSelectedRec] = useState<IEncodeFormat | undefined>(
+    undefined
+  );
   useState(() => {
     Encode.getFormats().then((formats) => {
       setEncodeData(formats);
@@ -56,12 +58,12 @@ const EncodeFormats: React.FC = () => {
     setLoading(true);
     if (selectedRec) {
       Encode.updateFormat(values).catch((err) => {
-        message.error(JSON.stringify(err));
+        message.error(err.message);
         return Promise.reject();
       });
     } else {
       Encode.createFormat(values).catch((err) => {
-        message.error(JSON.stringify(err));
+        message.error(err.message);
         return Promise.reject();
       });
     }
@@ -78,7 +80,21 @@ const EncodeFormats: React.FC = () => {
   if (encodeData === undefined) {
     return <h1>loading</h1>;
   }
-  let selData = encodeData[selectedRec ? selectedRec : 0];
+
+  let selData: IEncodeFormat = selectedRec
+    ? selectedRec
+    : {
+        id: 0,
+        name: "",
+        description: "",
+        mimeType: "video/",
+        mode: "watch",
+        width: 0,
+        height: 0,
+        arguments: "",
+        fileSuffix: "",
+        watermarked: false,
+      };
 
   return (
     <>
@@ -95,7 +111,7 @@ const EncodeFormats: React.FC = () => {
         onRow={(record, rowIndex) => {
           return {
             onClick: () => {
-              setSelectedRec(rowIndex);
+              setSelectedRec(record);
             },
           };
         }}
@@ -119,7 +135,11 @@ const EncodeFormats: React.FC = () => {
           </Button>,
         ]}
       >
-        <Formik initialValues={selData} onSubmit={handleSubmit}>
+        <Formik
+          initialValues={selData}
+          onSubmit={handleSubmit}
+          enableReinitialize
+        >
           <Form id="editFormat">
             <Form.Item name="name" label="Name">
               <Input name="name" />
