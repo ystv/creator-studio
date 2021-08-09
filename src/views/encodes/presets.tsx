@@ -3,7 +3,7 @@ import { Typography, Space, Button } from "antd";
 import Table, { ColumnsType } from "antd/lib/table";
 import IPreset from "../../types/EncodePreset";
 import PresetModal from "./preset";
-import { Encodes } from "../../api/api";
+import { Encode } from "../../api/api";
 const { Title, Paragraph } = Typography;
 
 const columns: ColumnsType<IPreset> = [
@@ -34,8 +34,7 @@ const EncodePresets: React.FC = () => {
   const [modalData, setModalData] = useState<IPreset | undefined>(undefined);
   const [loading, setLoading] = useState(true);
   useEffect(() => {
-    Encodes.getAllPresets()
-    .then(res => {
+    Encode.getPresets().then((res) => {
       setPresetData(res);
       setLoading(false);
     });

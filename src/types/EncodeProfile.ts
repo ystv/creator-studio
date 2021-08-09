@@ -7,6 +7,7 @@ interface IEncodeFormat {
   width: number;
   height: number;
   arguments: string;
+  fileSuffix: string;
   watermarked: boolean;
 }
 

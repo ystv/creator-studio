@@ -78,7 +78,7 @@ const Main: React.FC = (): JSX.Element => {
                   <AuthRoute path={AuthRoutes.videos} component={Videos} />
                   <AuthRoute path={AuthRoutes.series} component={Series} />
                   <AuthRoute path={AuthRoutes.playlists} component={Playlists} />
-                  <AuthRoute path="/encodes/profiles" component={EncodeFormats} />
+                  <AuthRoute path="/encodes/formats" component={EncodeFormats} />
                   <AuthRoute path="/encodes/presets" component={EncodePresets} />
                   <AuthRoute path={AuthRoutes.encodes} component={NotImplemented} />
                   <AuthRoute

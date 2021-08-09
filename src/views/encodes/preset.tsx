@@ -7,7 +7,7 @@ import { ColumnsType } from "antd/lib/table";
 import IEncodeFormat from "../../types/EncodeProfile";
 import SearchEncodeFormats from "../../components/EncodeFormatSearch";
 import { DeleteOutlined } from "@ant-design/icons";
-import { Encodes } from "../../api/api";
+import { Encode } from "../../api/api";
 
 interface ModalProps {
   state: string;
@@ -103,10 +103,10 @@ const PresetModal: React.FC<ModalProps> = ({
           setLoading(false);
           switch (state) {
             case "Create":
-              Encodes.createPreset(values);
+              Encode.createPreset(values);
               break;
             case "Update":
-              Encodes.updatePreset(values);
+              Encode.updatePreset(values);
               break;
           }
           actions.setSubmitting(false);

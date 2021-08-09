@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { AutoComplete } from "antd";
 import IEncodeFormat from "../types/EncodeProfile";
-import { Encodes } from "../api/api";
+import { Encode } from "../api/api";
 
 interface option {
   value: string;
@@ -15,7 +15,7 @@ interface Props {
 const SearchEncodeFormats: React.FC<Props> = ({ onSelect }) => {
   const [formats, setFormats] = useState<option[]>();
   useState(() => {
-    Encodes.getAllProfiles().then(data => {
+    Encode.getFormats().then((data) => {
       let options = Array<option>();
       data.forEach((item) => {
         options.push({ value: item.name, data: item });

@@ -1,16 +1,9 @@
 import React, { useState } from "react";
-import {
-  Typography,
-  Table,
-  Form,
-  Input,
-  InputNumber,
-  Radio,
-  Switch,
-} from "antd";
+import { Typography, Table, Modal, Button, message } from "antd";
 import IEncodeFormat from "../../types/EncodeProfile";
-import Modal from "antd/lib/modal/Modal";
-import { Encodes } from "../../api/api";
+import { Encode } from "../../api/api";
+import { Form, Input, InputNumber, Radio, Switch } from "formik-antd";
+import { Formik, FormikHelpers } from "formik";
 const { Title, Paragraph } = Typography;
 
 const columns = (id: number) => {
@@ -50,11 +43,37 @@ const EncodeFormats: React.FC = () => {
   );
   const [selectedRec, setSelectedRec] = useState<number | undefined>(undefined);
   useState(() => {
-    Encodes.getAllProfiles()
-    .then((data) => {
-      setEncodeData(data);
+    Encode.getFormats().then((formats) => {
+      setEncodeData(formats);
     });
   });
+  const [loading, setLoading] = useState<boolean>(false);
+
+  const handleSubmit = (
+    values: IEncodeFormat,
+    actions: FormikHelpers<IEncodeFormat>
+  ) => {
+    setLoading(true);
+    if (selectedRec) {
+      Encode.updateFormat(values).catch((err) => {
+        message.error(JSON.stringify(err));
+        return Promise.reject();
+      });
+    } else {
+      Encode.createFormat(values).catch((err) => {
+        message.error(JSON.stringify(err));
+        return Promise.reject();
+      });
+    }
+
+    actions.setSubmitting(false);
+    message.success(
+      `${!selectedRec ? "Created" : "Updated"} format successfully!`
+    );
+    setLoading(false);
+
+    return Promise.resolve();
+  };
 
   if (encodeData === undefined) {
     return <h1>loading</h1>;
@@ -63,9 +82,9 @@ const EncodeFormats: React.FC = () => {
 
   return (
     <>
-      <Title>Encode Profiles</Title>
+      <Title>Encode Formats</Title>
       <Paragraph>
-        An encode profile is an individual job that is perfomed on a video file.
+        An encode format is an individual job that is perfomed on a video file.
         We do this so when you watch a video on the website you will be able to
         select from a bunch of different qualities so people can have the best
         watch experience no matter the connection!
@@ -75,9 +94,8 @@ const EncodeFormats: React.FC = () => {
         dataSource={encodeData}
         onRow={(record, rowIndex) => {
           return {
-            onClick: (event) => {
+            onClick: () => {
               setSelectedRec(rowIndex);
-              console.log(rowIndex);
             },
           };
         }}
@@ -88,37 +106,53 @@ const EncodeFormats: React.FC = () => {
         onCancel={() => {
           setSelectedRec(undefined);
         }}
-        title="Edit encode profile"
+        title={(selectedRec === undefined ? "New" : "Edit") + "encode format"}
+        footer={[
+          <Button
+            type="primary"
+            form="editFormat"
+            key="submit"
+            htmlType="submit"
+            loading={loading}
+          >
+            Edit
+          </Button>,
+        ]}
       >
-        <Form>
-          <Form.Item name="name" label="Name">
-            <Input defaultValue={selData.name} />
-          </Form.Item>
-          <Form.Item name="description" label="description">
-            <Input.TextArea defaultValue={selData.description} />
-          </Form.Item>
-          <Form.Item name="width" label="Width">
-            <InputNumber defaultValue={selData.width} />
-          </Form.Item>
-          <Form.Item name="height" label="Height">
-            <InputNumber defaultValue={selData.height} />
-          </Form.Item>
-          <Form.Item name="arguments" label="Arguments">
-            <Input.TextArea defaultValue={selData.arguments} />
-          </Form.Item>
-          <Form.Item name="mimeType" label="MIME Type">
-            <Input defaultValue={selData.mimeType} />
-          </Form.Item>
-          <Form.Item name="mode" label="Mode">
-            <Radio.Group buttonStyle="solid">
-              <Radio.Button value="watch">Watch</Radio.Button>
-              <Radio.Button value="download">Download</Radio.Button>
-            </Radio.Group>
-          </Form.Item>
-          <Form.Item name="watermarked" label="Watermarked">
-            <Switch checked={selData.watermarked} />
-          </Form.Item>
-        </Form>
+        <Formik initialValues={selData} onSubmit={handleSubmit}>
+          <Form id="editFormat">
+            <Form.Item name="name" label="Name">
+              <Input name="name" />
+            </Form.Item>
+            <Form.Item name="description" label="description">
+              <Input.TextArea name="description" />
+            </Form.Item>
+            <Form.Item name="width" label="Width">
+              <InputNumber name="width" />
+            </Form.Item>
+            <Form.Item name="height" label="Height">
+              <InputNumber name="height" />
+            </Form.Item>
+            <Form.Item name="arguments" label="Arguments">
+              <Input.TextArea name="arguments" />
+            </Form.Item>
+            <Form.Item name="fileSuffix" label="File Suffix">
+              <Input name="fileSuffix" />
+            </Form.Item>
+            <Form.Item name="mimeType" label="MIME Type">
+              <Input name="mimeType" />
+            </Form.Item>
+            <Form.Item name="mode" label="Mode">
+              <Radio.Group name="mode" buttonStyle="solid">
+                <Radio.Button value="watch">Watch</Radio.Button>
+                <Radio.Button value="download">Download</Radio.Button>
+              </Radio.Group>
+            </Form.Item>
+            <Form.Item name="watermarked" label="Watermarked">
+              <Switch name="watermarked" />
+            </Form.Item>
+          </Form>
+        </Formik>
       </Modal>
     </>
   );
