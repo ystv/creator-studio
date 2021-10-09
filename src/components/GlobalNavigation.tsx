@@ -17,8 +17,8 @@ const GlobalNavigation: React.FC = (): JSX.Element => {
         </Link>
       </h1>
       <Menu theme="dark" mode="horizontal" defaultSelectedKeys={["1"]}>
-        <Menu.Item key="1">VOD</Menu.Item>
-        <Menu.Item key="2">Live</Menu.Item>
+        <Menu.Item key="1"><Link to="/">VOD</Link></Menu.Item>
+        <Menu.Item key="2"><Link to="/live">Live</Link></Menu.Item>
         <Menu.Item key="3" style={{ float: "right" }}>
           <User />
         </Menu.Item>
