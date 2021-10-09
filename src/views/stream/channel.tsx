@@ -136,7 +136,7 @@ const columns = (id: number) => {
           onCancel={() => {
             setSelectedRec(undefined);
           }}
-          title={(selectedRec === undefined ? "New" : "Edit") + "channel"}
+          title={(selectedRec === undefined ? "New" : "Edit") + " " + "channel"}
           footer={[
             <Button
               type="primary"
