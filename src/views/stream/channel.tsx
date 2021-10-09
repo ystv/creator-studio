@@ -114,7 +114,7 @@ const columns = (id: number) => {
       <>
         <Title>Channels</Title>
         <Paragraph>
-          An encode format is an individual job that is perfomed on a video file.
+          An encode format is an individual job that is performed on a video file.
           We do this so when you watch a video on the website you will be able to
           select from a bunch of different qualities so people can have the best
           watch experience no matter the connection!
@@ -161,7 +161,7 @@ const columns = (id: number) => {
               <Form.Item name="urlName" label="URL Name">
                 <Input name="urlName" />
               </Form.Item>
-              <Form.Item name="description" label="description">
+              <Form.Item name="description" label="Description">
                 <Input.TextArea name="description" />
               </Form.Item>
               <Form.Item name="location" label="Location">
