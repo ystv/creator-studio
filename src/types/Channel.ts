@@ -6,6 +6,7 @@ interface IChannel {
     outputType: string
     outputURL: string
     status: string
+    visibility: string
     location: string
     scheduledStart: Date
     scheduledEnd: Date

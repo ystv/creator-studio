@@ -91,6 +91,12 @@ export const User = {
 };
 
 export const Channel = {
-  getChannels: (): Promise<IChannel> =>
+  getChannels: (): Promise<IChannel[]> =>
     reqs.get("/v1/internal/creator/playout/channels"),
+  createChannel: (ch: IChannel) => 
+    reqs.post("/v1/internal/creator/playout/channels", ch),
+  updateChannel: (ch: IChannel) =>
+    reqs.put("/v1/internal/creator/playout/channels", ch),
+  deleteChannel: (channelID: number) =>
+    reqs.delete(`/v1/internal/creator/playout/channels/${channelID}`)
 };
