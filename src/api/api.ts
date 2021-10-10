@@ -97,6 +97,6 @@ export const Channel = {
     reqs.post("/v1/internal/creator/playout/channels", ch),
   updateChannel: (ch: IChannel) =>
     reqs.put("/v1/internal/creator/playout/channels", ch),
-  deleteChannel: (channelID: number) =>
-    reqs.delete(`/v1/internal/creator/playout/channels/${channelID}`)
+  deleteChannel: (channelURLName: string) =>
+    reqs.delete(`/v1/internal/creator/playout/channels/${channelURLName}`)
 };

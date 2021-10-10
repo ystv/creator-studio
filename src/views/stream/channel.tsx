@@ -1,6 +1,6 @@
-import { Button, message, Modal, Table, Divider } from "antd";
+import { Button, message, Modal, Table, Divider, Space } from "antd";
 import { Formik, FormikHelpers } from "formik";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Channel } from "../../api/api";
 import IChannel from "../../types/Channel";
 import { Typography } from "antd";
@@ -20,35 +20,28 @@ const uppy = Uppy({
     restrictions: { maxNumberOfFiles: 1, allowedFileTypes: ["image/*"] },
   }).use(Tus, TusConfig);
 
-const columns = (id: number) => {
-    return [
+const columns = [
       {
         title: "Name",
         dataIndex: "name",
-        key: `name-${id}`,
       },
       {
         title: "Description",
         dataIndex: "description",
-        key: `description-${id}`,
       },
       {
         title: "Status",
         dataIndex: "status",
-        key: `status-${id}`,
       },
       {
         title: "URL Name",
         dataIndex: "urlName",
-        key: `urlName-${id}`,
       },
       {
         title: "Scheduled Start",
         dataIndex: "scheduledStart",
-        key: `scheduledStart-${id}`,
       },
     ];
-  };
   
   const Channels: React.FC = ():JSX.Element => {
     const [channelData, setChannelData] = useState<IChannel[] | undefined>(
@@ -57,13 +50,19 @@ const columns = (id: number) => {
     const [selectedRec, setSelectedRec] = useState<IChannel | undefined>(
       undefined
     );
-    useState(() => {
+    const [loading, setLoading] = useState<boolean>(false);
+    const [visible, setVisible] = useState<boolean>(false);
+    useEffect(() => {
       Channel.getChannels().then((channels) => {
         setChannelData(channels);
+        setLoading(false);
       });
-    });
-    const [loading, setLoading] = useState<boolean>(false);
+    }, [loading]);
   
+    const refresh = () => {
+      setLoading(true);
+    };
+
     const handleSubmit = (
       values: IChannel,
       actions: FormikHelpers<IChannel>
@@ -85,6 +84,8 @@ const columns = (id: number) => {
             
             actions.setSubmitting(false);
             setSelectedRec(undefined);
+            setVisible(false);
+            refresh();
             message.success(
                 `${!selectedRec ? "Created" : "Updated"} channel successfully!`
               );
@@ -137,7 +138,7 @@ const columns = (id: number) => {
           urlName: "",
           visibility: "",
         };
-  
+
     return (
       <>
         <Title>Channels</Title>
@@ -145,22 +146,38 @@ const columns = (id: number) => {
           A channel is what people can watch on the website. You can
           make as many channels as you like.
         </Paragraph>
+        <Space style={{ marginBottom: 16 }}>
+          <Button
+          onClick={() => {
+            setVisible(true);
+          }}
+          type="primary"
+        >
+          New
+        </Button>
+        </Space>
+        <Button onClick={refresh} style={{ float: "right" }}>
+          Refresh
+        </Button>
         <Table
-          columns={columns(0)}
+          columns={columns}
           dataSource={channelData}
+          rowKey={"urlName"}
           onRow={(record, rowIndex) => {
             return {
               onClick: () => {
                 setSelectedRec(record);
+                setVisible(true);
               },
             };
           }}
         />
   
         <Modal
-          visible={selectedRec !== undefined}
+          visible={visible}
           onCancel={() => {
             setSelectedRec(undefined);
+            setVisible(false);
           }}
           title={(selectedRec === undefined ? "New" : "Edit") + " channel"}
           footer={[
@@ -171,8 +188,8 @@ const columns = (id: number) => {
               htmlType="submit"
               loading={loading}
             >
-              Edit
-            </Button>,
+              {(selectedRec === undefined ? "New" : "Edit")}
+            </Button>
           ]}
         >
           <Formik
@@ -186,7 +203,7 @@ const columns = (id: number) => {
                 <Input name="name" />
               </Form.Item>
               <Form.Item name="urlName" label="URL Name">
-                <Input name="urlName" />
+                <Input name="urlName" disabled={(selectedRec ? true:false)} />
               </Form.Item>
               <Form.Item name="description" label="Description">
                 <Input.TextArea name="description" />
@@ -235,4 +252,4 @@ const columns = (id: number) => {
     );
   };
 
-  export default Channels;
+export default Channels;
