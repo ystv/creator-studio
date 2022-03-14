@@ -1,5 +1,9 @@
 import axios, { AxiosResponse } from "axios";
 
+interface AccessToken {
+  token: string
+}
+
 const instance = axios.create({
   baseURL: process.env.REACT_APP_SECURITY_BASEURL,
   withCredentials: true,
@@ -15,6 +19,6 @@ const reqs = {
 };
 
 export const Token = {
-  getToken: (): Promise<null> => reqs.get("/api/set_token"),
+  getToken: (): Promise<AccessToken> => reqs.get("/api/set_token"),
   testToken: () => reqs.get("/api/test"),
 };

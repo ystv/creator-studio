@@ -4,8 +4,21 @@ import {
   AxiosRequestConfig,
   AxiosResponse,
 } from "axios";
-import { instance } from "./api";
+import createAuthRefreshInterceptor from "axios-auth-refresh";
 import { Token } from "./auth";
+
+const refreshAccess = async (failedRequest: AxiosError): Promise<void> => {
+  try {
+    const { token } = await Token.getToken();
+    failedRequest.response!.config.headers["Authorization"] = `Bearer ${token}`;
+    sessionStorage.setItem("token", token);
+    return Promise.resolve();
+  } catch (error) {
+    // The user is likely to have no JWT, so send them to login
+    window.location.href = `${process.env.REACT_APP_SECURITY_BASEURL}/login?callback=${window.location.href}`;
+    return Promise.reject(error);
+  }
+};
 
 const onRequest = (config: AxiosRequestConfig): AxiosRequestConfig => {
   console.info("[request]", config);
@@ -24,37 +37,33 @@ const onResponse = (response: AxiosResponse): AxiosResponse => {
 
 const onResponseError = async (error: AxiosError): Promise<AxiosError> => {
   console.error("[response error]", error);
-  if (
-    error.response?.status === 400 &&
-    error.response.data.message === "missing or malformed jwt"
-  ) {
-    await Token.getToken().then((res) => {
-      return instance(error.config);
-    });
-  }
   return Promise.reject(error);
 };
 
-const onResponseErrorRetry = async (error: AxiosError): Promise<AxiosError> => {
-  if (
-    error.response?.status === 400 &&
-    error.response.data.message === "missing or malformed jwt"
-  ) {
-    await Token.getToken().then((res) => {
-      return instance(error.config);
-    });
-  }
-  return Promise.reject(error);
-};
+export const setupInterceptorsTo = (instance: AxiosInstance): AxiosInstance => {
+  createAuthRefreshInterceptor(instance, refreshAccess, {
+    statusCodes: [400, 401, 403],
+  });
 
-export function setupInterceptorsTo(
-  axiosInstance: AxiosInstance
-): AxiosInstance {
+  instance.interceptors.request.use(
+    (config) => {
+      const token = sessionStorage.getItem("token");
+      if (token && config) {
+        if (!config.headers) {
+          // eslint-disable-next-line no-param-reassign
+          config.headers = {};
+        }
+        // eslint-disable-next-line no-param-reassign
+        config.headers.Authorization = `Bearer ${token}`;
+      }
+      return config;
+    },
+    (error) => Promise.reject(error)
+  );
+
   if (process.env.REACT_APP_DEBUG) {
-    axiosInstance.interceptors.request.use(onRequest, onRequestError);
-    axiosInstance.interceptors.response.use(onResponse, onResponseError);
-  } else {
-    axiosInstance.interceptors.response.use(undefined, onResponseErrorRetry);
+    instance.interceptors.request.use(onRequest, onRequestError);
+    instance.interceptors.response.use(onResponse, onResponseError);
   }
-  return axiosInstance;
-}
+  return instance;
+};
