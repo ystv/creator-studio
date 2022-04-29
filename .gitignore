@@ -9,3 +9,5 @@
 
 # dev environment file
 /.env.local
+
+.idea/
