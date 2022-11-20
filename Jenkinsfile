@@ -8,7 +8,7 @@ def image
 String imageName = "ystv/creator-studio:${env.BRANCH_NAME}-${env.BUILD_ID}"
 
 // Checking if it is semantic version release/
-String deployEnv = env.TAG_NAME ==~ /v(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)/
+String deployEnv = env.TAG_NAME ==~ /v(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)/ ? 'prod' : 'dev'
 
 pipeline {
   agent {
