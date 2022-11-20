@@ -1,78 +1,76 @@
+String registryEndpoint = 'registry.comp.ystv.co.uk'
+
+def vaultConfig = [vaultUrl: 'https://vault.comp.ystv.co.uk',
+                   vaultCredentialId: 'jenkins-vault',
+                   engineVersion: 2]
+
+def image
+String imageName = "ystv/creator-studio:${env.BRANCH_NAME}-${env.BUILD_ID}"
+
+// Checking if it is semantic version release/
+String deployEnv = env.TAG_NAME ==~ /v(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)/
+
 pipeline {
-    agent any
-    stages {
-        stage('Install Dependencies') {
-            steps {
-                sh 'yarn --no-progress --non-interactive --skip-integrity-check --frozen-lockfile install'
+  agent {
+    label 'docker'
+  }
+
+  environment {
+    DOCKER_BUILDKIT = '1'
+  }
+
+  stages {
+    stage('Build image') {
+      steps {
+        script {
+          def secrets = [
+            [path: "ci/ystv-creator-studio-${deployEnv}", engineVersion: 2, secretValues: [
+              [envVar: 'REACT_APP_API_BASEURL', vaultKey: 'api-baseurl'],
+              [envVar: 'REACT_APP_MYTV_BASEURL', vaultKey: 'mytv-baseurl'],
+              [envVar: 'REACT_APP_SECURITY_BASEURL', vaultKey: 'auth-baseurl'],
+              [envVar: 'REACT_APP_SECURITY_TYPE', vaultKey: 'auth-type'],
+              [envVar: 'REACT_APP_UPLOAD_ENDPOINT', vaultKey: 'upload-endpoint'],
+              [envVar: 'REACT_APP_TITLE', vaultKey: 'title']
+            ]]
+          ]
+          withVault([configuration: vaultConfig, vaultSecrets: secrets]) {
+            docker.withRegistry('https://' + registryEndpoint, 'docker-registry') {
+              sh 'env > .env.local'
+              image = docker.build(imageName)
+              sh 'rm .env.local'
             }
+          }
         }
-        stage('Build') {
-            stages {
-                stage('Staging') {
-                    when {
-                        branch 'master'
-                        not {
-                            expression { return env.TAG_NAME ==~ /v(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)/ } // Checking if it is main semantic version release
-                        }
-                    }
-                    environment {
-                        APP_ENV = credentials('creator-staging-env')
-                    }
-                    steps {
-                        sh 'cp $APP_ENV .env'
-                        sh 'yarn run build'
-                        sh 'rm .env'
-                    }
-                }
-                stage('Production') {
-                    when {
-                        expression { return env.TAG_NAME ==~ /v(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)/ } // Checking if it is main semantic version release
-                    }
-                    environment {
-                        APP_ENV = credentials('creator-prod-env')
-                    }
-                    steps {
-                        sh 'cp $APP_ENV .env'
-                        sh 'yarn run build'
-                        sh 'rm .env'
-                    }
-                }
-            }
-        }
-        stage('Deploy') {
-            stages {
-                stage('Staging') {
-                    when {
-                        branch 'master'
-                        not {
-                            expression { return env.TAG_NAME ==~ /v(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)/ } // Checking if it is main semantic version release
-                        }
-                    }
-                    environment {
-                        TARGET_SERVER = credentials('staging-server-address')
-                        TARGET_PATH = credentials('staging-server-path')
-                    }
-                    steps {
-                        sshagent(credentials: ['staging-server-key']) {
-                            sh 'rsync -av --delete-after build deploy@$TARGET_SERVER:$TARGET_PATH/creator-studio'
-                        }
-                    }
-                }
-                stage('Production') {
-                    when {
-                        expression { return env.TAG_NAME ==~ /v(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)/ } // Checking if it is main semantic version release
-                    }
-                    environment {
-                        TARGET_SERVER = credentials('prod-server-address')
-                        TARGET_PATH = credentials('prod-server-path')
-                    }
-                    steps {
-                        sshagent(credentials: ['prod-server-key']) {
-                            sh 'rsync -av --delete-after build deploy@$TARGET_SERVER:$TARGET_PATH/creator-studio'
-                        }
-                    }
-                }
-            }
-        }
+      }
     }
+
+    stage('Push image to registry') {
+      steps {
+        script {
+          docker.withRegistry('https://' + registryEndpoint, 'docker-registry') {
+            image.push()
+            if (env.BRANCH_IS_PRIMARY) {
+              image.push('latest')
+            }
+          }
+        }
+      }
+    }
+
+    stage('Deploy') {
+      when {
+        anyOf {
+          expression { env.BRANCH_IS_PRIMARY }
+          equals(actual: deployEnv, expected: 'prod')
+        }
+      }
+
+      steps {
+        build(job: 'Deploy Nomad Job', parameters: [
+          string(name: 'JOB_FILE', value: "creator-studio-${deployEnv}.nomad"),
+          string(name: 'TAG_REPLACEMENTS', value: "${registryEndpoint}/${imageName}")
+        ])
+      }
+    }
+  }
 }
