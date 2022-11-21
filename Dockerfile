@@ -1,5 +1,5 @@
 # Build environment
-FROM node:alpine as deps
+FROM node:16-alpine as deps
 RUN apk add --no-cache libc6-compat
 LABEL site="creator-studio"
 LABEL stage="builder"
