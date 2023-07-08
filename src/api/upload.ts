@@ -6,7 +6,8 @@ export const TusConfig = {
   resume: true,
   headers: {
     authorization: `Bearer ${Token.getToken()}`,
-},
+  },
+  withCredentials: true,
   autoretry: true,
   retryDelays: [0, 1000, 3000, 5000],
 };
