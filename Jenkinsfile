@@ -1,14 +1,8 @@
 String registryEndpoint = 'registry.comp.ystv.co.uk'
 
-def vaultConfig = [vaultUrl: 'https://vault.comp.ystv.co.uk',
-                   vaultCredentialId: 'jenkins-vault',
-                   engineVersion: 2]
-
+def branch = env.BRANCH_NAME.replaceAll("/", "_")
 def image
-String imageName = "ystv/creator-studio:${env.BRANCH_NAME}-${env.BUILD_ID}"
-
-// Checking if it is semantic version release/
-String deployEnv = env.TAG_NAME ==~ /v(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)/ ? 'prod' : 'dev'
+String imageName = "ystv/creator-studio:${branch}-${env.BUILD_ID}"
 
 pipeline {
   agent {
@@ -23,22 +17,8 @@ pipeline {
     stage('Build image') {
       steps {
         script {
-          def secrets = [
-            [path: "ci/ystv-creator-studio-${deployEnv}", engineVersion: 2, secretValues: [
-              [envVar: 'REACT_APP_API_BASEURL', vaultKey: 'api-baseurl'],
-              [envVar: 'REACT_APP_MYTV_BASEURL', vaultKey: 'mytv-baseurl'],
-              [envVar: 'REACT_APP_SECURITY_BASEURL', vaultKey: 'auth-baseurl'],
-              [envVar: 'REACT_APP_SECURITY_TYPE', vaultKey: 'auth-type'],
-              [envVar: 'REACT_APP_UPLOAD_ENDPOINT', vaultKey: 'upload-endpoint'],
-              [envVar: 'REACT_APP_TITLE', vaultKey: 'title']
-            ]]
-          ]
-          withVault([configuration: vaultConfig, vaultSecrets: secrets]) {
-            docker.withRegistry('https://' + registryEndpoint, 'docker-registry') {
-              sh 'env > .env.local'
-              image = docker.build(imageName)
-              sh 'rm .env.local'
-            }
+          docker.withRegistry('https://' + registryEndpoint, 'docker-registry') {
+            image = docker.build(imageName, ".")
           }
         }
       }
@@ -58,18 +38,31 @@ pipeline {
     }
 
     stage('Deploy') {
-      when {
-        anyOf {
-          expression { env.BRANCH_IS_PRIMARY }
-          equals(actual: deployEnv, expected: 'prod')
+      stages {
+        stage('Development') {
+          when {
+            expression { env.BRANCH_IS_PRIMARY }
+          }
+          steps {
+            build(job: 'Deploy Nomad Job', parameters: [
+              string(name: 'JOB_FILE', value: 'creator-studio-dev.nomad'),
+              text(name: 'TAG_REPLACEMENTS', value: "${registryEndpoint}/${imageName}")
+            ])
+          }
         }
-      }
 
-      steps {
-        build(job: 'Deploy Nomad Job', parameters: [
-          string(name: 'JOB_FILE', value: "creator-studio-${deployEnv}.nomad"),
-          string(name: 'TAG_REPLACEMENTS', value: "${registryEndpoint}/${imageName}")
-        ])
+        stage('Production') {
+          when {
+            // Checking if it is semantic version release.
+            expression { return env.TAG_NAME ==~ /v(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)/ }
+          }
+          steps {
+            build(job: 'Deploy Nomad Job', parameters: [
+              string(name: 'JOB_FILE', value: 'creator-studio-prod.nomad'),
+              text(name: 'TAG_REPLACEMENTS', value: "${registryEndpoint}/${imageName}")
+            ])
+          }
+        }
       }
     }
   }
