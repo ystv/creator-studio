@@ -1,78 +1,69 @@
+String registryEndpoint = 'registry.comp.ystv.co.uk'
+
+def branch = env.BRANCH_NAME.replaceAll("/", "_")
+def image
+String imageName = "ystv/creator-studio:${branch}-${env.BUILD_ID}"
+
 pipeline {
-    agent any
-    stages {
-        stage('Install Dependencies') {
-            steps {
-                sh 'yarn --no-progress --non-interactive --skip-integrity-check --frozen-lockfile install'
-            }
+  agent {
+    label 'docker'
+  }
+
+  environment {
+    DOCKER_BUILDKIT = '1'
+  }
+
+  stages {
+    stage('Build image') {
+      steps {
+        script {
+          docker.withRegistry('https://' + registryEndpoint, 'docker-registry') {
+            image = docker.build(imageName, ".")
+          }
         }
-        stage('Build') {
-            stages {
-                stage('Staging') {
-                    when {
-                        branch 'master'
-                        not {
-                            expression { return env.TAG_NAME ==~ /v(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)/ } // Checking if it is main semantic version release
-                        }
-                    }
-                    environment {
-                        APP_ENV = credentials('creator-staging-env')
-                    }
-                    steps {
-                        sh 'cp $APP_ENV .env'
-                        sh 'yarn run build'
-                        sh 'rm .env'
-                    }
-                }
-                stage('Production') {
-                    when {
-                        expression { return env.TAG_NAME ==~ /v(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)/ } // Checking if it is main semantic version release
-                    }
-                    environment {
-                        APP_ENV = credentials('creator-prod-env')
-                    }
-                    steps {
-                        sh 'cp $APP_ENV .env'
-                        sh 'yarn run build'
-                        sh 'rm .env'
-                    }
-                }
-            }
-        }
-        stage('Deploy') {
-            stages {
-                stage('Staging') {
-                    when {
-                        branch 'master'
-                        not {
-                            expression { return env.TAG_NAME ==~ /v(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)/ } // Checking if it is main semantic version release
-                        }
-                    }
-                    environment {
-                        TARGET_SERVER = credentials('staging-server-address')
-                        TARGET_PATH = credentials('staging-server-path')
-                    }
-                    steps {
-                        sshagent(credentials: ['staging-server-key']) {
-                            sh 'rsync -av --delete-after build deploy@$TARGET_SERVER:$TARGET_PATH/creator-studio'
-                        }
-                    }
-                }
-                stage('Production') {
-                    when {
-                        expression { return env.TAG_NAME ==~ /v(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)/ } // Checking if it is main semantic version release
-                    }
-                    environment {
-                        TARGET_SERVER = credentials('prod-server-address')
-                        TARGET_PATH = credentials('prod-server-path')
-                    }
-                    steps {
-                        sshagent(credentials: ['prod-server-key']) {
-                            sh 'rsync -av --delete-after build deploy@$TARGET_SERVER:$TARGET_PATH/creator-studio'
-                        }
-                    }
-                }
-            }
-        }
+      }
     }
+
+    stage('Push image to registry') {
+      steps {
+        script {
+          docker.withRegistry('https://' + registryEndpoint, 'docker-registry') {
+            image.push()
+            if (env.BRANCH_IS_PRIMARY) {
+              image.push('latest')
+            }
+          }
+        }
+      }
+    }
+
+    stage('Deploy') {
+      stages {
+        stage('Development') {
+          when {
+            expression { env.BRANCH_IS_PRIMARY }
+          }
+          steps {
+            build(job: 'Deploy Nomad Job', parameters: [
+              string(name: 'JOB_FILE', value: 'creator-studio-dev.nomad'),
+              text(name: 'TAG_REPLACEMENTS', value: "${registryEndpoint}/${imageName}")
+            ])
+          }
+        }
+
+        stage('Production') {
+          when {
+            // Checking if it is semantic version release.
+            expression { return env.TAG_NAME ==~ /v(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)/ }
+          }
+          steps {
+            build(job: 'Deploy Nomad Job', parameters: [
+              string(name: 'JOB_FILE', value: 'creator-studio-prod.nomad'),
+              text(name: 'TAG_REPLACEMENTS', value: "${registryEndpoint}/${imageName}")
+            ])
+          }
+        }
+      }
+    }
+  }
 }
