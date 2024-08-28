@@ -8,6 +8,7 @@ import { Token } from "./auth";
 
 const refreshAccess = async (failedRequest: AxiosError): Promise<void> => {
   try {
+    console.log(process.env.REACT_APP_SECURITY_BASEURL);
     const { token } = await Token.getToken();
     failedRequest.response!.config.headers["Authorization"] = `Bearer ${token}`;
     sessionStorage.setItem("token", token);
