@@ -21,9 +21,6 @@ pipeline {
     stage('Build image') {
       steps {
         script {
-          docker.withRegistry('https://' + registryEndpoint, 'docker-registry') {
-            image = docker.build(imageName, ".")
-          }
           // Checking if it is semantic version release.
           String deployEnv = env.TAG_NAME ==~ /v(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)/ ? 'prod' : 'dev'
           def secrets = [
