@@ -27,7 +27,7 @@ const EditPlaylist: React.FC<editProps> = ({
   initialValues,
   onFinish,
 }): JSX.Element => {
-  const isNew = initialValues === undefined ? true : false;
+  const isNew = initialValues === undefined;
   const [loading, setLoading] = useState<boolean>(false);
   const handleSubmit = (
     values: IPlaylist,

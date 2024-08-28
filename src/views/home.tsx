@@ -91,7 +91,7 @@ const VideoCalendar = () => {
 
   if (calendarData) {
     const dateCellRender = (date: moment.Moment) => {
-      let events: IVideoCalendar[] = [];
+      let events: IVideoCalendar[];
       events = calendarData.filter((event) =>
         date.isSame(Moment(event.broadcastDate), "day")
       );

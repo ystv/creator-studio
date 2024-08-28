@@ -80,7 +80,7 @@ const PresetModal: React.FC<ModalProps> = ({
 
   return (
     <Modal
-      visible={state ? true : false}
+      visible={!!state}
       onCancel={onCancel}
       title={state + " Preset"}
       width={800}
@@ -133,7 +133,7 @@ const PresetModal: React.FC<ModalProps> = ({
             }}
           />
           <AddRowButton
-            disabled={!searchData ? true : false}
+            disabled={!searchData}
             name="formats"
             createNewRow={() => searchData}
           >
