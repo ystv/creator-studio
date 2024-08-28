@@ -22,13 +22,13 @@ export const Token = {
     getToken: (): Promise<AccessToken> => axios({
         method: "get",
         baseURL: process.env.REACT_APP_SECURITY_BASEURL,
-        url: "/api/set_token",
+        url: "api/set_token",
         withCredentials: true,
     }).then(resBody),
     testToken: () => axios({
         method: "get",
         baseURL: process.env.REACT_APP_SECURITY_BASEURL,
-        url: "/api/test",
+        url: "api/test",
         withCredentials: true,
     }).then(resBody),
     // getToken: (): Promise<AccessToken> => reqs.get("/api/set_token"),
