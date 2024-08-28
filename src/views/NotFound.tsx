@@ -2,7 +2,7 @@ import React from "react";
 import { Result, Button } from "antd";
 import { Link } from "react-router-dom";
 
-const NotFound: React.FC = (props: any): JSX.Element => {
+const NotFound: React.FC = (): JSX.Element => {
   return (
     <Result
       status="404"

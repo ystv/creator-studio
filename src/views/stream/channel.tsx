@@ -158,7 +158,7 @@ const Channels: React.FC = (): JSX.Element => {
         columns={columns}
         dataSource={channelData}
         rowKey={"urlName"}
-        onRow={(record, rowIndex) => {
+        onRow={(record) => {
           return {
             onClick: () => {
               setSelectedRec(record);
@@ -198,7 +198,7 @@ const Channels: React.FC = (): JSX.Element => {
               <Input name="name" />
             </Form.Item>
             <Form.Item name="urlName" label="URL Name">
-              <Input name="urlName" disabled={selectedRec ? true : false} />
+              <Input name="urlName" disabled={!!selectedRec} />
             </Form.Item>
             <Form.Item name="description" label="Description">
               <Input.TextArea name="description" />
