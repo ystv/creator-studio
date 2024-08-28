@@ -23,7 +23,7 @@
     "@uppy/tus": "^1.9.1",
     "@uppy/url": "^1.5.22",
     "antd": "^4.16.1",
-    "axios": "^0.21.1",
+    "axios": "1.6.0",
     "axios-auth-refresh": "^3.2.2",
     "formik": "^2.2.9",
     "formik-antd": "^2.0.1",
