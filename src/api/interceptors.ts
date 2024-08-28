@@ -1,8 +1,7 @@
 import {
-  AxiosError,
+  AxiosError, AxiosHeaders,
   AxiosInstance,
-  AxiosRequestConfig,
-  AxiosResponse,
+  AxiosResponse, InternalAxiosRequestConfig,
 } from "axios";
 import createAuthRefreshInterceptor from "axios-auth-refresh";
 import { Token } from "./auth";
@@ -20,7 +19,7 @@ const refreshAccess = async (failedRequest: AxiosError): Promise<void> => {
   }
 };
 
-const onRequest = (config: AxiosRequestConfig): AxiosRequestConfig => {
+const onRequest = (config: InternalAxiosRequestConfig): InternalAxiosRequestConfig => {
   console.info("[request]", config);
   return config;
 };
@@ -51,7 +50,7 @@ export const setupInterceptorsTo = (instance: AxiosInstance): AxiosInstance => {
       if (token && config) {
         if (!config.headers) {
           // eslint-disable-next-line no-param-reassign
-          config.headers = {};
+          config.headers = new AxiosHeaders();
         }
         // eslint-disable-next-line no-param-reassign
         config.headers.Authorization = `Bearer ${token}`;
