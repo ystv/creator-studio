@@ -6,6 +6,8 @@ const getToken = (): Promise<APIToken> =>
     let accessToken = sessionStorage.getItem("token");
     if (!accessToken) {
       try {
+        console.log(process.env.REACT_APP_SECURITY_BASEURL);
+        console.log(process.env);
         await Token.getToken()
       } catch (err) {
         return reject(err);
