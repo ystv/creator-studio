@@ -16,6 +16,7 @@
     "@types/yup": "^0.29.11",
     "@uppy/companion": "^3.3.1",
     "@uppy/core": "^1.19.1",
+    "@uppy/dashboard": "1.21.1",
     "@uppy/dropbox": "^1.5.1",
     "@uppy/google-drive": "^1.7.1",
     "@uppy/onedrive": "^1.2.1",

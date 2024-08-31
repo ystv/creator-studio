@@ -2538,6 +2538,26 @@
     namespace-emitter "^2.0.1"
     preact "8.2.9"
 
+"@uppy/dashboard@1.21.1":
+  version "1.21.1"
+  resolved "https://registry.yarnpkg.com/@uppy/dashboard/-/dashboard-1.21.1.tgz#c920d3af69b61413ef109608dde9b12d3c8a434b"
+  integrity sha512-psMwBVxxhAZxYkRds4e//+Sx3zkFYRnYpt4jaF4hmwpL9SehlyhQKwaB/scZz/O4yshmgTN8Sri0mYK5FSh5SQ==
+  dependencies:
+    "@transloadit/prettier-bytes" "0.0.7"
+    "@uppy/informer" "^1.6.6"
+    "@uppy/provider-views" "^1.12.3"
+    "@uppy/status-bar" "^1.9.6"
+    "@uppy/thumbnail-generator" "^1.7.11"
+    "@uppy/utils" "^3.6.2"
+    classnames "^2.2.6"
+    cuid "^2.1.1"
+    is-shallow-equal "^1.0.1"
+    lodash.debounce "^4.0.8"
+    lodash.throttle "^4.1.1"
+    memoize-one "^5.0.4"
+    preact "8.2.9"
+    resize-observer-polyfill "^1.5.0"
+
 "@uppy/dashboard@^1.20.1":
   version "1.20.1"
   resolved "https://registry.yarnpkg.com/@uppy/dashboard/-/dashboard-1.20.1.tgz#145a7950bb7c4380804d28ba919f43043bb488df"
@@ -2602,6 +2622,14 @@
     "@uppy/utils" "^3.6.1"
     preact "8.2.9"
 
+"@uppy/informer@^1.6.6":
+  version "1.6.6"
+  resolved "https://registry.yarnpkg.com/@uppy/informer/-/informer-1.6.6.tgz#94090ab74997f10c2a2151c04b1c75484bdfe7eb"
+  integrity sha512-9rZoAqNrKQN/HINnGg8rGnKEliLgc+9/tQQ0f9QcBgRIu/rnbBCTwS+qnGGdjYBdEJTSbHx+U7X9ufjrrjB+CA==
+  dependencies:
+    "@uppy/utils" "^3.6.2"
+    preact "8.2.9"
+
 "@uppy/onedrive@^1.2.1":
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/@uppy/onedrive/-/onedrive-1.2.1.tgz#4df292c00edf4e7417c79b408ffbf360293b18db"
@@ -2629,6 +2657,15 @@
     classnames "^2.2.6"
     preact "8.2.9"
 
+"@uppy/provider-views@^1.12.3":
+  version "1.12.3"
+  resolved "https://registry.yarnpkg.com/@uppy/provider-views/-/provider-views-1.12.3.tgz#aecfed615bc174abc548539a3c17b39e455aed0e"
+  integrity sha512-r2kra3IftmGLeKMEgZbmQM1qXixulWUUzydgpHcZqJOpeNIjJcpspJruYRctrVqaLz/8asw87V4KxDk0U4xGzw==
+  dependencies:
+    "@uppy/utils" "^3.6.2"
+    classnames "^2.2.6"
+    preact "8.2.9"
+
 "@uppy/react@^1.11.10":
   version "1.11.10"
   resolved "https://registry.yarnpkg.com/@uppy/react/-/react-1.11.10.tgz#fd56080be4e70430fbd21d40f5878fa1a529f0e9"
@@ -2653,6 +2690,17 @@
     lodash.throttle "^4.1.1"
     preact "8.2.9"
 
+"@uppy/status-bar@^1.9.6":
+  version "1.9.6"
+  resolved "https://registry.yarnpkg.com/@uppy/status-bar/-/status-bar-1.9.6.tgz#a04f699444fc7f156c260e5b7c001125e5190a5f"
+  integrity sha512-U/KPs5SwZ5d4hJFiCNAdriGHSk1Uhrl+iQmpJS8hoM+8r8rPfwScdua2/ehLuH69Ymwp6k7DpK2DU7UG2XZ+ag==
+  dependencies:
+    "@transloadit/prettier-bytes" "0.0.7"
+    "@uppy/utils" "^3.6.2"
+    classnames "^2.2.6"
+    lodash.throttle "^4.1.1"
+    preact "8.2.9"
+
 "@uppy/store-default@^1.2.7":
   version "1.2.7"
   resolved "https://registry.yarnpkg.com/@uppy/store-default/-/store-default-1.2.7.tgz#41a0b1579f4d5b86c236e7f5e52fdc01960bb011"
@@ -2664,6 +2712,15 @@
   integrity sha512-AIK0tqJEmzcbI1Z8Rs/sEXQAezxs+F5f1Z9Lnx+gmHYNUn15N899eP+IkePzhfPNBNs9EL7c2GIWHIFxvyUW6Q==
   dependencies:
     "@uppy/utils" "^3.6.1"
+    exifr "^6.0.0"
+    math-log2 "^1.0.1"
+
+"@uppy/thumbnail-generator@^1.7.11":
+  version "1.7.11"
+  resolved "https://registry.yarnpkg.com/@uppy/thumbnail-generator/-/thumbnail-generator-1.7.11.tgz#c6f49be90469f220a419ac43c129bf835cc11c41"
+  integrity sha512-qo9ZD8ByDMM6gIJ4JPN0V/dWlruYMhmYifhUvDUu0qhPAOTJAqh2hLQ+dlmUXTns8RnDorCXScreICSQ09FuLQ==
+  dependencies:
+    "@uppy/utils" "^3.6.2"
     exifr "^6.0.0"
     math-log2 "^1.0.1"
 
@@ -2689,6 +2746,14 @@
   version "3.6.1"
   resolved "https://registry.yarnpkg.com/@uppy/utils/-/utils-3.6.1.tgz#8fd71a1fc04eb1600ed51a1d38ab79dfd51ebefd"
   integrity sha512-NxPdnYUg2jbywp6/oR825j2jAboZByqh3m3VN1AHptI0z9ksBRr6oBxBwliO7ht+pO5jHceKye50A9qjAZR6UQ==
+  dependencies:
+    abortcontroller-polyfill "^1.4.0"
+    lodash.throttle "^4.1.1"
+
+"@uppy/utils@^3.6.2":
+  version "3.6.2"
+  resolved "https://registry.yarnpkg.com/@uppy/utils/-/utils-3.6.2.tgz#78b02455b9c469d927d22736be5b68cda2600826"
+  integrity sha512-wGTZma7eywIojfuE1vXlT0fxPSpmCRMkfgFWYc+6TL2FfGqWInmePoB+yal6/M2AnjeKHz6XYMhIpZkjOxFvcw==
   dependencies:
     abortcontroller-polyfill "^1.4.0"
     lodash.throttle "^4.1.1"

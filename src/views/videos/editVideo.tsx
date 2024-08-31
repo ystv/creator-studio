@@ -3,7 +3,7 @@ import { Formik, FormikHelpers } from "formik";
 import { Form, Input, InputNumber, Radio, Select } from "formik-antd";
 import { Button, Modal, message } from "antd";
 import { IVideo } from "../../types/Video";
-import { DragDrop } from "@uppy/react";
+import { Dashboard } from "@uppy/react";
 import Uppy from "@uppy/core";
 import { getKey, TusConfig } from "../../api/upload";
 import Tus from "@uppy/tus";
@@ -106,7 +106,9 @@ const EditVideo: React.FC<editProps> = ({
             <Select name="tags" mode="tags" />
           </Form.Item>
           <Form.Item name="thumbnail" label="Thumbnail">
-            <DragDrop uppy={uppy} width="12rem" height="10rem" />
+            <Dashboard uppy={uppy} width="12rem" height="10rem" hideUploadButton={true} hideRetryButton={true}
+                       hidePauseResumeButton={true} hideCancelButton={true} hideProgressAfterFinish={true}
+                       proudlyDisplayPoweredByUppy={false} disableStatusBar={true} disableInformer={true} />
           </Form.Item>
           <Form.Item name="status" label="Visibility">
             <Radio.Group name="status" buttonStyle="solid">

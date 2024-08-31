@@ -6,7 +6,7 @@ import { Button, message, Modal } from "antd";
 import { Playlist } from "../../api/api";
 import Uppy from "@uppy/core";
 import Tus from "@uppy/tus";
-import { DragDrop } from "@uppy/react";
+import { Dashboard } from "@uppy/react";
 import "@uppy/core/dist/style.css";
 import "@uppy/drag-drop/dist/style.css";
 import { getKey, TusConfig } from "../../api/upload";
@@ -117,7 +117,9 @@ const EditPlaylist: React.FC<editProps> = ({
             <Input.TextArea name="description" />
           </Form.Item>
           <Form.Item name="thumbnail" label="Thumbnail">
-            <DragDrop uppy={uppy} width="12rem" height="10rem" />
+            <Dashboard uppy={uppy} width="12rem" height="10rem" hideUploadButton={true} hideRetryButton={true}
+                       hidePauseResumeButton={true} hideCancelButton={true} hideProgressAfterFinish={true}
+                       proudlyDisplayPoweredByUppy={false} disableStatusBar={true} disableInformer={true} />
           </Form.Item>
           <Form.Item name="status" label="Publish type">
             <Radio.Group name="status" buttonStyle="solid">
