@@ -1,21 +1,16 @@
-import React from "react";
+import React, {useState, createRef} from "react";
 import { Formik, FormikHelpers } from "formik";
 import { Form, Input, InputNumber, Radio, Select } from "formik-antd";
 import { Button, Modal, message } from "antd";
 import { IVideo } from "../../types/Video";
-import { Dashboard } from "@uppy/react";
+import Dashboard from "@uppy/dashboard";
 import Uppy from "@uppy/core";
 import { getKey, TusConfig } from "../../api/upload";
 import Tus from "@uppy/tus";
 import "@uppy/core/dist/style.css";
 import "@uppy/drag-drop/dist/style.css";
-import { useState } from "react";
 import { Video } from "../../api/api";
-
-const uppy = Uppy({
-  meta: { type: "thumbnail" },
-  restrictions: { maxNumberOfFiles: 1, allowedFileTypes: ["image/*"] },
-}).use(Tus, TusConfig);
+import { Token } from "../../api/auth";
 
 interface editProps {
   visible: boolean;
@@ -28,7 +23,44 @@ const EditVideo: React.FC<editProps> = ({
   initialValues,
   onFinish,
 }): JSX.Element => {
+  var inited = false;
+  const inputRef = createRef<HTMLDivElement>();
   const [loading, setLoading] = useState<boolean>(false);
+  console.log(0)
+  var uppy = Uppy()
+  Token.getToken().then(accessToken => {
+    var divEl = document.getElementById("editVideoThumbnailUpload");
+    if (divEl !== null) {
+      if (inited || divEl.firstChild !== null) {
+        return
+      }
+    }
+    inited = true
+    var tusConfig = TusConfig;
+
+    tusConfig.headers = {
+      authorization: `Bearer ${accessToken.token}`,
+    };
+
+    try {
+      uppy = Uppy({
+        meta: {type: "thumbnail"},
+        restrictions: {maxNumberOfFiles: 1, allowedFileTypes: ["image/*"]},
+      })
+
+      uppy.use(Dashboard, {
+        inline: true, target: inputRef.current, width: "12rem", height: "10rem",
+        hideUploadButton: true, hideRetryButton: true, hidePauseResumeButton: true, hideCancelButton: true,
+        hideProgressAfterFinish: true, proudlyDisplayPoweredByUppy: false, disableStatusBar: true, disableInformer: true
+      }).use(Tus, tusConfig);
+
+      if (divEl !== null) {
+        divEl.removeAttribute("ref");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  })
   const handleSubmit = (values: IVideo, actions: FormikHelpers<IVideo>) => {
     const submit = async (): Promise<void> => {
       await Video.updateVideoMeta(values).catch((err) => {
@@ -57,6 +89,14 @@ const EditVideo: React.FC<editProps> = ({
           submit()
             .then(() => {
               setLoading(false);
+              var divEl = document.getElementById("editVideoThumbnailUpload");
+              if (divEl !== null) {
+                while (divEl.firstChild) {
+                  if (divEl.lastChild !== null) {
+                    divEl.removeChild(divEl.lastChild);
+                  }
+                }
+              }
               return;
             })
             .catch(() => {
@@ -106,9 +146,7 @@ const EditVideo: React.FC<editProps> = ({
             <Select name="tags" mode="tags" />
           </Form.Item>
           <Form.Item name="thumbnail" label="Thumbnail">
-            <Dashboard uppy={uppy} width="12rem" height="10rem" hideUploadButton={true} hideRetryButton={true}
-                       hidePauseResumeButton={true} hideCancelButton={true} hideProgressAfterFinish={true}
-                       proudlyDisplayPoweredByUppy={false} disableStatusBar={true} disableInformer={true} />
+            <div id="editVideoThumbnailUpload" ref={inputRef}></div>
           </Form.Item>
           <Form.Item name="status" label="Visibility">
             <Radio.Group name="status" buttonStyle="solid">

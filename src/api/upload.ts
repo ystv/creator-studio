@@ -1,11 +1,10 @@
 import { UppyFile } from "@uppy/core";
-import { Token } from "./auth";
 
 export const TusConfig = {
   endpoint: `${process.env.REACT_APP_UPLOAD_ENDPOINT}`,
   resume: true,
   headers: {
-    authorization: `Bearer ${Token.getToken()}`,
+    authorization: `Bearer undefined`,
   },
   withCredentials: true,
   autoretry: true,
