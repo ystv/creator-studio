@@ -11,13 +11,27 @@ import {getKey, TusConfig} from "../../api/upload";
 import { Dashboard } from "@uppy/react";
 import "@uppy/core/dist/style.css";
 import "@uppy/drag-drop/dist/style.css";
+import {Token} from "../../api/auth";
 
 const {Title, Paragraph} = Typography;
+
+// TODO fix
+var tusConfig = TusConfig;
+var bearerToken = "undefined";
+
+(async () => {
+    const { token } = await Token.getToken();
+    bearerToken = token;
+})();
+
+tusConfig.headers = {
+    authorization: `Bearer ${bearerToken}`,
+};
 
 const uppy = Uppy({
     meta: {type: "thumbnail"},
     restrictions: {maxNumberOfFiles: 1, allowedFileTypes: ["image/*"]},
-}).use(Tus, TusConfig);
+}).use(Tus, tusConfig);
 
 const columns = [
     {
