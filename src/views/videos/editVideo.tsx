@@ -26,7 +26,6 @@ const EditVideo: React.FC<editProps> = ({
   var inited = false;
   const inputRef = createRef<HTMLDivElement>();
   const [loading, setLoading] = useState<boolean>(false);
-  console.log(0)
   var uppy = Uppy()
   Token.getToken().then(accessToken => {
     var divEl = document.getElementById("editVideoThumbnailUpload");
