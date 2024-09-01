@@ -203,7 +203,10 @@ const Channels: React.FC = (): JSX.Element => {
             <Title>Channels</Title>
             <Paragraph>
                 A channel is what people can watch on the website. You can make as many
-                channels as you like.
+                channels as you like.<br/><br/>
+
+                Please note that this website is a bit buggy and you are required to reload if you want to upload more
+                than 1 image.
             </Paragraph>
             <Space style={{marginBottom: 16}}>
                 <Button

@@ -146,20 +146,22 @@ const EditPlaylist: React.FC<editProps> = ({
       ]}
     >
       <Formik
-        validateOnChange={true}
-        initialValues={initialValues}
-        onSubmit={handleSubmit}
+          validateOnChange={true}
+          initialValues={initialValues}
+          onSubmit={handleSubmit}
       >
+        <p>Please note that this website is a bit buggy and you are required to reload if you want to upload more
+          than 1 image.</p>
         <Form id="editPlaylist">
           <Form.Item name="name" label="Name">
-            <Input name="name" />
+            <Input name="name"/>
           </Form.Item>
           <Form.Item name="description" label="Description">
-            <Input.TextArea name="description" />
+            <Input.TextArea name="description"/>
           </Form.Item>
           <Form.Item name="thumbnail" label="Thumbnail">
             <div id="editPlaylistThumbnailUpload" ref={inputRef}></div>
-            <Image src={initialValues.thumbnail} width="12rem" max-height="10rem" ></Image>
+            <Image src={initialValues.thumbnail} width="12rem" max-height="10rem"></Image>
           </Form.Item>
           <Form.Item name="status" label="Publish type">
             <Radio.Group name="status" buttonStyle="solid">

@@ -126,6 +126,8 @@ const EditVideo: React.FC<editProps> = ({
       ]}
     >
       <Formik initialValues={initialValues} onSubmit={handleSubmit}>
+        <p>Please note that this website is a bit buggy and you are required to reload if you want to upload more
+          than 1 image.</p>
         <Form id="editVideo">
           <Form.Item name="name" label="Name">
             <Input name="name" />
