@@ -1,7 +1,7 @@
 import React, {useState, createRef} from "react";
 import { Formik, FormikHelpers } from "formik";
 import { Form, Input, InputNumber, Radio, Select } from "formik-antd";
-import { Button, Modal, message } from "antd";
+import {Button, Modal, message, Image} from "antd";
 import { IVideo } from "../../types/Video";
 import Dashboard from "@uppy/dashboard";
 import Uppy from "@uppy/core";
@@ -53,9 +53,9 @@ const EditVideo: React.FC<editProps> = ({
         hideProgressAfterFinish: true, proudlyDisplayPoweredByUppy: false, disableStatusBar: true, disableInformer: true
       }).use(Tus, tusConfig);
 
-      if (divEl !== null) {
-        divEl.removeAttribute("ref");
-      }
+      // if (divEl !== null) {
+      //   divEl.removeAttribute("ref");
+      // }
     } catch (error) {
       console.log(error);
     }
@@ -96,6 +96,7 @@ const EditVideo: React.FC<editProps> = ({
                   }
                 }
               }
+              uppy.reset();
               return;
             })
             .catch(() => {
@@ -146,6 +147,7 @@ const EditVideo: React.FC<editProps> = ({
           </Form.Item>
           <Form.Item name="thumbnail" label="Thumbnail">
             <div id="editVideoThumbnailUpload" ref={inputRef}></div>
+            <Image src={initialValues.thumbnail} width="12rem" max-height="10rem" ></Image>
           </Form.Item>
           <Form.Item name="status" label="Visibility">
             <Radio.Group name="status" buttonStyle="solid">

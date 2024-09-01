@@ -1,6 +1,6 @@
-import {Button, message, Modal, Table, Divider, Space} from "antd";
+import {Button, message, Modal, Table, Divider, Space, Image} from "antd";
 import {Formik, FormikHelpers} from "formik";
-import React, {useEffect, useState} from "react";
+import React, {createRef, useEffect, useState} from "react";
 import {Channel} from "../../api/api";
 import IChannel from "../../types/Channel";
 import {Typography} from "antd";
@@ -8,30 +8,12 @@ import {Form, Input, Radio, DatePicker} from "formik-antd";
 import Uppy from "@uppy/core";
 import Tus from "@uppy/tus";
 import {getKey, TusConfig} from "../../api/upload";
-import { Dashboard } from "@uppy/react";
+import Dashboard from "@uppy/dashboard";
 import "@uppy/core/dist/style.css";
 import "@uppy/drag-drop/dist/style.css";
 import {Token} from "../../api/auth";
 
 const {Title, Paragraph} = Typography;
-
-// TODO fix
-var tusConfig = TusConfig;
-var bearerToken = "undefined";
-
-(async () => {
-    const { token } = await Token.getToken();
-    bearerToken = token;
-})();
-
-tusConfig.headers = {
-    authorization: `Bearer ${bearerToken}`,
-};
-
-const uppy = Uppy({
-    meta: {type: "thumbnail"},
-    restrictions: {maxNumberOfFiles: 1, allowedFileTypes: ["image/*"]},
-}).use(Tus, tusConfig);
 
 const columns = [
     {
@@ -57,6 +39,8 @@ const columns = [
 ];
 
 const Channels: React.FC = (): JSX.Element => {
+    var inited = false;
+    const inputRef = createRef<HTMLDivElement>();
     const [channelData, setChannelData] = useState<IChannel[] | undefined>(
         undefined
     );
@@ -75,6 +59,42 @@ const Channels: React.FC = (): JSX.Element => {
     const refresh = () => {
         setLoading(true);
     };
+
+    var uppy = Uppy()
+    Token.getToken().then(accessToken => {
+        var divEl = document.getElementById("editChannelThumbnailUpload");
+        if (divEl !== null) {
+            if (inited || divEl.firstChild !== null) {
+                return
+            }
+        }
+        inited = true
+        var tusConfig = TusConfig;
+
+        tusConfig.headers = {
+            authorization: `Bearer ${accessToken.token}`,
+        };
+
+        try {
+            uppy = Uppy({
+                meta: {type: "thumbnail"},
+                allowMultipleUploads: true,
+                restrictions: {maxNumberOfFiles: 1, allowedFileTypes: ["image/*"]},
+            })
+
+            uppy.use(Dashboard, {
+                inline: true, target: inputRef.current, width: "12rem", height: "10rem",
+                hideUploadButton: true, hideRetryButton: true, hidePauseResumeButton: true, hideCancelButton: true,
+                hideProgressAfterFinish: true, proudlyDisplayPoweredByUppy: false, disableStatusBar: true, disableInformer: true
+            }).use(Tus, tusConfig);
+
+            // if (divEl !== null) {
+            //     divEl.removeAttribute("ref");
+            // }
+        } catch (error) {
+            console.log(error);
+        }
+    })
 
     const handleSubmit = (values: IChannel, actions: FormikHelpers<IChannel>) => {
         const submit = async (): Promise<void> => {
@@ -103,23 +123,53 @@ const Channels: React.FC = (): JSX.Element => {
         };
         setLoading(true);
         if (uppy.getFiles().length === 0) {
+            console.log(1)
             submit()
                 .then(() => {
+                    console.log(2)
                     setLoading(false);
+                    uppy.reset();
+                    uppy.close();
+                    inited = false;
                 })
                 .catch(() => {
+                    console.log(3)
+                    uppy.reset();
+                    uppy.close();
+                    inited = false;
                     return;
                 });
         } else {
+            console.log(4)
             uppy.upload().then((res) => {
+                console.log(5)
                 if (res.successful.length === 1) {
+                    console.log(6)
                     values.thumbnail = getKey(res.successful[0]);
                     submit()
                         .then(() => {
+                            console.log(7)
                             setLoading(false);
+                            // var divEl = document.getElementById("editChannelThumbnailUpload");
+                            // if (divEl !== null) {
+                            //     while (divEl.firstChild) {
+                            //         if (divEl.lastChild !== null) {
+                            //             divEl.removeChild(divEl.lastChild);
+                            //         }
+                            //     }
+                            // }
+                            uppy.removeFile(uppy.getFiles()[0].id)
+                            uppy.reset();
+                            uppy.close();
+                            inited = false;
                             return;
                         })
                         .catch(() => {
+                            console.log(8)
+                            uppy.removeFile(uppy.getFiles()[0].id)
+                            uppy.reset();
+                            uppy.close();
+                            inited = false;
                             return;
                         });
                 }
@@ -221,12 +271,8 @@ const Channels: React.FC = (): JSX.Element => {
                             <Input name="location"/>
                         </Form.Item>
                         <Form.Item name="thumbnail" label="Thumbnail">
-                            <Dashboard uppy={uppy} width="12rem" height="10rem" hideUploadButton={true}
-                                       hideRetryButton={true}
-                                       hidePauseResumeButton={true} hideCancelButton={true}
-                                       hideProgressAfterFinish={true}
-                                       proudlyDisplayPoweredByUppy={false} disableStatusBar={true}
-                                       disableInformer={true}/>
+                            <div id="editChannelThumbnailUpload" ref={inputRef}></div>
+                            <Image src={selData.thumbnail} width="12rem" max-height="10rem" ></Image>
                         </Form.Item>
                         <Divider orientation="left">Status Configuration</Divider>
                         <Form.Item name="status" label="Status">
