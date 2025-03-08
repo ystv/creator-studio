@@ -26,7 +26,7 @@ const reqs = {
 
 export const Video = {
   getVideos: (): Promise<IVideoMeta[]> =>
-    reqs.get("/v1/internal/creator/video"),
+    reqs.get("/v1/internal/creator/videos"),
   getVideosByCurrentUser: (): Promise<IVideo[]> =>
     reqs.get("/v1/internal/creator/video/my"), //TODO: Implement get by user ID and move this endpoint
   getVideosByMonth: (year: number, month: number): Promise<IVideoCalendar[]> =>
@@ -34,7 +34,7 @@ export const Video = {
   getVideo: (id: number): Promise<IVideo> =>
     reqs.get(`/v1/internal/creator/video/${id}`),
   searchVideo: (query: string): Promise<IVideoMeta[]> =>
-    reqs.post("/v1/internal/creator/video/search", { query }),
+    reqs.post("/v1/internal/creator/videos/search", { query }),
   createVideo: (v: INewVideo): Promise<IVideo> =>
     reqs.post("/v1/internal/creator/video", v),
   createVideoThumbnail: (f: Blob): Promise<string> =>
@@ -52,7 +52,7 @@ export const Series = {
 
 export const Playlist = {
   getPlaylists: (): Promise<IPlaylist[]> =>
-    reqs.get("/v1/internal/creator/playlist"),
+    reqs.get("/v1/internal/creator/playlists"),
   createPlaylist: (p: IPlaylist): Promise<IPlaylist> =>
     reqs.post("/v1/internal/creator/playlist", p),
   updatePlaylist: (p: IPlaylist): Promise<IPlaylist> =>
@@ -63,7 +63,7 @@ export const Playlist = {
 
 export const Encode = {
   getPresets: (): Promise<IPreset[]> =>
-    reqs.get("/v1/internal/creator/encode/preset"),
+    reqs.get("/v1/internal/creator/encode/presets"),
   createPreset: (p: IPreset): Promise<IPreset> =>
     reqs.post("/v1/internal/creator/encode/preset", p),
   updatePreset: (p: IPreset): Promise<IPreset> =>
@@ -71,7 +71,7 @@ export const Encode = {
   deletePreset: (presetID: number): Promise<void> =>
     reqs.delete(`/v1/internal/creator/encode/preset/${presetID}`),
   getFormats: (): Promise<IEncodeFormat[]> =>
-    reqs.get("/v1/internal/creator/encode/format"),
+    reqs.get("/v1/internal/creator/encode/formats"),
   createFormat: (f: IEncodeFormat): Promise<number> =>
     reqs.post("/v1/internal/creator/encode/format", f),
   updateFormat: (f: IEncodeFormat): Promise<void> =>
